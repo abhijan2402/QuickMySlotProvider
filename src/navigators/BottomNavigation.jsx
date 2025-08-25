@@ -34,8 +34,7 @@ const BottomNavigation = () => {
         },
         tabBarStyle: {
           paddingVertical: 8,
-          height: 60 + insets.bottom, // Add safe area bottom inset for Android/iOS
-          paddingBottom: 0 + insets.bottom, // Padding to prevent overlap with nav buttons
+          height: 60 , // Add safe area bottom inset for Android/iOS
         },
         tabBarIcon: ({focused}) => {
           const iconUri = icons[route.name];

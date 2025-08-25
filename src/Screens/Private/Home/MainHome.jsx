@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Linking,
 } from 'react-native';
 import React from 'react';
 import {COLOR} from '../../../Constants/Colors';
@@ -102,7 +103,7 @@ const MainHome = ({navigation}) => {
           <TouchableOpacity
             style={styles.gridItem}
             onPress={() => {
-              navigation.navigate('ManageServices');
+              navigation.navigate('Promotion');
             }}>
             <Image
               source={{
@@ -127,6 +128,19 @@ const MainHome = ({navigation}) => {
             <Text style={styles.gridText}>Manage Services</Text>
           </TouchableOpacity>
         </View>
+        <TouchableOpacity
+          style={styles.bannerWrapper}
+          onPress={() => {
+            Linking.openURL('https://quick-my-slot-prov-web.vercel.app/');
+          }}>
+          <Image
+            source={{
+              uri: 'https://img.freepik.com/premium-vector/beauty-salon-banner-template_23-2148614461.jpg',
+            }}
+            style={styles.bannerImage}
+            resizeMode="cover"
+          />
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -246,5 +260,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: COLOR.black,
+  },
+  bannerWrapper: {
+    marginTop: 20,
+    marginHorizontal: 20,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  bannerImage: {
+    width: '100%',
+    height: 150,
+    borderRadius: 12,
   },
 });

@@ -23,6 +23,11 @@ import BoostProfile from '../Screens/Private/Home/BoostProfile';
 import ManageServices from '../Screens/Private/Home/ManageServices';
 import AddService from '../Screens/Private/Home/AddService';
 import AvailabilityManagement from '../Screens/Private/Home/AvailabilityManagement';
+import EditProfile from '../Screens/Private/Account/EditProfile';
+import BankDetails from '../Screens/Private/Account/BankDetails';
+import AddBank from '../Screens/Private/Account/AddBank';
+import Promotion from '../Screens/Private/Home/Promotion';
+import AddPromotion from '../Screens/Private/Home/AddPromotion';
 const Stack = createNativeStackNavigator();
 
 const AuthStack = () => {
@@ -59,6 +64,11 @@ const AuthStack = () => {
 
       <Stack.Screen name="BookingConfirmation" component={BookingConfirmation} />
       <Stack.Screen name="AddService" component={AddService} />
+            <Stack.Screen name="EditProfile" component={EditProfile} />
+            <Stack.Screen name="BankDetails" component={BankDetails} />
+            <Stack.Screen name="AddBank" component={AddBank} />
+            <Stack.Screen name="Promotion" component={Promotion} />
+            <Stack.Screen name="AddPromotion" component={AddPromotion} />
 
 
       {/* <Stack.Screen name="SignUp" component={SignUp} /> */}

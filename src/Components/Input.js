@@ -13,7 +13,7 @@ const Input = ({
   style,
   labelStyle,
   mainStyle,
-  showStar = true,
+  showStar = false,
   ...rest
 }) => {
   return (
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     fontSize: 16,
     color: COLOR.black,
-    width: windowWidth / 1.16,
+    width: '90%',
     alignSelf: 'center',
   },
 });

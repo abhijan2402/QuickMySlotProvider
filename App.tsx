@@ -1,6 +1,6 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {SafeAreaView, StatusBar, StyleSheet, Text} from 'react-native';
+import {SafeAreaView, StatusBar, StyleSheet, Text, View} from 'react-native';
 import MainNavigation from './src/navigators/MainNavigation';
 import {AuthProvider} from './src/Backend/AuthContent';
 // import {LanguageProvider} from './src/localization/LanguageContext';
@@ -9,12 +9,12 @@ const App = () => {
   return (
     // <LanguageProvider>
     <AuthProvider>
-      <SafeAreaView style={styles.safeArea}>
+      <View style={styles.safeArea}>
         <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
         <NavigationContainer>
           <MainNavigation />
         </NavigationContainer>
-      </SafeAreaView>
+      </View>
     </AuthProvider>
     // </LanguageProvider>
   );
