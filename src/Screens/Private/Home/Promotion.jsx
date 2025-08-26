@@ -12,45 +12,49 @@ import {COLOR} from '../../../Constants/Colors';
 import Button from '../../../Components/UI/Button';
 import {images} from '../../../Components/UI/images';
 import EmptyView from '../../../Components/UI/EmptyView';
+import LinearGradient from 'react-native-linear-gradient';
 
 const Promotion = ({navigation}) => {
   const offers = [
     {
       code: 'FIRST40',
-      title: 'Get 40% OFF via LUZO',
+      title: 'Get 40% OFF',
       discount: '20%',
       cashback: '20%',
       validity: 'Valid on All Days',
       description:
-        'After availing your services, pay at the salon using LUZO app via any mode of online payment and get 20% Discount & 20% Cashback as LUZO Cash on the net payable amount.',
+        'After availing your services, pay at the salon using app via any mode of online payment and get 20% Discount & 20% Cashback as Cash on the net payable amount.',
     },
     {
       code: 'WEEKEND10',
-      title: 'Get 10% OFF via LUZO',
+      title: 'Get 10% OFF',
       discount: '5%',
       cashback: '5%',
       validity: 'Valid on Friday, Saturday, and Sunday',
       description:
-        'After availing your services, pay at the salon using LUZO app via any mode of online payment and get 5% Discount & 5% Cashback as LUZO Cash on the net payable amount.',
+        'After availing your services, pay at the salon using app via any mode of online payment and get 5% Discount & 5% Cashback as Cash on the net payable amount.',
     },
     {
       code: 'GLAMUP40',
-      title: 'Get 40% OFF via LUZO',
+      title: 'Get $20 OFF',
       discount: '25%',
       cashback: '15%',
       validity: 'Valid on Tuesday',
       description:
-        'After availing your services, pay at the salon using LUZO app via any mode of online payment and get 25% Discount & 15% Cashback as LUZO Cash on the net payable amount.',
+        'After availing your services, pay at the salon using app via any mode of online payment and get 25% Discount & 15% Cashback as Cash on the net payable amount.',
     },
   ];
 
   const renderOffer = ({item}) => (
     <View style={styles.card}>
       {/* Left Strip */}
-      <View style={styles.strip}>
+      <LinearGradient
+        colors={['#fbc2eb', '#a6c1ee']} // light pink to lavender
+        start={{x: 0, y: 0}}
+        end={{x: 0, y: 1}}
+        style={styles.strip}>
         <Text style={styles.stripText}>{item.code}</Text>
-      </View>
-
+      </LinearGradient>
       {/* Content */}
       <View style={styles.content}>
         <View style={styles.headerRow}>
@@ -78,13 +82,10 @@ const Promotion = ({navigation}) => {
             </TouchableOpacity>
           </View>
         </View>
-
         <Text style={styles.offerText}>
           {item.discount} Discount + {item.cashback} Cashback
         </Text>
-
         <Text style={styles.validity}>{item.validity}</Text>
-
         <Text style={styles.description}>{item.description}</Text>
       </View>
     </View>
