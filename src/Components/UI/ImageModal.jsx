@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   View,
@@ -8,20 +7,18 @@ import {
   Image,
   Modal,
   StatusBar,
-  Platform
+  Platform,
 } from 'react-native';
-import { openCamera, openPicker } from 'react-native-image-crop-picker';
-import { PERMISSIONS, RESULTS, check, request } from 'react-native-permissions';
-import { Typography } from './Typography';
-import SimpleToast from 'react-native-simple-toast';
-import { COLOR } from '../../Constants/Colors';
-
+import {openCamera, openPicker} from 'react-native-image-crop-picker';
+import {PERMISSIONS, RESULTS, check, request} from 'react-native-permissions';
+import {Typography} from './Typography';
+import {COLOR} from '../../Constants/Colors';
 
 const ImageModal = ({
   multiple = false,
   showModal,
-  close = () => { },
-  selected = () => { },
+  close = () => {},
+  selected = () => {},
   mediaType = 'photo',
 }) => {
   const isIos = Platform.OS === 'ios';
@@ -42,7 +39,7 @@ const ImageModal = ({
         .then(async response => {
           selected(response, e);
         })
-        .catch(err => { });
+        .catch(err => {});
     }, 200);
   };
   const OpenCamera = () => {
@@ -83,13 +80,13 @@ const ImageModal = ({
   const checkCameraPermission = () => {
     check(!isIos ? PERMISSIONS.ANDROID.CAMERA : PERMISSIONS.IOS.CAMERA)
       .then(result => {
-        console.warn("ress",result);
+        console.warn('ress', result);
         switch (result) {
           case RESULTS.UNAVAILABLE:
             requestCameraPermission();
-            SimpleToast.show(
-              `Camera feature is not available (on this device / in this context)`, SimpleToast.SHORT
-            );
+            // SimpleToast.show(
+            //   `Camera feature is not available (on this device / in this context)`, SimpleToast.SHORT
+            // );
             console.log(
               'This feature is not available (on this device / in this context)',
             );
@@ -109,14 +106,14 @@ const ImageModal = ({
             console.log('The permission is granted');
             break;
           case RESULTS.BLOCKED:
-            SimpleToast.show(`Please provide camera permission to use this feature.`);
-            console.log('The permission is denied and not requestable anymore');
+            // SimpleToast.show(`Please provide camera permission to use this feature.`);
+            // console.log('The permission is denied and not requestable anymore');
             break;
         }
       })
       .catch(error => {
-        console.log("error", error)
-        SimpleToast.show(`Please provide camera permission to use this feature.`, SimpleToast.SHORT);
+        console.log('error', error);
+        // SimpleToast.show(`Please provide camera permission to use this feature.`, SimpleToast.SHORT);
       });
   };
 
@@ -137,9 +134,9 @@ const ImageModal = ({
       .then(result => {
         switch (result) {
           case RESULTS.UNAVAILABLE:
-            SimpleToast.show(
-              `This feature is not available (on this device / in this context)`, SimpleToast.SHORT
-            );
+            // SimpleToast.show(
+            //   `This feature is not available (on this device / in this context)`, SimpleToast.SHORT
+            // );
             console.log(
               'This feature is not available (on this device / in this context)',
             );
@@ -159,14 +156,14 @@ const ImageModal = ({
             console.log('The permission is granted');
             break;
           case RESULTS.BLOCKED:
-            SimpleToast.show(`Please provide storage permission to use this feature.`, SimpleToast.SHORT);
-            console.log('The permission is denied and not requestable anymore');
+            // SimpleToast.show(`Please provide storage permission to use this feature.`, SimpleToast.SHORT);
+            // console.log('The permission is denied and not requestable anymore');
             break;
         }
       })
       .catch(error => {
-        console.log("hereee", error)
-        SimpleToast.show(`Please provide storage permission to use this feature`, SimpleToast.SHORT);
+        console.log('hereee', error);
+        // SimpleToast.show(`Please provide storage permission to use this feature`, SimpleToast.SHORT);
       });
   };
 
@@ -175,8 +172,8 @@ const ImageModal = ({
       isIos
         ? PERMISSIONS.IOS.PHOTO_LIBRARY
         : Platform.constants['Release'] > 12
-          ? PERMISSIONS.ANDROID.READ_MEDIA_IMAGES
-          : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+        ? PERMISSIONS.ANDROID.READ_MEDIA_IMAGES
+        : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
     )
       .then(result => {
         if (result === 'granted' || result === 'limited') OpenGallery();
@@ -190,11 +187,10 @@ const ImageModal = ({
         statusBarTranslucent
         onRequestClose={() => close()}
         transparent={true}
-        style={{ height: '100%', flex: 1 }}
+        style={{height: '100%', flex: 1}}
         visible={showModal}
         animationType="fade"
-        presentationStyle="overFullScreen"
-      >
+        presentationStyle="overFullScreen">
         <View style={styles.modalContainer}>
           <TouchableOpacity
             style={{
@@ -204,43 +200,44 @@ const ImageModal = ({
             }}
             onPress={() => close()}
           />
-          <View style={styles.bottomModal} >
+          <View style={styles.bottomModal}>
             <View style={styles.modalShowSection}>
               <TouchableOpacity
                 activeOpacity={1}
-                style={{ alignSelf: 'flex-end', margin: 10 }}
+                style={{alignSelf: 'flex-end', margin: 10}}
                 onPress={() => close()}>
                 {/* <Icon source={icons?.ic_cancel} size={15} /> */}
               </TouchableOpacity>
               <View style={styles.modalView}>
-                <View style={{ alignItems: 'center' }}>
+                <View style={{alignItems: 'center'}}>
                   <TouchableOpacity
                     style={styles.checkView}
                     onPress={checkCameraPermission}>
                     <Image
-                      style={{ height: 50, width: 50, }}
+                      style={{height: 50, width: 50}}
                       source={require('../../assets/Images/camera.png')} // Replace with your camera icon
                     />
-                    <Typography size={16}
+                    <Typography
+                      size={16}
+                      style={{marginTop: 10}}
                       color={COLOR.black}>
-                      {"Camera"}
+                      {'Camera'}
                     </Typography>
                   </TouchableOpacity>
-
                 </View>
-                <View style={{ alignItems: 'center' }}>
+                <View style={{alignItems: 'center'}}>
                   <TouchableOpacity
                     style={styles.checkView}
                     onPress={checkPhotoPermission}>
                     <Image
-                      style={{ height: 50, width: 50, }}
-                      source={require('../../assets/Images/picture.png')} // Replace with your gallery icon
+                      style={{height: 50, width: 50}}
+                      source={require('../../assets/Images/gallery.png')} // Replace with your gallery icon
                     />
                     <Typography
                       size={16}
-                      color={COLOR.black}
-                    >
-                      {"Gallery"}
+                      style={{marginTop: 10}}
+                      color={COLOR.black}>
+                      {'Gallery'}
                     </Typography>
                   </TouchableOpacity>
                 </View>
@@ -304,4 +301,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ImageModal
+export default ImageModal;

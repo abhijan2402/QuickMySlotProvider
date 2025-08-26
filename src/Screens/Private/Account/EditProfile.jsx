@@ -6,103 +6,136 @@ import {
   Text,
   ScrollView,
   Image,
+  KeyboardAvoidingView,
 } from 'react-native';
 import Input from '../../../Components/Input';
 import {COLOR} from '../../../Constants/Colors';
-import {windowWidth} from '../../../Constants/Dimensions';
 import HomeHeader from '../../../Components/HomeHeader';
+import ImageModal from '../../../Components/UI/ImageModal';
+import useKeyboard from '../../../Constants/Utility';
 
 const EditProfile = ({navigation}) => {
   const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const { isKeyboardVisible, keyboardHeight } = useKeyboard();
 
-  const [isEditing, setIsEditing] = useState(false); // toggle state
+  const [profileImage, setProfileImage] = useState(
+    'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+  );
 
-  const profileImage =
-    'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
 
   const handleUpdate = () => {
-    console.log('Updated Profile:', {firstName, lastName, email, phone});
+    console.log('Updated Profile:', {firstName, email, phone, profileImage});
     setIsEditing(false);
   };
 
+  const handleImageSelected = (response, from) => {
+    // for single image case
+    if (response?.path) {
+      setProfileImage(response.path);
+    }
+  };
+
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1,backgroundColor: COLOR.white}}>
       <HomeHeader
         title="Edit Profile"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
+
+      {/* Profile Image */}
       <View style={styles.profileSection}>
         <Image source={{uri: profileImage}} style={styles.profileImage} />
-        <TouchableOpacity style={styles.editIconWrapper}>
-          <Image
-            source={require('../../../assets/Images/edit.png')}
-            style={styles.editIcon}
-          />
-        </TouchableOpacity>
+
+        {isEditing && (
+          <TouchableOpacity
+            style={styles.editIconWrapper}
+            onPress={() => setShowModal(true)}>
+            <Image
+              source={require('../../../assets/Images/edit.png')}
+              style={styles.editIcon}
+            />
+          </TouchableOpacity>
+        )}
       </View>
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : isKeyboardVisible ? 0 :  -40}>
+        <ScrollView style={{flex:1}} contentContainerStyle={styles.container}>
+          {/* 🚀 Promo Card */}
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>🚀 Promote Your Business</Text>
+            <View style={styles.promoBox}>
+              <Text style={styles.promoTitle}>Boost Your Profile</Text>
+              <Text style={styles.promoText}>
+                Increase visibility and attract more customers by appearing
+                {'\n'}
+                higher in search results.
+              </Text>
+              <TouchableOpacity
+                style={styles.boostBtn}
+                onPress={() => navigation.navigate('BoostProfile')}>
+                <Text style={styles.boostText}>View Plans</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.card}>
-  <Text style={styles.sectionTitle}>🚀 Promote Your Business</Text>
+          {/* Inputs */}
+          <Input
+            label="Name"
+            placeholder="Enter Your name"
+            value={firstName}
+            labelStyle={{marginLeft: 30, marginTop: -10}}
+            style={{borderColor: COLOR.primary}}
+            onChangeText={setFirstName}
+            editable={isEditing}
+          />
 
-  <View style={styles.promoBox}>
-    <Text style={styles.promoTitle}>Boost Your Profile</Text>
-    <Text style={styles.promoText}>
-      Increase visibility and attract more customers by appearing{"\n"}
-      higher in search results.
-    </Text>
+          <Input
+            label="Email"
+            placeholder="Enter email"
+            value={email}
+            onChangeText={setEmail}
+            labelStyle={{marginLeft: 30}}
+            style={{borderColor: COLOR.primary}}
+            keyboardType="email-address"
+            editable={isEditing}
+          />
 
-    <TouchableOpacity
-      style={styles.boostBtn}
-      onPress={() => {
-        navigation.navigate('BoostProfile');
-      }}>
-      <Text style={styles.boostText}>View Plans</Text>
-    </TouchableOpacity>
-  </View>
-</View>
-
-        <Input
-          label="Name"
-          placeholder="Enter Your name"
-          value={firstName}
-          labelStyle={{marginLeft: 30,marginTop:-10}}
-          style={{borderColor: COLOR.primary}}
-          onChangeText={setFirstName}
-          editable={isEditing}
-        />
-
-        <Input
-          label="Email"
-          placeholder="Enter email"
-          value={email}
-          onChangeText={setEmail}
-          labelStyle={{marginLeft: 30}}
-          style={{borderColor: COLOR.primary}}
-          keyboardType="email-address"
-          editable={isEditing}
-        />
-        <Input
-          label="Phone Number"
-          placeholder="Enter phone number"
-          value={phone}
-          onChangeText={setPhone}
-          labelStyle={{marginLeft: 30}}
-          style={{borderColor: COLOR.primary}}
-          keyboardType="phone-pad"
-          editable={isEditing}
-        />
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => setIsEditing(prev => !prev)}>
-          <Text style={styles.buttonText}>{isEditing ? 'Update' : 'Edit'}</Text>
-        </TouchableOpacity>
-      </ScrollView>
+          <Input
+            label="Phone Number"
+            placeholder="Enter phone number"
+            value={phone}
+            onChangeText={setPhone}
+            labelStyle={{marginLeft: 30}}
+            style={{borderColor: COLOR.primary}}
+            keyboardType="phone-pad"
+            editable={isEditing}
+          />
+        </ScrollView>
+      </KeyboardAvoidingView>
+      {/* Edit / Update Button */}
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          if (isEditing) handleUpdate();
+          setIsEditing(prev => !prev);
+        }}>
+        <Text style={styles.buttonText}>{isEditing ? 'Update' : 'Edit'}</Text>
+      </TouchableOpacity>
+      {/* Image Modal */}
+      <ImageModal
+        showModal={showModal}
+        close={() => setShowModal(false)}
+        selected={handleImageSelected}
+        mediaType="photo"
+      />
     </View>
   );
 };
@@ -139,7 +172,6 @@ const styles = StyleSheet.create({
     tintColor: COLOR.primary,
   },
   container: {
-    flexGrow: 1,
     paddingVertical: 10,
     backgroundColor: COLOR.bgColor,
   },
@@ -157,17 +189,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
   },
-   card: {
+  card: {
     padding: 15,
     borderRadius: 16,
     backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: {width: 0, height: 3},
     shadowRadius: 6,
     elevation: 4,
-    marginHorizontal:20,
-    marginBottom:15
+    marginHorizontal: 20,
+    marginBottom: 15,
   },
   sectionTitle: {
     fontSize: 18,

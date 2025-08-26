@@ -61,6 +61,7 @@ const Availability = ({navigation}) => {
             padding: 10,
             borderRadius: 6,
             paddingHorizontal: 20,
+            marginHorizontal: 20,
           }}>
           <Image
             style={{width: 20, height: 20, marginBottom: 5, marginRight: 6}}
@@ -132,22 +133,23 @@ const Availability = ({navigation}) => {
             }}
           />
         </ScrollView>
-        {/* Submit */}
-        <Button
-          containerStyle={{
-            marginBottom: 10,
-            marginHorizontal: 20,
-            width: '90%',
-          }}
-          // disabled={selectedDays.length === 0 || !startTime || !endTime}
-          title="Save profile & Submit for Approval"
-          onPress={() => {
-            // Handle submit here
-            console.log({selectedDays, startTime, endTime});
-            navigation.navigate('BottomNavigation'); // Example navigation
-          }}
-        />
       </KeyboardAvoidingView>
+      {/* Submit */}
+
+      <Button
+        containerStyle={{
+          marginBottom: 10,
+          marginHorizontal: 20,
+          width: '90%',
+        }}
+        // disabled={selectedDays.length === 0 || !startTime || !endTime}
+        title="Save profile & Submit for Approval"
+        onPress={() => {
+          // Handle submit here
+          console.log({selectedDays, startTime, endTime});
+          navigation.navigate('BottomNavigation'); // Example navigation
+        }}
+      />
     </View>
   );
 };
@@ -192,6 +194,8 @@ const styles = StyleSheet.create({
     borderColor: COLOR.primary,
     borderRadius: 4,
     marginRight: 10,
+    alignItems:"center",
+    justifyContent:"center"
   },
   checkboxSelected: {
     backgroundColor: COLOR.primary,

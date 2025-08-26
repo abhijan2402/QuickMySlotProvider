@@ -1,3 +1,4 @@
+import React, {useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,19 +10,46 @@ import {
   Platform,
   Image,
 } from 'react-native';
-import React, {useState} from 'react';
 import HomeHeader from '../../Components/HomeHeader';
 import {COLOR} from '../../Constants/Colors';
 import CustomButton from '../../Components/CustomButton';
+import ImageModal from '../../Components/UI/ImageModal';
+import {windowWidth} from '../../Constants/Dimensions';
 import {images} from '../../Components/UI/images';
+import ImageUpload from '../../Components/UI/ImageUpload';
 import DatePickerModal from '../../Components/UI/DatePicker';
 
+
 const CompleteProfile = ({navigation}) => {
+  const [showModal, setShowModal] = useState(false);
+  const [currentField, setCurrentField] = useState(null);
+  const [image, setImages] = useState({
+    PhotoVerifi: null,
+    businessProof: null,
+    aadhaarFront: null,
+    aadhaarBack: null,
+    pan: null,
+  });
   const [startDate, setStartDate] = useState(new Date());
   const [openStartPicker, setOpenStartPicker] = useState(false);
+
+  const handleSelect = (response, source) => {
+    if (currentField) {
+      setImages(prev => ({
+        ...prev,
+        [currentField]: response.path || response[0]?.path,
+      }));
+    }
+    setShowModal(false);
+  };
+
+  const openUpload = field => {
+    setCurrentField(field);
+    setShowModal(true);
+  };
+
   return (
     <View style={styles.container}>
-      {/* Header */}
       <HomeHeader
         title="Complete Your Profile"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
@@ -29,11 +57,10 @@ const CompleteProfile = ({navigation}) => {
         onLeftPress={() => navigation.goBack()}
       />
 
-      {/* Keyboard handling */}
       <KeyboardAvoidingView
         style={{flex: 1}}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={80}>
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
@@ -56,7 +83,7 @@ const CompleteProfile = ({navigation}) => {
                 fontSize: 13,
                 color: '#555',
                 marginEnd: 20,
-                marginBottom: 15,
+                marginBottom: 10,
               }}>
               Please make sure to provide accurate and complete business
               details, including valid proof documents. This helps us verify
@@ -64,43 +91,131 @@ const CompleteProfile = ({navigation}) => {
             </Text>
           </View>
 
-          {/* Section Title */}
           <Text style={styles.sectionTitle}>Business Information</Text>
 
           {/* Photo Verification */}
-          {/* <Text style={styles.label}>Photo Verification</Text>
-          <TouchableOpacity style={styles.uploadBtn}>
-            <Text style={styles.uploadBtnText}>📷 Live Photo Verification</Text>
-          </TouchableOpacity> */}
+          <Text style={styles.label}>Photo Verification</Text>
+          {image.PhotoVerifi ? (
+            <View style={styles.imgWrapper}>
+              <Image
+                source={{uri: image.PhotoVerifi}}
+                style={styles.previewImg}
+              />
+              <TouchableOpacity
+                style={styles.deleteBtn}
+                onPress={() =>
+                  setImages(prev => ({...prev, PhotoVerifi: null}))
+                }>
+                <Image
+                  source={images.cross}
+                  style={{height: 12, width: 12}}
+                  tintColor={'white'}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <ImageUpload onPress={() => openUpload('PhotoVerifi')} />
+          )}
 
           {/* Business Proof */}
           <Text style={styles.label}>Business Proof</Text>
-          <TouchableOpacity style={styles.uploadBtn}>
-            <Text style={styles.uploadBtnText}>
-              📄Upload Business Proof Image
-            </Text>
-          </TouchableOpacity>
+          {image.businessProof ? (
+            <View style={styles.imgWrapper}>
+              <Image
+                source={{uri: image.businessProof}}
+                style={styles.previewImg}
+              />
+              <TouchableOpacity
+                style={styles.deleteBtn}
+                onPress={() =>
+                  setImages(prev => ({...prev, businessProof: null}))
+                }>
+                <Image
+                  source={images.cross}
+                  style={{height: 12, width: 12}}
+                  tintColor={'white'}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <ImageUpload onPress={() => openUpload('businessProof')} />
+          )}
 
-          {/* Aadhaar Verification */}
+          {/* Aadhaar Front */}
           <Text style={styles.label}>Aadhaar Card Verification</Text>
-          <TouchableOpacity style={styles.uploadBtn}>
-            <Text style={styles.uploadBtnText}>📄 Front Side Image</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.uploadBtn}>
-            <Text style={styles.uploadBtnText}>📄 Back Side Image</Text>
-          </TouchableOpacity>
+          {image.aadhaarFront ? (
+            <View style={styles.imgWrapper}>
+              <Image
+                source={{uri: image.aadhaarFront}}
+                style={styles.previewImg}
+              />
+              <TouchableOpacity
+                style={styles.deleteBtn}
+                onPress={() =>
+                  setImages(prev => ({...prev, aadhaarFront: null}))
+                }>
+                <Image
+                  source={images.cross}
+                  style={{height: 12, width: 12}}
+                  tintColor={'white'}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <ImageUpload onPress={() => openUpload('aadhaarFront')} />
+          )}
 
-          {/*  PAN Card */}
+          {/* Aadhaar Back */}
+          {/* {image.aadhaarBack ? (
+            <View style={styles.imgWrapper}>
+              <Image
+                source={{uri: image.aadhaarBack}}
+                style={styles.previewImg}
+              />
+              <TouchableOpacity
+                style={styles.deleteBtn}
+                onPress={() =>
+                  setImages(prev => ({...prev, aadhaarBack: null}))
+                }>
+                <Image
+                  source={images.cross}
+                  style={{height: 12, width: 12}}
+                  tintColor={'white'}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={styles.uploadBtn}
+              onPress={() => openUpload('aadhaarBack')}>
+              <Text style={styles.uploadBtnText}>📄 Back Side Image</Text>
+            </TouchableOpacity>
+          )} */}
+
+          {/* PAN Card */}
           <Text style={styles.label}>PAN Card</Text>
-          <TouchableOpacity style={styles.uploadBtn}>
-            <Text style={styles.uploadBtnText}>📄Upload PAN Card Image</Text>
-          </TouchableOpacity>
+          {image.pan ? (
+            <View style={styles.imgWrapper}>
+              <Image source={{uri: image.pan}} style={styles.previewImg} />
+              <TouchableOpacity
+                style={styles.deleteBtn}
+                onPress={() => setImages(prev => ({...prev, pan: null}))}>
+                <Image
+                  source={images.cross}
+                  style={{height: 12, width: 12}}
+                  tintColor={'white'}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <ImageUpload onPress={() => openUpload('pan')} />
+          )}
 
           {/* About Business */}
           <Text style={styles.label}>About Your Business</Text>
           <TextInput
             style={[styles.input, {height: 90, textAlignVertical: 'top'}]}
-            placeholder="Tell customers about your services, experience and what makes you unique..."
+            placeholder="Tell customers about your services..."
             multiline
           />
 
@@ -127,6 +242,8 @@ const CompleteProfile = ({navigation}) => {
             style={styles.input}
             placeholder="ex., https://yourbusiness.com"
           />
+
+          {/* GST */}
           <Text style={styles.label}>GSTIN No.</Text>
           <TextInput
             style={styles.input}
@@ -135,13 +252,22 @@ const CompleteProfile = ({navigation}) => {
             placeholderTextColor={'black'}
             onChangeText={() => {}}
           />
-          {/* Next Button */}
-          <CustomButton
-            title="Next"
-            onPress={() => navigation.navigate('Availability')}
-          />
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <CustomButton
+        title="Next"
+        style={{width: '90%'}}
+        onPress={() => navigation.navigate('Availability')}
+      />
+
+      {/* Image Modal */}
+      <ImageModal
+        showModal={showModal}
+        close={() => setShowModal(false)}
+        selected={handleSelect}
+        mediaType="photo"
+      />
     </View>
   );
 };
@@ -149,14 +275,8 @@ const CompleteProfile = ({navigation}) => {
 export default CompleteProfile;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLOR.white,
-  },
-  scrollContainer: {
-    padding: 20,
-    paddingBottom: 50,
-  },
+  container: {flex: 1, backgroundColor: COLOR.white},
+  scrollContainer: {padding: 20, paddingBottom: 50},
   infoText: {
     fontSize: 14,
     color: COLOR.yellow,
@@ -173,7 +293,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: COLOR.black,
-    marginTop: 12,
+    marginTop: 8,
     marginBottom: 6,
   },
   uploadBtn: {
@@ -183,11 +303,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
-  uploadBtnText: {
-    color: COLOR.white,
-    fontSize: 15,
-    fontWeight: '600',
-  },
+  uploadBtnText: {color: COLOR.white, fontSize: 15, fontWeight: '600'},
   input: {
     borderWidth: 1,
     borderColor: COLOR.primary,
@@ -197,5 +313,28 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLOR.black,
     marginBottom: 12,
+  },
+  imgWrapper: {
+    position: 'relative',
+    marginBottom: 12,
+    alignSelf: 'flex-start',
+  },
+  previewImg: {
+    width: windowWidth * 0.9,
+    height: 180,
+    borderRadius: 8,
+  },
+  deleteBtn: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 12,
+    padding: 6,
+  },
+  deleteText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });
