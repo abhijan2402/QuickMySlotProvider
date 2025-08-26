@@ -8,8 +8,8 @@ import {
 } from 'react-native';
 import React from 'react';
 import {Typography} from './Typography';
-import { COLOR } from '../../Constants/Colors';
-import { TouchableOpacity } from 'react-native';
+import {COLOR} from '../../Constants/Colors';
+import {TouchableOpacity} from 'react-native';
 
 const Button = ({
   onPress = () => {},
@@ -26,12 +26,11 @@ const Button = ({
   leftImgStyle,
   titleContainerStyle,
   colorsicon,
-  leftIcon='',
+  leftIcon = '',
   indStyle,
   leftIconValue = false,
 }) => {
-
-  const handlebutton = () => {
+  const handleButton = () => {
     if (loading || disabled) {
     } else {
       Keyboard.dismiss();
@@ -43,7 +42,7 @@ const Button = ({
     <TouchableOpacity
       disabled={disabled || loading}
       activeOpacity={activeOpacity}
-      onPress={handlebutton}
+      onPress={handleButton}
       style={[styles.buttons, containerStyle]}>
       {loading ? (
         <ActivityIndicator
@@ -78,10 +77,10 @@ const Button = ({
 
 export default Button;
 
-const createStyles = (theme  ) =>
+const createStyles = theme =>
   StyleSheet.create({
     buttons: {
-      backgroundColor: theme?.buttonColor,
+      backgroundColor: COLOR.royalBlue,
       borderRadius: 7,
       height: 55,
       width: '100%',

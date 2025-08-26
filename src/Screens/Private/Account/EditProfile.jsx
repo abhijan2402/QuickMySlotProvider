@@ -6,17 +6,20 @@ import {
   Text,
   ScrollView,
   Image,
+  KeyboardAvoidingView,
 } from 'react-native';
 import Input from '../../../Components/Input';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import ImageModal from '../../../Components/UI/ImageModal';
+import useKeyboard from '../../../Constants/Utility';
 
 const EditProfile = ({navigation}) => {
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const { isKeyboardVisible, keyboardHeight } = useKeyboard();
 
   const [profileImage, setProfileImage] = useState(
     'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
@@ -38,7 +41,7 @@ const EditProfile = ({navigation}) => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1,backgroundColor: COLOR.white}}>
       <HomeHeader
         title="Edit Profile"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
@@ -60,69 +63,72 @@ const EditProfile = ({navigation}) => {
           </TouchableOpacity>
         )}
       </View>
-
-      <ScrollView contentContainerStyle={styles.container}>
-        {/* 🚀 Promo Card */}
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>🚀 Promote Your Business</Text>
-          <View style={styles.promoBox}>
-            <Text style={styles.promoTitle}>Boost Your Profile</Text>
-            <Text style={styles.promoText}>
-              Increase visibility and attract more customers by appearing{'\n'}
-              higher in search results.
-            </Text>
-            <TouchableOpacity
-              style={styles.boostBtn}
-              onPress={() => navigation.navigate('BoostProfile')}>
-              <Text style={styles.boostText}>View Plans</Text>
-            </TouchableOpacity>
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : isKeyboardVisible ? 0 :  -40}>
+        <ScrollView style={{flex:1}} contentContainerStyle={styles.container}>
+          {/* 🚀 Promo Card */}
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>🚀 Promote Your Business</Text>
+            <View style={styles.promoBox}>
+              <Text style={styles.promoTitle}>Boost Your Profile</Text>
+              <Text style={styles.promoText}>
+                Increase visibility and attract more customers by appearing
+                {'\n'}
+                higher in search results.
+              </Text>
+              <TouchableOpacity
+                style={styles.boostBtn}
+                onPress={() => navigation.navigate('BoostProfile')}>
+                <Text style={styles.boostText}>View Plans</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
 
-        {/* Inputs */}
-        <Input
-          label="Name"
-          placeholder="Enter Your name"
-          value={firstName}
-          labelStyle={{marginLeft: 30, marginTop: -10}}
-          style={{borderColor: COLOR.primary}}
-          onChangeText={setFirstName}
-          editable={isEditing}
-        />
+          {/* Inputs */}
+          <Input
+            label="Name"
+            placeholder="Enter Your name"
+            value={firstName}
+            labelStyle={{marginLeft: 30, marginTop: -10}}
+            style={{borderColor: COLOR.primary}}
+            onChangeText={setFirstName}
+            editable={isEditing}
+          />
 
-        <Input
-          label="Email"
-          placeholder="Enter email"
-          value={email}
-          onChangeText={setEmail}
-          labelStyle={{marginLeft: 30}}
-          style={{borderColor: COLOR.primary}}
-          keyboardType="email-address"
-          editable={isEditing}
-        />
+          <Input
+            label="Email"
+            placeholder="Enter email"
+            value={email}
+            onChangeText={setEmail}
+            labelStyle={{marginLeft: 30}}
+            style={{borderColor: COLOR.primary}}
+            keyboardType="email-address"
+            editable={isEditing}
+          />
 
-        <Input
-          label="Phone Number"
-          placeholder="Enter phone number"
-          value={phone}
-          onChangeText={setPhone}
-          labelStyle={{marginLeft: 30}}
-          style={{borderColor: COLOR.primary}}
-          keyboardType="phone-pad"
-          editable={isEditing}
-        />
-
-        {/* Edit / Update Button */}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            if (isEditing) handleUpdate();
-            setIsEditing(prev => !prev);
-          }}>
-          <Text style={styles.buttonText}>{isEditing ? 'Update' : 'Edit'}</Text>
-        </TouchableOpacity>
-      </ScrollView>
-
+          <Input
+            label="Phone Number"
+            placeholder="Enter phone number"
+            value={phone}
+            onChangeText={setPhone}
+            labelStyle={{marginLeft: 30}}
+            style={{borderColor: COLOR.primary}}
+            keyboardType="phone-pad"
+            editable={isEditing}
+          />
+        </ScrollView>
+      </KeyboardAvoidingView>
+      {/* Edit / Update Button */}
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          if (isEditing) handleUpdate();
+          setIsEditing(prev => !prev);
+        }}>
+        <Text style={styles.buttonText}>{isEditing ? 'Update' : 'Edit'}</Text>
+      </TouchableOpacity>
       {/* Image Modal */}
       <ImageModal
         showModal={showModal}
@@ -166,7 +172,6 @@ const styles = StyleSheet.create({
     tintColor: COLOR.primary,
   },
   container: {
-    flexGrow: 1,
     paddingVertical: 10,
     backgroundColor: COLOR.bgColor,
   },

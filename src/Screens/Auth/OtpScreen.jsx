@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -13,8 +13,10 @@ import {COLOR} from '../../Constants/Colors';
 import CustomButton from '../../Components/CustomButton';
 import {windowHeight} from '../../Constants/Dimensions';
 import HomeHeader from '../../Components/HomeHeader';
+import {AuthContext} from '../../Backend/AuthContent';
 
 const OtpScreen = ({navigation}) => {
+  const {setUser, setToken} = useContext(AuthContext);
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const inputs = useRef([]);
 
@@ -44,6 +46,9 @@ const OtpScreen = ({navigation}) => {
   const verifyOtp = () => {
     const otpCode = otp.join('');
     console.log('Entered OTP:', otpCode);
+    // setUser('dummyUser');
+    // setToken('dummyToken');
+    navigation.navigate('CompleteProfile');
   };
 
   return (
@@ -88,7 +93,7 @@ const OtpScreen = ({navigation}) => {
       <CustomButton
         title={'Verify'}
         onPress={() => {
-          navigation.navigate('CompleteProfile');
+          verifyOtp();
         }}
       />
       <View

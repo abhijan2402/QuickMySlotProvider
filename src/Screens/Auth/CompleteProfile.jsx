@@ -17,6 +17,8 @@ import ImageModal from '../../Components/UI/ImageModal';
 import {windowWidth} from '../../Constants/Dimensions';
 import {images} from '../../Components/UI/images';
 import ImageUpload from '../../Components/UI/ImageUpload';
+import DatePickerModal from '../../Components/UI/DatePicker';
+
 
 const CompleteProfile = ({navigation}) => {
   const [showModal, setShowModal] = useState(false);
@@ -28,6 +30,8 @@ const CompleteProfile = ({navigation}) => {
     aadhaarBack: null,
     pan: null,
   });
+  const [startDate, setStartDate] = useState(new Date());
+  const [openStartPicker, setOpenStartPicker] = useState(false);
 
   const handleSelect = (response, source) => {
     if (currentField) {
@@ -55,15 +59,37 @@ const CompleteProfile = ({navigation}) => {
 
       <KeyboardAvoidingView
         style={{flex: 1}}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={80}>
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled">
-          <Text style={styles.infoText}>
-            Please provide accurate and complete information.
-          </Text>
+          {/* Info Text */}
+          <View
+            style={{
+              flexDirection: 'row',
+              marginBottom: 15,
+              backgroundColor: COLOR.lightYellow,
+              padding: 10,
+              borderRadius: 6,
+            }}>
+            <Image
+              style={{width: 20, height: 20, marginBottom: 5, marginRight: 6}}
+              source={images.warning}
+            />
+            <Text
+              style={{
+                fontSize: 13,
+                color: '#555',
+                marginEnd: 20,
+                marginBottom: 10,
+              }}>
+              Please make sure to provide accurate and complete business
+              details, including valid proof documents. This helps us verify
+              your profile and improves customer trust.{' '}
+            </Text>
+          </View>
 
           <Text style={styles.sectionTitle}>Business Information</Text>
 
@@ -253,11 +279,9 @@ const styles = StyleSheet.create({
   scrollContainer: {padding: 20, paddingBottom: 50},
   infoText: {
     fontSize: 14,
-    color: '#555',
-    backgroundColor: '#F5F5F5',
-    padding: 10,
-    borderRadius: 6,
-    marginBottom: 15,
+    color: COLOR.yellow,
+    fontWeight: '700',
+    flex: 1,
   },
   sectionTitle: {
     fontSize: 16,

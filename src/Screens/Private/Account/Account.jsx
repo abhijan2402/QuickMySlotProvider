@@ -20,7 +20,7 @@
 
 // const styles = StyleSheet.create({});
 
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -34,9 +34,17 @@ import {COLOR} from '../../../Constants/Colors';
 import CustomButton from '../../../Components/CustomButton';
 import {AuthContext} from '../../../Backend/AuthContent';
 import HomeHeader from '../../../Components/HomeHeader';
+import ConfirmModal from '../../../Components/UI/ConfirmModel';
 
 const Account = ({navigation}) => {
   const {setUser} = useContext(AuthContext);
+  const [visible, setVisible] = useState(false);
+
+  const handleLogout = () => {
+    setVisible(false);
+    // your logout logic here
+    console.log('User logged out');
+  };
 
   const profileImage =
     'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'; // default profile icon
@@ -164,23 +172,34 @@ const Account = ({navigation}) => {
           title={'Log Out'}
           style={{marginTop: '10%'}}
           onPress={() => {
-            setUser('ABCC');
+           setVisible(true)
           }}
         />
         <CustomButton
-          textStyle={{color: COLOR.primary}}
+          textStyle={{color: COLOR.red}}
           title={'Delete Account'}
           style={{
             marginTop: '5%',
             backgroundColor: COLOR.white,
             borderWidth: 1,
-            borderColor: COLOR.primary,
+            borderColor: COLOR.red,
           }}
           onPress={() => {
             setUser('ABCC');
           }}
         />
+        <ConfirmModal
+        visible={visible}
+        close={() => setVisible(false)}
+        title="Logout"
+        description="Are you sure you want to logout?"
+        yesTitle="Yes"
+        noTitle="No"
+        onPressYes={handleLogout}
+        onPressNo={() => setVisible(false)}
+      />
       </ScrollView>
+       
     </View>
   );
 };

@@ -4,70 +4,88 @@ import LinearGradient from 'react-native-linear-gradient';
 import {windowHeight, windowWidth} from '../../Constants/Dimensions';
 import {COLOR} from '../../Constants/Colors';
 import CustomButton from '../../Components/CustomButton';
+import {validators} from '../../Backend/Validator';
+import {isValidForm} from '../../Backend/Utility';
+import {ErrorBox} from '../../Components/UI/ErrorBox';
+import Button from '../../Components/UI/Button';
+import GoogleAuthButton from '../../Components/UI/GoogleAuthButton';
+import {ScrollView} from 'react-native';
 
 const Login = ({navigation}) => {
+  const [error, setError] = React.useState({});
+  const [number, setNumber] = React.useState('');
+  const onSubmit = () => {
+    let error = {
+      mobile: validators.checkNumber('Mobile Number', number),
+    };
+    setError(error);
+    if (isValidForm(error)) {
+      navigation.navigate('OtpScreen');
+    }
+  };
+  const handleLoginSuccess = user => {};
   return (
-    <LinearGradient
-      colors={[COLOR.white, COLOR.white]}
-      start={{x: 0, y: 0}}
-      end={{x: 0, y: 1}}
-      style={styles.container}>
-      {/* Logo */}
-      <Image
-        source={require('../../assets/Images/logo.png')}
-        style={styles.logo}
-      />
-
-      {/* Tagline */}
-      <Text style={styles.text}>
-        Get Bookings, Expand Business with QuickSlot
-      </Text>
-
-      {/* Mobile Number Input */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.countryCode}>+91 | </Text>
-        <TextInput
-          keyboardType="numeric"
-          placeholder="Enter Mobile Number"
-          placeholderTextColor={COLOR.black}
-          style={styles.input}
-        />
-      </View>
-
-      {/* Continue Button */}
-      <CustomButton
-        title={'Continue'}
-        onPress={() => {
-          navigation.navigate('OtpScreen');
-        }}
-      />
-
-      {/* Divider with text */}
-      <View style={styles.dividerContainer}>
-        <View style={styles.divider} />
-        <Text style={styles.dividerText}>Or</Text>
-        <View style={styles.divider} />
-      </View>
-
-      {/* Google Login Button */}
-      <View style={styles.googleLoginContainer}>
+    <View style={{flex: 1}}>
+      <LinearGradient
+        colors={[COLOR.white, COLOR.white]}
+        start={{x: 0, y: 0}}
+        end={{x: 0, y: 1}}
+        style={styles.container}>
+        {/* Logo */}
         <Image
-          source={{
-            uri: 'https://cdn-icons-png.flaticon.com/128/281/281764.png',
-          }}
-          style={styles.googleIcon}
+          source={require('../../assets/Images/logo.png')}
+          style={styles.logo}
         />
-        <Text style={styles.googleText}>Login Using Google</Text>
-      </View>
-      <View style={styles.registerContainer}>
-        <Text style={styles.registerText}>Don’t have an account? </Text>
-        <Text
-          style={styles.registerLink}
-          onPress={() => navigation.navigate('SignUp')}>
-          Register
+
+        {/* Tagline */}
+        <Text style={styles.text}>
+          Get Bookings, Expand Business with QuickSlot
         </Text>
-      </View>
-    </LinearGradient>
+
+        {/* Mobile Number Input */}
+        <View style={styles.inputContainer}>
+          <Text style={styles.countryCode}>+91 | </Text>
+          <TextInput
+            keyboardType="numeric"
+            placeholder="Enter Mobile Number"
+            placeholderTextColor={COLOR.black}
+            style={styles.input}
+            value={number}
+            onChangeText={text => setNumber(text)}
+          />
+        </View>
+        <View style={{marginHorizontal: 20, width: '90%'}}>
+          <ErrorBox error={error.mobile} />
+          <Button
+            containerStyle={{marginTop: 30}}
+            title={'Continue'}
+            onPress={() => {
+              onSubmit();
+            }}
+          />
+        </View>
+
+        {/* Divider with text */}
+        <View style={styles.dividerContainer}>
+          <View style={styles.divider} />
+          <Text style={styles.dividerText}>Or</Text>
+          <View style={styles.divider} />
+        </View>
+
+        {/* Google Login Button */}
+
+        <GoogleAuthButton onLoginSuccess={handleLoginSuccess} />
+
+        <View style={styles.registerContainer}>
+          <Text style={styles.registerText}>Don’t have an account? </Text>
+          <Text
+            style={styles.registerLink}
+            onPress={() => navigation.navigate('SignUp')}>
+            Register
+          </Text>
+        </View>
+      </LinearGradient>
+    </View>
   );
 };
 
@@ -102,7 +120,6 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingHorizontal: 10,
     marginTop: 30,
-    marginBottom: 30,
   },
   countryCode: {
     color: COLOR.black,

@@ -1,7 +1,8 @@
 import React from 'react';
-import { TextInput, StyleSheet, View, Text } from 'react-native';
-import { COLOR } from '../Constants/Colors';
-import { windowWidth } from '../Constants/Dimensions';
+import {TextInput, StyleSheet, View, Text} from 'react-native';
+import {COLOR} from '../Constants/Colors';
+import {windowWidth} from '../Constants/Dimensions';
+import {ErrorBox} from './UI/ErrorBox';
 
 const Input = ({
   label,
@@ -14,16 +15,14 @@ const Input = ({
   labelStyle,
   mainStyle,
   showStar = false,
+  error,
   ...rest
 }) => {
   return (
     <View style={[styles.inputWrapper, mainStyle]}>
-      <View style={{ flexDirection: 'row', }}>
+      <View style={{flexDirection: 'row'}}>
         {label && <Text style={[styles.label, labelStyle]}>{label}</Text>}
-        {
-          showStar && <Text style={{ color: COLOR.red, fontSize: 16 }}> *</Text>
-        }
-
+        {showStar && <Text style={{color: COLOR.red, fontSize: 16}}> *</Text>}
       </View>
       <TextInput
         placeholder={placeholder}
@@ -35,6 +34,17 @@ const Input = ({
         style={[styles.input, style]}
         {...rest}
       />
+      {error && (
+        <Text
+          style={{
+            color: COLOR.red,
+            fontSize: 12,
+            marginLeft: windowWidth * 0.03,
+            marginTop: 3,
+          }}>
+          {error}
+        </Text>
+      )}
     </View>
   );
 };
