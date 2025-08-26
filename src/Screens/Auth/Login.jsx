@@ -15,15 +15,14 @@ const Login = ({navigation}) => {
   const [number, setNumber] = React.useState('');
   const onSubmit = () => {
     let error = {
-      mobile: validators.checkNumber('Mobile Number', ''),
+      mobile: validators.checkNumber('Mobile Number', number),
     };
     setError(error);
     if (isValidForm(error)) {
       navigation.navigate('OtpScreen');
     }
   };
-  const handleLoginSuccess = user => {
-  };
+  const handleLoginSuccess = user => {};
   return (
     <LinearGradient
       colors={[COLOR.white, COLOR.white]}
@@ -72,7 +71,7 @@ const Login = ({navigation}) => {
       </View>
 
       {/* Google Login Button */}
-    
+
       <GoogleAuthButton onLoginSuccess={handleLoginSuccess} />
 
       <View style={styles.registerContainer}>
