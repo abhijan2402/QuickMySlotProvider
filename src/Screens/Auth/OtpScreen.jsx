@@ -46,9 +46,9 @@ const OtpScreen = ({navigation}) => {
   const verifyOtp = () => {
     const otpCode = otp.join('');
     console.log('Entered OTP:', otpCode);
-    setUser('dummyUser');
-    setToken('dummyToken');
-    // navigation.navigate('CompleteProfile');
+    // setUser('dummyUser');
+    // setToken('dummyToken');
+    navigation.navigate('CompleteProfile');
   };
 
   return (

@@ -7,11 +7,15 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import React, {useState} from 'react';
 import HomeHeader from '../../Components/HomeHeader';
 import {COLOR} from '../../Constants/Colors';
 import CustomButton from '../../Components/CustomButton';
+import DatePickerModal from '../../Components/UI/DatePicker';
+import {images} from '../../Components/UI/images';
+import Button from '../../Components/UI/Button';
 
 const days = [
   'Monday',
@@ -27,7 +31,6 @@ const Availability = ({navigation}) => {
   const [selectedDays, setSelectedDays] = useState([]);
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
-
   const toggleDay = day => {
     if (selectedDays.includes(day)) {
       setSelectedDays(selectedDays.filter(d => d !== day));
@@ -50,6 +53,31 @@ const Availability = ({navigation}) => {
         style={{flex: 1, paddingBottom: 55}}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={80}>
+        <View
+          style={{
+            flexDirection: 'row',
+            marginBottom: 15,
+            backgroundColor: COLOR.lightYellow,
+            padding: 10,
+            borderRadius: 6,
+            paddingHorizontal: 20,
+          }}>
+          <Image
+            style={{width: 20, height: 20, marginBottom: 5, marginRight: 6}}
+            source={images.warning}
+          />
+          <Text
+            style={{
+              fontSize: 13,
+              color: '#555',
+              marginBottom: 15,
+              flexWrap: 'wrap',
+              marginEnd: 20,
+            }}>
+            Select your working days and set start and end times for each. This
+            schedule will let customers know when you’re available for bookings.{' '}
+          </Text>
+        </View>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
@@ -59,7 +87,6 @@ const Availability = ({navigation}) => {
           <Text style={styles.infoText}>
             Select the days that you are available
           </Text>
-
           {/* Days checkboxes */}
           <View style={styles.daysContainer}>
             {days.map(day => (
@@ -71,34 +98,48 @@ const Availability = ({navigation}) => {
                   style={[
                     styles.checkbox,
                     selectedDays.includes(day) && styles.checkboxSelected,
-                  ]}
-                />
+                  ]}>
+                  <Image
+                    source={selectedDays.includes(day) ? images.check : null}
+                    style={{
+                      width: 14,
+                      height: 14,
+                      tintColor: COLOR.white,
+                      alignSelf: 'center',
+                      resizeMode: 'contain',
+                    }}
+                  />
+                </View>
                 <Text style={styles.dayText}>{day}</Text>
               </TouchableOpacity>
             ))}
           </View>
-
-          {/* Start Time */}
-          <Text style={styles.label}>Daily Start Time (e.g., 9:00 AM)</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="--:-- --"
+          <DatePickerModal
+            label="Daily Start Time (e.g., 9:00 AM)"
             value={startTime}
-            onChangeText={setStartTime}
+            mode="time"
+            onChange={v => {
+              setStartTime(v);
+            }}
           />
-
           {/* End Time */}
-          <Text style={styles.label}>Daily End Time (e.g., 5:00 PM)</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="--:-- --"
+          <DatePickerModal
+            label="Daily End Time (e.g., 5:00 PM)"
             value={endTime}
-            onChangeText={setEndTime}
+            mode="time"
+            onChange={v => {
+              setEndTime(v);
+            }}
           />
         </ScrollView>
         {/* Submit */}
-        <CustomButton
-          textStyle={{fontSize: 14}}
+        <Button
+          containerStyle={{
+            marginBottom: 10,
+            marginHorizontal: 20,
+            width: '90%',
+          }}
+          // disabled={selectedDays.length === 0 || !startTime || !endTime}
           title="Save profile & Submit for Approval"
           onPress={() => {
             // Handle submit here

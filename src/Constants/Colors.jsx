@@ -11,4 +11,8 @@ export const COLOR = {
   HomeBtnBg: '#8880CA91',
   iconBg: '#796FC31A',
   red: '#da2727ff',
+
+  // Added colors
+  yellow: '#FFD700',       // standard yellow (gold-like)
+  lightYellow: '#FFFFE0',  // very light yellow
 };

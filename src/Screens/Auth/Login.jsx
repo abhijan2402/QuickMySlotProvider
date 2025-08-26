@@ -9,6 +9,7 @@ import {isValidForm} from '../../Backend/Utility';
 import {ErrorBox} from '../../Components/UI/ErrorBox';
 import Button from '../../Components/UI/Button';
 import GoogleAuthButton from '../../Components/UI/GoogleAuthButton';
+import {ScrollView} from 'react-native';
 
 const Login = ({navigation}) => {
   const [error, setError] = React.useState({});
@@ -24,65 +25,67 @@ const Login = ({navigation}) => {
   };
   const handleLoginSuccess = user => {};
   return (
-    <LinearGradient
-      colors={[COLOR.white, COLOR.white]}
-      start={{x: 0, y: 0}}
-      end={{x: 0, y: 1}}
-      style={styles.container}>
-      {/* Logo */}
-      <Image
-        source={require('../../assets/Images/logo.png')}
-        style={styles.logo}
-      />
-
-      {/* Tagline */}
-      <Text style={styles.text}>
-        Get Bookings, Expand Business with QuickSlot
-      </Text>
-
-      {/* Mobile Number Input */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.countryCode}>+91 | </Text>
-        <TextInput
-          keyboardType="numeric"
-          placeholder="Enter Mobile Number"
-          placeholderTextColor={COLOR.black}
-          style={styles.input}
-          value={number}
-          onChangeText={text => setNumber(text)}
+    <View style={{flex: 1}}>
+      <LinearGradient
+        colors={[COLOR.white, COLOR.white]}
+        start={{x: 0, y: 0}}
+        end={{x: 0, y: 1}}
+        style={styles.container}>
+        {/* Logo */}
+        <Image
+          source={require('../../assets/Images/logo.png')}
+          style={styles.logo}
         />
-      </View>
-      <View style={{marginHorizontal: 20, width: '90%'}}>
-        <ErrorBox error={error.mobile} />
-        <Button
-          containerStyle={{marginTop: 30}}
-          title={'Continue'}
-          onPress={() => {
-            onSubmit();
-          }}
-        />
-      </View>
 
-      {/* Divider with text */}
-      <View style={styles.dividerContainer}>
-        <View style={styles.divider} />
-        <Text style={styles.dividerText}>Or</Text>
-        <View style={styles.divider} />
-      </View>
-
-      {/* Google Login Button */}
-
-      <GoogleAuthButton onLoginSuccess={handleLoginSuccess} />
-
-      <View style={styles.registerContainer}>
-        <Text style={styles.registerText}>Don’t have an account? </Text>
-        <Text
-          style={styles.registerLink}
-          onPress={() => navigation.navigate('SignUp')}>
-          Register
+        {/* Tagline */}
+        <Text style={styles.text}>
+          Get Bookings, Expand Business with QuickSlot
         </Text>
-      </View>
-    </LinearGradient>
+
+        {/* Mobile Number Input */}
+        <View style={styles.inputContainer}>
+          <Text style={styles.countryCode}>+91 | </Text>
+          <TextInput
+            keyboardType="numeric"
+            placeholder="Enter Mobile Number"
+            placeholderTextColor={COLOR.black}
+            style={styles.input}
+            value={number}
+            onChangeText={text => setNumber(text)}
+          />
+        </View>
+        <View style={{marginHorizontal: 20, width: '90%'}}>
+          <ErrorBox error={error.mobile} />
+          <Button
+            containerStyle={{marginTop: 30}}
+            title={'Continue'}
+            onPress={() => {
+              onSubmit();
+            }}
+          />
+        </View>
+
+        {/* Divider with text */}
+        <View style={styles.dividerContainer}>
+          <View style={styles.divider} />
+          <Text style={styles.dividerText}>Or</Text>
+          <View style={styles.divider} />
+        </View>
+
+        {/* Google Login Button */}
+
+        <GoogleAuthButton onLoginSuccess={handleLoginSuccess} />
+
+        <View style={styles.registerContainer}>
+          <Text style={styles.registerText}>Don’t have an account? </Text>
+          <Text
+            style={styles.registerLink}
+            onPress={() => navigation.navigate('SignUp')}>
+            Register
+          </Text>
+        </View>
+      </LinearGradient>
+    </View>
   );
 };
 

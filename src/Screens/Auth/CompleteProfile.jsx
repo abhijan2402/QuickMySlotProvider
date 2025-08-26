@@ -7,13 +7,18 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import HomeHeader from '../../Components/HomeHeader';
 import {COLOR} from '../../Constants/Colors';
 import CustomButton from '../../Components/CustomButton';
+import {images} from '../../Components/UI/images';
+import DatePickerModal from '../../Components/UI/DatePicker';
 
 const CompleteProfile = ({navigation}) => {
+  const [startDate, setStartDate] = useState(new Date());
+  const [openStartPicker, setOpenStartPicker] = useState(false);
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -34,9 +39,30 @@ const CompleteProfile = ({navigation}) => {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled">
           {/* Info Text */}
-          <Text style={styles.infoText}>
-            Please provide accurate and complete information.
-          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginBottom: 15,
+              backgroundColor: COLOR.lightYellow,
+              padding: 10,
+              borderRadius: 6,
+            }}>
+            <Image
+              style={{width: 20, height: 20, marginBottom: 5, marginRight: 6}}
+              source={images.warning}
+            />
+            <Text
+              style={{
+                fontSize: 13,
+                color: '#555',
+                marginEnd: 20,
+                marginBottom: 15,
+              }}>
+              Please make sure to provide accurate and complete business
+              details, including valid proof documents. This helps us verify
+              your profile and improves customer trust.{' '}
+            </Text>
+          </View>
 
           {/* Section Title */}
           <Text style={styles.sectionTitle}>Business Information</Text>
@@ -133,11 +159,9 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 14,
-    color: '#555',
-    backgroundColor: '#F5F5F5',
-    padding: 10,
-    borderRadius: 6,
-    marginBottom: 15,
+    color: COLOR.yellow,
+    fontWeight: '700',
+    flex: 1,
   },
   sectionTitle: {
     fontSize: 16,
