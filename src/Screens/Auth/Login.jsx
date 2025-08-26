@@ -75,7 +75,7 @@ const Login = ({navigation}) => {
         {/* Google Login Button */}
 
         <GoogleAuthButton onLoginSuccess={handleLoginSuccess} />
-
+        {/* 
         <View style={styles.registerContainer}>
           <Text style={styles.registerText}>Don’t have an account? </Text>
           <Text
@@ -83,7 +83,7 @@ const Login = ({navigation}) => {
             onPress={() => navigation.navigate('SignUp')}>
             Register
           </Text>
-        </View>
+        </View> */}
       </LinearGradient>
     </View>
   );

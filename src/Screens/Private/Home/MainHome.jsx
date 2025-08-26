@@ -6,21 +6,67 @@ import {
   Image,
   ScrollView,
   Linking,
+  Dimensions,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
+import {FlatList} from 'react-native';
 
 const MainHome = ({navigation}) => {
+  const {width} = Dimensions.get('window');
+  const AUTO_SCROLL_INTERVAL = 3000; // 3 seconds
+  const flatListRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const banners = [
+    {
+      id: '1',
+      image:
+        'https://img.freepik.com/premium-vector/beauty-salon-banner-template_23-2148614461.jpg',
+      link: 'https://quick-my-slot-prov-web.vercel.app/',
+    },
+    {
+      id: '2',
+      image:
+        'https://img.freepik.com/free-vector/spa-beauty-salon-horizontal-banners-set_1284-9915.jpg',
+      link: 'https://example.com/another-banner',
+    },
+    {
+      id: '3',
+      image:
+        'https://img.freepik.com/free-vector/barbershop-banner-template_23-2148614473.jpg',
+      link: 'https://example.com/yet-another-banner',
+    },
+  ];
+
+  // Auto-scroll logic
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const nextIndex = (currentIndex + 1) % banners.length;
+      flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
+      setCurrentIndex(nextIndex);
+    }, AUTO_SCROLL_INTERVAL);
+
+    return () => clearInterval(interval);
+  }, [currentIndex]);
+  const renderItem = ({item}) => {
+    return (
+      <TouchableOpacity
+        activeOpacity={0.8}
+        style={[styles.bannerWrapper]}
+        onPress={() => Linking.openURL(item.link)}>
+        <Image
+          source={{uri: item?.image}}
+          style={[styles.bannerImage, {width: width - 40}]}
+          resizeMode="cover"
+        />
+      </TouchableOpacity>
+    );
+  };
   return (
     <View style={styles.container}>
       {/* Header */}
-      <HomeHeader
-        title="Dashboard"
-        rightIcon={'https://cdn-icons-png.flaticon.com/128/1144/1144760.png'}
-        rightTint={COLOR.black}
-        style={{paddingHorizontal: 15}}
-      />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -41,33 +87,39 @@ const MainHome = ({navigation}) => {
             </Text>
           </View>
         </View>
-
-        {/* Upcoming Booking Section */}
-        <View style={styles.bookingContainer}>
-          <Text style={styles.sectionTitle}>Upcoming Booking</Text>
-
-          <View style={styles.bookingCard}>
-            <View style={styles.bookingRow}>
-              <Image
-                source={{
-                  uri: 'https://cdn-icons-png.flaticon.com/128/3641/3641838.png',
-                }}
-                style={styles.customerImg}
-              />
-              <View style={{flex: 1, marginLeft: 12}}>
-                <Text style={styles.customerName}>Jane Smith</Text>
-                <Text style={styles.bookingDetail}>Service: Hair Styling</Text>
-                <Text style={styles.bookingDetail}>
-                  Time: 18 Aug, 3:00 PM - 4:00 PM
-                </Text>
-                <Text style={styles.bookingPrice}>₹1200</Text>
-              </View>
-            </View>
-
-            <TouchableOpacity style={styles.viewButton}>
-              <Text style={styles.viewButtonText}>View Details</Text>
-            </TouchableOpacity>
-          </View>
+        <View
+          style={{
+            backgroundColor: '#f5f3ff',
+            marginTop: 20,
+            marginHorizontal: 20,
+            borderRadius: 12,
+          }}>
+          <FlatList
+            ref={flatListRef}
+            data={banners}
+            scrollEnabled={false}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={e => {
+              const offsetX = e.nativeEvent.contentOffset.x;
+              const index = Math.round(offsetX / (width - 40)); // item width
+              setCurrentIndex(index);
+            }}
+          />
+        </View>
+        <View style={styles.dotsContainer}>
+          {banners.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.dot,
+                currentIndex === index ? styles.activeDot : styles.inactiveDot,
+              ]}
+            />
+          ))}
         </View>
 
         {/* Grid Menu */}
@@ -128,19 +180,32 @@ const MainHome = ({navigation}) => {
             <Text style={styles.gridText}>Manage Services</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.bannerWrapper}
-          onPress={() => {
-            Linking.openURL('https://quick-my-slot-prov-web.vercel.app/');
-          }}>
-          <Image
-            source={{
-              uri: 'https://img.freepik.com/premium-vector/beauty-salon-banner-template_23-2148614461.jpg',
-            }}
-            style={styles.bannerImage}
-            resizeMode="cover"
-          />
-        </TouchableOpacity>
+
+        {/* Upcoming Booking Section */}
+        <View style={styles.bookingContainer}>
+          <Text style={styles.sectionTitle}>Upcoming Booking</Text>
+          <View style={styles.bookingCard}>
+            <View style={styles.bookingRow}>
+              <Image
+                source={{
+                  uri: 'https://cdn-icons-png.flaticon.com/128/3641/3641838.png',
+                }}
+                style={styles.customerImg}
+              />
+              <View style={{flex: 1, marginLeft: 12}}>
+                <Text style={styles.customerName}>Jane Smith</Text>
+                <Text style={styles.bookingDetail}>Service: Hair Styling</Text>
+                <Text style={styles.bookingDetail}>
+                  Time: 18 Aug, 3:00 PM - 4:00 PM
+                </Text>
+                <Text style={styles.bookingPrice}>₹1200</Text>
+              </View>
+            </View>
+            <TouchableOpacity style={styles.viewButton}>
+              <Text style={styles.viewButtonText}>View Details</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </ScrollView>
     </View>
   );
@@ -155,7 +220,7 @@ const styles = StyleSheet.create({
   },
   card: {
     marginHorizontal: 20,
-    backgroundColor: '#a58de4',
+    backgroundColor: COLOR.lavender,
     borderRadius: 12,
     padding: 20,
     alignItems: 'center',
@@ -165,20 +230,19 @@ const styles = StyleSheet.create({
   cardIcon: {
     width: 70,
     height: 70,
-    borderRadius: 8,
+    borderRadius: 12,
   },
   cardTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLOR.white,
+    color: COLOR.black,
   },
   cardSub: {
     fontSize: 13,
-    color: COLOR.white,
+    color: COLOR.grey,
     marginTop: 3,
   },
   bookingContainer: {
-    marginTop: 25,
     marginHorizontal: 20,
   },
   sectionTitle: {
@@ -236,7 +300,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   grid: {
-    marginTop: 25,
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
@@ -262,14 +325,38 @@ const styles = StyleSheet.create({
     color: COLOR.black,
   },
   bannerWrapper: {
-    marginTop: 20,
-    marginHorizontal: 20,
+    marginRight: 10,
     borderRadius: 12,
     overflow: 'hidden',
+    alignSelf: 'center',
   },
   bannerImage: {
-    width: '100%',
     height: 150,
     borderRadius: 12,
+  },
+  dotsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    paddingVertical: 6,
+    alignSelf: 'center',
+    borderRadius: 12,
+    top: -40,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 4,
+  },
+  activeDot: {
+    backgroundColor: COLOR.primary,
+    width: 10,
+    height: 10,
+  },
+  inactiveDot: {
+    backgroundColor: '#ccc',
   },
 });
