@@ -1,7 +1,17 @@
 import React from 'react';
-import {StyleSheet, Text, View, TouchableOpacity, FlatList} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+  Image,
+} from 'react-native';
 import HomeHeader from '../../../Components/HomeHeader';
 import {COLOR} from '../../../Constants/Colors';
+import Button from '../../../Components/UI/Button';
+import {images} from '../../../Components/UI/images';
+import EmptyView from '../../../Components/UI/EmptyView';
 
 const Promotion = ({navigation}) => {
   const offers = [
@@ -45,9 +55,28 @@ const Promotion = ({navigation}) => {
       <View style={styles.content}>
         <View style={styles.headerRow}>
           <Text style={styles.title}>{item.title}</Text>
-          <TouchableOpacity>
-            <Text style={styles.apply}>APPLY</Text>
-          </TouchableOpacity>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <TouchableOpacity
+              style={[styles.addButton, {marginRight: 10}]}
+              onPress={() => {
+                // Handle apply action
+              }}>
+              <Image
+                source={images.edit}
+                style={{height: 20, width: 20, tintColor: COLOR.grey}}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={() => {
+                // Handle apply action
+              }}>
+              <Image
+                source={images.delete}
+                style={{height: 20, width: 20, tintColor: COLOR.red}}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <Text style={styles.offerText}>
@@ -57,29 +86,34 @@ const Promotion = ({navigation}) => {
         <Text style={styles.validity}>{item.validity}</Text>
 
         <Text style={styles.description}>{item.description}</Text>
-
-        <Text style={styles.tc}>T&C +</Text>
       </View>
     </View>
   );
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: '#fff'}}>
       <HomeHeader
         title="Promotion"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
-      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddPromotion')}>
-        <Text style={styles.addButtonText}>+ Add Promotion</Text>
-      </TouchableOpacity>
-      <FlatList
-        data={offers}
-        renderItem={renderOffer}
-        keyExtractor={(item, index) => index.toString()}
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-      />
+      <View style={{flex: 1, backgroundColor: '#fff', paddingHorizontal: 15}}>
+        <FlatList
+          data={offers}
+          renderItem={renderOffer}
+          style={{flex: 1}}
+          keyExtractor={(item, index) => index.toString()}
+          contentContainerStyle={styles.container}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={<EmptyView title="No promotions available." />}
+        />
+        <View style={{marginBottom: 20, marginTop: 10}}>
+          <Button
+            onPress={() => navigation.navigate('AddPromotion')}
+            title={'+ Add Promotion'}
+          />
+        </View>
+      </View>
     </View>
   );
 };
@@ -89,7 +123,7 @@ export default Promotion;
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 10,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
   },
   card: {
     flexDirection: 'row',
@@ -98,7 +132,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     elevation: 3,
     overflow: 'hidden',
-    marginHorizontal: 20,
+    margin: 5,
   },
   strip: {
     backgroundColor: '#e0f3ff',
@@ -120,6 +154,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 12,
+    backgroundColor: '#fff',
   },
   headerRow: {
     flexDirection: 'row',
@@ -158,13 +193,9 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   addButton: {
-    backgroundColor: '#007aff',
-    marginHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
     alignItems: 'center',
     alignSelf: 'flex-end',
-    paddingHorizontal:12
+    justifyContent: 'center',
   },
   addButtonText: {
     color: '#fff',

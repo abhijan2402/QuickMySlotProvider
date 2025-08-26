@@ -10,4 +10,6 @@ export const images = {
   // rightArrow : require('../../assets/Images/rightarrow.png'),
   warning: require('../../assets/Images/warning.png'),
   check: require('../../assets/Images/check.png'),
+  edit: require('../../assets/Images/edit.png'),
+  delete: require('../../assets/Images/delete.png'),
 };

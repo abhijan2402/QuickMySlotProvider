@@ -60,9 +60,7 @@ const VendorAppointments = () => {
           📞 {item.customerPhone}
         </Text>
         <Text style={styles.infoText}>📍 {item.customerAddress}</Text>
-
         <View style={styles.divider} />
-
         {/* Services */}
         <Text style={styles.sectionTitle}>💇 Services Booked</Text>
         {item.services.map((s, index) => (
@@ -71,16 +69,13 @@ const VendorAppointments = () => {
           </Text>
         ))}
         <Text style={styles.totalPrice}>Total: ₹{totalPrice}</Text>
-
         <View style={styles.divider} />
-
         {/* Booking Details */}
         <Text style={styles.sectionTitle}>🗓 Booking Details</Text>
         <Text style={styles.infoText}>
           Date & Time: {item.date}, {item.time}
         </Text>
         <Text style={styles.infoText}>Duration: {item.duration}</Text>
-
         {/* Actions */}
         {tab === 'Upcoming' && (
           <View style={styles.actionRow}>
@@ -92,7 +87,6 @@ const VendorAppointments = () => {
             </TouchableOpacity>
           </View>
         )}
-
         {tab === 'Past' && (
           <TouchableOpacity style={styles.feedbackBtn}>
             <Text style={styles.feedbackText}>✍️ Give Feedback</Text>
@@ -109,7 +103,6 @@ const VendorAppointments = () => {
         leftTint={COLOR.black}
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
       />
-
       {/* Tabs */}
       <View style={styles.tabRow}>
         {['Upcoming', 'Past'].map(label => (
@@ -130,7 +123,6 @@ const VendorAppointments = () => {
           </TouchableOpacity>
         ))}
       </View>
-
       {/* List */}
       <FlatList
         data={filteredAppointments}
