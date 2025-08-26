@@ -53,7 +53,7 @@ const Account = ({navigation}) => {
 
     {
       id: 7,
-      title: 'QucikMySlot Wallet',
+      title: 'QuickMySlot Wallet',
       icon: 'https://cdn-icons-png.flaticon.com/128/3258/3258446.png',
       navigate: 'Wallet',
     },
@@ -66,6 +66,12 @@ const Account = ({navigation}) => {
         title: `Terms & Conditions`,
         slug: 'terms-condition',
       },
+    },
+    {
+      id: 7,
+      title: 'Account Managment',
+      icon: 'https://cdn-icons-png.flaticon.com/128/3258/3258446.png',
+      navigate: 'BankDetails',
     },
 
     {
@@ -84,20 +90,20 @@ const Account = ({navigation}) => {
       icon: 'https://cdn-icons-png.flaticon.com/128/8898/8898827.png',
       navigate: 'Support',
     },
+    // {
+    //   id: 6,
+    //   title: 'Invite family and Friends',
+    //   icon: 'https://cdn-icons-png.flaticon.com/128/10206/10206656.png',
+    //   navigate: 'Invite',
+    // },
     {
       id: 6,
-      title: 'Invite family and Friends',
-      icon: 'https://cdn-icons-png.flaticon.com/128/10206/10206656.png',
-      navigate: 'Invite',
-    },
-    {
-      id: 7,
       title: 'Change Password',
       icon: 'https://cdn-icons-png.flaticon.com/128/11135/11135307.png',
       navigate: 'ForgotPassword',
     },
     {
-      id: 8,
+      id: 7,
       title: 'FAQ',
       icon: 'https://cdn-icons-png.flaticon.com/128/4403/4403603.png',
       navigate: 'Faq',
@@ -123,6 +129,23 @@ const Account = ({navigation}) => {
         contentContainerStyle={{paddingBottom: 20}}>
         {/* Tabs */}
         <View style={styles.tabContainer}>
+          <View style={styles.planCard}>
+            <Text style={styles.planTitle}>⭐ Current Plan</Text>
+
+            <Text style={styles.planName}>Basic Visibility Boost</Text>
+            <Text style={styles.planDesc}>
+              Appear higher in search results for 7 days.
+            </Text>
+
+            <Text style={styles.planPrice}>$25.00</Text>
+
+            <TouchableOpacity
+              style={styles.upgradeBtn}
+              onPress={() => navigation.navigate('BoostProfile')}>
+              <Text style={styles.upgradeText}>Upgrade Your Plan</Text>
+            </TouchableOpacity>
+          </View>
+
           {tabs.map(item => (
             <TouchableOpacity
               key={item.id}
@@ -230,5 +253,54 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 16,
     color: COLOR.black,
+  },
+
+  planCard: {
+    backgroundColor: '#fff',
+    padding: 15,
+    marginHorizontal: 10,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: {width: 0, height: 3},
+    shadowRadius: 6,
+    elevation: 5,
+    alignItems: 'center',
+    marginBottom:10
+  },
+  planTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#888',
+    marginBottom: 8,
+  },
+  planName: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#222',
+    marginBottom: 6,
+  },
+  planDesc: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  planPrice: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#2E86DE',
+    marginBottom: 10
+  },
+  upgradeBtn: {
+    backgroundColor: '#2E86DE',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 10,
+  },
+  upgradeText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
   },
 });

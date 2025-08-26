@@ -47,6 +47,14 @@ const CompleteProfile = ({navigation}) => {
             <Text style={styles.uploadBtnText}>📷 Live Photo Verification</Text>
           </TouchableOpacity> */}
 
+          {/* Business Proof */}
+          <Text style={styles.label}>Business Proof</Text>
+          <TouchableOpacity style={styles.uploadBtn}>
+            <Text style={styles.uploadBtnText}>
+              📄Upload Business Proof Image
+            </Text>
+          </TouchableOpacity>
+
           {/* Aadhaar Verification */}
           <Text style={styles.label}>Aadhaar Card Verification</Text>
           <TouchableOpacity style={styles.uploadBtn}>
@@ -54,6 +62,12 @@ const CompleteProfile = ({navigation}) => {
           </TouchableOpacity>
           <TouchableOpacity style={styles.uploadBtn}>
             <Text style={styles.uploadBtnText}>📄 Back Side Image</Text>
+          </TouchableOpacity>
+
+          {/*  PAN Card */}
+          <Text style={styles.label}>PAN Card</Text>
+          <TouchableOpacity style={styles.uploadBtn}>
+            <Text style={styles.uploadBtnText}>📄Upload PAN Card Image</Text>
           </TouchableOpacity>
 
           {/* About Business */}
@@ -87,7 +101,14 @@ const CompleteProfile = ({navigation}) => {
             style={styles.input}
             placeholder="ex., https://yourbusiness.com"
           />
-
+          <Text style={styles.label}>GSTIN No.</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="GSTIN"
+            value={''}
+            placeholderTextColor={'black'}
+            onChangeText={() => {}}
+          />
           {/* Next Button */}
           <CustomButton
             title="Next"

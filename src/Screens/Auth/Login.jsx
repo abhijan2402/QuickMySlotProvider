@@ -4,8 +4,24 @@ import LinearGradient from 'react-native-linear-gradient';
 import {windowHeight, windowWidth} from '../../Constants/Dimensions';
 import {COLOR} from '../../Constants/Colors';
 import CustomButton from '../../Components/CustomButton';
+import {validators} from '../../Backend/Validator';
+import {isValidForm} from '../../Backend/Utility';
+import {ErrorBox} from '../../Components/UI/ErrorBox';
+import Button from '../../Components/UI/Button';
 
 const Login = ({navigation}) => {
+  const [error, setError] = React.useState({});
+  const [number, setNumber] = React.useState('');
+  const onSubmit = () => {
+    let error = {
+      mobile: validators.checkNumber('Mobile Number', ''),
+    };
+    setError(error);
+    if (isValidForm(error)) {
+      navigation.navigate('OtpScreen');
+    }
+  };
+
   return (
     <LinearGradient
       colors={[COLOR.white, COLOR.white]}
@@ -31,16 +47,20 @@ const Login = ({navigation}) => {
           placeholder="Enter Mobile Number"
           placeholderTextColor={COLOR.black}
           style={styles.input}
+          value={number}
+          onChangeText={text => setNumber(text)}
         />
       </View>
-
-      {/* Continue Button */}
-      <CustomButton
-        title={'Continue'}
-        onPress={() => {
-          navigation.navigate('OtpScreen');
-        }}
-      />
+      <View style={{marginHorizontal: 20, width: '90%'}}>
+        <ErrorBox error={error.mobile} />
+        <Button
+          containerStyle={{marginTop: 30}}
+          title={'Continue'}
+          onPress={() => {
+            onSubmit();
+          }}
+        />
+      </View>
 
       {/* Divider with text */}
       <View style={styles.dividerContainer}>
@@ -102,7 +122,6 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingHorizontal: 10,
     marginTop: 30,
-    marginBottom: 30,
   },
   countryCode: {
     color: COLOR.black,

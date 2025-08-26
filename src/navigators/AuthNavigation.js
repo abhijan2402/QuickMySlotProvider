@@ -1,4 +1,4 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Login from '../Screens/Auth/Login';
 import OtpScreen from '../Screens/Auth/OtpScreen';
 import MainHome from '../Screens/Private/Home/MainHome';
@@ -23,6 +23,11 @@ import BoostProfile from '../Screens/Private/Home/BoostProfile';
 import ManageServices from '../Screens/Private/Home/ManageServices';
 import AddService from '../Screens/Private/Home/AddService';
 import AvailabilityManagement from '../Screens/Private/Home/AvailabilityManagement';
+import EditProfile from '../Screens/Private/Account/EditProfile';
+import BankDetails from '../Screens/Private/Account/BankDetails';
+import AddBank from '../Screens/Private/Account/AddBank';
+import Promotion from '../Screens/Private/Home/Promotion';
+import AddPromotion from '../Screens/Private/Home/AddPromotion';
 const Stack = createNativeStackNavigator();
 
 const AuthStack = () => {
@@ -37,7 +42,6 @@ const AuthStack = () => {
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="CompleteProfile" component={CompleteProfile} />
       <Stack.Screen name="Availability" component={Availability} />
-
       <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
       <Stack.Screen name="MainHome" component={MainHome} />
       <Stack.Screen name="Faq" component={Faq} />
@@ -53,18 +57,22 @@ const AuthStack = () => {
       <Stack.Screen name="BookingScreen" component={BookingScreen} />
       <Stack.Screen name="Checkout" component={Checkout} />
       <Stack.Screen name="ManageServices" component={ManageServices} />
-
       <Stack.Screen name="BoostProfile" component={BoostProfile} />
-      <Stack.Screen name="AvailabilityManagement" component={AvailabilityManagement} />
-
-      <Stack.Screen name="BookingConfirmation" component={BookingConfirmation} />
+      <Stack.Screen
+        name="AvailabilityManagement"
+        component={AvailabilityManagement}
+      />
+      <Stack.Screen
+        name="BookingConfirmation"
+        component={BookingConfirmation}
+      />
       <Stack.Screen name="AddService" component={AddService} />
-
-
+      <Stack.Screen name="EditProfile" component={EditProfile} />
+      <Stack.Screen name="BankDetails" component={BankDetails} />
+      <Stack.Screen name="AddBank" component={AddBank} />
+      <Stack.Screen name="Promotion" component={Promotion} />
+      <Stack.Screen name="AddPromotion" component={AddPromotion} />
       {/* <Stack.Screen name="SignUp" component={SignUp} /> */}
-
-
-
     </Stack.Navigator>
   );
 };
