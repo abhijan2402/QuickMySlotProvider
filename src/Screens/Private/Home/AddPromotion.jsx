@@ -5,6 +5,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import Input from '../../../Components/Input';
 import {COLOR} from '../../../Constants/Colors';
@@ -12,18 +14,23 @@ import {windowWidth} from '../../../Constants/Dimensions';
 import HomeHeader from '../../../Components/HomeHeader';
 import {Dropdown} from 'react-native-element-dropdown';
 import DatePicker from 'react-native-date-picker';
+import {validators} from '../../../Backend/Validator';
+import {ErrorBox} from '../../../Components/UI/ErrorBox';
+import useKeyboard from '../../../Constants/Utility';
 
 const AddPromotion = ({navigation}) => {
   const [title, setTitle] = useState('');
+  const [error, setError] = useState({});
   const [description, setDescription] = useState('');
   const [promoCode, setPromoCode] = useState('');
   const [discount, setDiscount] = useState('');
-  const [discountType, setDiscountType] = useState(null); 
+  const [discountType, setDiscountType] = useState(null);
   const [brandName, setBrandName] = useState('');
   const [openStartPicker, setOpenStartPicker] = useState(false);
   const [openEndPicker, setOpenEndPicker] = useState(false);
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const {isKeyboardVisible} = useKeyboard();
 
   const discountOptions = [
     {label: 'Percent (%)', value: 'percent'},
@@ -31,142 +38,170 @@ const AddPromotion = ({navigation}) => {
   ];
 
   const handleAddPromotion = () => {
-    console.log('New Promotion:', {
-      title,
-      description,
-      startDate,
-      endDate,
-      promoCode,
-      discount,
-      discountType,
-      brandName,
-    });
-    navigation.goBack()
-    // API call can go here
+    let errorObj = {};
+
+    if (!promoCode?.trim()) {
+      errorObj.promoCode = 'Promotion code is required.';
+    }
+
+    if (!discountType) {
+      errorObj.discountType = 'Please select a discount type.';
+    }
+
+    if (!discount?.trim()) {
+      errorObj.discount = 'Discount value is required.';
+    }
+
+    if (!startDate) {
+      errorObj.startDate = 'Start date is required.';
+    }
+
+    if (!endDate) {
+      errorObj.endDate = 'End date is required.';
+    } else if (endDate <= startDate) {
+      errorObj.endDate = 'End date must be after start date.';
+    }
+
+    if (!description?.trim()) {
+      errorObj.description = 'Description is required.';
+    }
+
+    setError(errorObj);
+
+    if (Object.keys(errorObj).length === 0) {
+      // Submit only if no errors
+      navigation.goBack();
+    }
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: COLOR.white}}>
       <HomeHeader
         title="Add Promotion"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
-
-      <ScrollView contentContainerStyle={styles.container}>
-        <Input
-          label="Promotion Code"
-          placeholder="Enter promo code"
-          value={promoCode}
-          onChangeText={setPromoCode}
-          style={styles.input}
-          labelStyle={styles.label}
-        />
-        <View style={{alignSelf: 'center', width: '90%', marginVertical: 5}}>
-          <Text style={{marginBottom: 5, fontSize: 14, fontWeight: '500'}}>
-            Discount Type
-          </Text>
-          <Dropdown
-            style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            data={discountOptions}
-            maxHeight={120}
-            labelField="label"
-            valueField="value"
-            placeholder="Select type"
-            value={discountType}
-            onChange={item => setDiscountType(item.value)}
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={
+          Platform.OS === 'ios' ? 0 : isKeyboardVisible ? 40 : -40
+        }>
+        <ScrollView
+          style={{paddingHorizontal: 20}}
+          contentContainerStyle={styles.container}>
+          <Input
+            label="Promotion Code"
+            placeholder=""
+            value={promoCode}
+            onChangeText={setPromoCode}
+            style={styles.input}
+            error={error.promoCode}
           />
-        </View>
-        <Input
-          label="Description"
-          placeholder="Enter promotion description"
-          value={description}
-          onChangeText={setDescription}
-          style={styles.input}
-          labelStyle={styles.label}
-          multiline
-        />
-         <Input
-          label={discountType === 'amount' ? 'Discount Amount' : 'Discount Percent' }
-          placeholder={discountType === 'amount' ? 'Enter Discount Amount' : 'Enter Discount Percent' }
-          value={discount}
-          onChangeText={setDiscount}
-          style={[styles.input]}
-          labelStyle={styles.label}
-          keyboardType="numeric"
-        />
-
-        {/* Start Date */}
-        <View style={{width: '90%', alignSelf: 'center', marginVertical: 8}}>
-          <Text style={{marginBottom: 5, fontSize: 14, fontWeight: '500'}}>
-            Start Date
-          </Text>
-          <TouchableOpacity
-            onPress={() => setOpenStartPicker(true)}
-            style={styles.dateInput}>
-            <Text>
-              {startDate
-                ? startDate.toISOString().split('T')[0]
-                : 'Select start date'}
+          <View style={{alignSelf: 'center', width: '100%', marginTop: 20}}>
+            <Text style={{marginBottom: 5, fontSize: 14, fontWeight: '500'}}>
+              Discount Type
             </Text>
-          </TouchableOpacity>
-          <DatePicker
-            modal
-            open={openStartPicker}
-            date={startDate}
-            minimumDate={new Date()}
-            mode="date"
-            onConfirm={date => {
-              setOpenStartPicker(false);
-              setStartDate(date);
-            }}
-            onCancel={() => setOpenStartPicker(false)}
-          />
-        </View>
+            <Dropdown
+              style={styles.dropdown}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              data={discountOptions}
+              maxHeight={120}
+              labelField="label"
+              valueField="value"
+              placeholder=""
+              value={discountType}
+              onChange={item => setDiscountType(item.value)}
+            />
+          </View>
+          {error.discountType && <ErrorBox error={error.discountType} />}
 
-        {/* End Date */}
-        <View style={{width: '90%', alignSelf: 'center', marginVertical: 8}}>
-          <Text style={{marginBottom: 5, fontSize: 14, fontWeight: '500'}}>
-            End Date
-          </Text>
-          <TouchableOpacity
-            onPress={() => setOpenEndPicker(true)}
-            style={styles.dateInput}>
-            <Text>
-              {endDate
-                ? endDate.toISOString().split('T')[0]
-                : 'Select end date'}
+          <Input
+            label={'Discount (Amount/Percent)'}
+            value={discount}
+            onChangeText={setDiscount}
+            style={[styles.input]}
+            keyboardType="numeric"
+            error={error.discount}
+          />
+          {/* Start Date */}
+          <View
+            style={{
+              width: '100%',
+              alignSelf: 'center',
+              marginBottom: 8,
+              marginTop: 20,
+            }}>
+            <Text style={{marginBottom: 5, fontSize: 14, fontWeight: '500'}}>
+              Start Date
             </Text>
-          </TouchableOpacity>
-          <DatePicker
-            modal
-            open={openEndPicker}
-            date={endDate}
-            minimumDate={startDate} 
-            mode="date"
-            onConfirm={date => {
-              setOpenEndPicker(false);
-              setEndDate(date);
-            }}
-            onCancel={() => setOpenEndPicker(false)}
+            <TouchableOpacity
+              onPress={() => setOpenStartPicker(true)}
+              style={styles.dateInput}>
+              <Text
+                style={{
+                  color: startDate ? COLOR.black : COLOR.grey,
+                  fontSize: 14,
+                }}>
+                {!!startDate ? startDate.toISOString().split('T')[0] : ''}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {error.startDate && <ErrorBox error={error.startDate} />}
+          {/* End Date */}
+          <View style={{width: '100%', alignSelf: 'center', marginTop: 8}}>
+            <Text style={{marginBottom: 5, fontSize: 14, fontWeight: '500'}}>
+              End Date
+            </Text>
+            <TouchableOpacity
+              onPress={() => setOpenEndPicker(true)}
+              style={styles.dateInput}>
+              <Text
+                style={{
+                  color: endDate ? COLOR.black : COLOR.grey,
+                  fontSize: 14,
+                }}>
+                {!!endDate ? endDate.toISOString().split('T')[0] : ''}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {error.endDate && <ErrorBox error={error.endDate} />}
+          <Input
+            label="Description"
+            placeholder=""
+            value={description}
+            onChangeText={setDescription}
+            style={[styles.input, {height: 100}]}
+            multiline={true}
+            error={error.description}
           />
-        </View>       
+        </ScrollView>
+      </KeyboardAvoidingView>
 
-        <Input
-          label="Brand Name"
-          placeholder="Enter brand name"
-          value={brandName}
-          onChangeText={setBrandName}
-          style={styles.input}
-          labelStyle={styles.label}
-        />
-
-        <TouchableOpacity style={styles.button} onPress={handleAddPromotion}>
-          <Text style={styles.buttonText}>Save Promotion</Text>
-        </TouchableOpacity>
-      </ScrollView>
+      <TouchableOpacity style={styles.button} onPress={handleAddPromotion}>
+        <Text style={styles.buttonText}>Save Promotion</Text>
+      </TouchableOpacity>
+      <DatePicker
+        modal
+        open={openStartPicker || openEndPicker}
+        date={startDate || new Date()}
+        minimumDate={openStartPicker ? openStartPicker : new Date()}
+        mode="date"
+        onConfirm={date => {
+          if (openStartPicker) {
+            setOpenStartPicker(false);
+            setStartDate(date);
+          } else {
+            setOpenEndPicker(false);
+            setEndDate(date);
+          }
+        }}
+        onCancel={() => {
+          setOpenStartPicker(false);
+          setOpenEndPicker(false);
+        }}
+      />
     </View>
   );
 };

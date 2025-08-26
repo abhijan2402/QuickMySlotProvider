@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   Text,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import Input from '../../../Components/Input';
 import {COLOR} from '../../../Constants/Colors';
@@ -13,12 +15,14 @@ import {Dropdown} from 'react-native-element-dropdown';
 import {validators} from '../../../Backend/Validator';
 import {isValidForm} from '../../../Backend/Utility';
 import {ErrorBox} from '../../../Components/UI/ErrorBox';
+import useKeyboard from '../../../Constants/Utility';
 
 const AddBank = ({navigation}) => {
   const [bankName, setBankName] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [ifscCode, setIfscCode] = useState('');
   const [bankType, setBankType] = useState(null);
+  const {isKeyboardVisible} = useKeyboard();
 
   // Validation errors
   const [error, setError] = useState({});
@@ -60,52 +64,59 @@ const AddBank = ({navigation}) => {
         leftTint={COLOR.black}
       />
 
-      <ScrollView
-        style={{paddingHorizontal: 20}}
-        contentContainerStyle={styles.container}>
-        <Input
-          label="Bank Name"
-          placeholder="Enter bank name"
-          value={bankName}
-          onChangeText={setBankName}
-          style={{borderColor: COLOR.primary}}
-        />
-        {error.bankName && <ErrorBox error={error.bankName} />}
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={
+          Platform.OS === 'ios' ? 0 : isKeyboardVisible ? 0 : -40
+        }>
+        <ScrollView
+          style={{paddingHorizontal: 20}}
+          contentContainerStyle={styles.container}>
+          <Input
+            label="Bank Name"
+            placeholder="Enter bank name"
+            value={bankName}
+            onChangeText={setBankName}
+            style={{borderColor: COLOR.primary}}
+          />
+          {error.bankName && <ErrorBox error={error.bankName} />}
 
-        <Input
-          label="Account Number"
-          placeholder="Enter account number"
-          value={accountNumber}
-          onChangeText={setAccountNumber}
-          style={{borderColor: COLOR.primary}}
-          keyboardType="numeric"
-        />
-        {error.accountNumber && <ErrorBox error={error.accountNumber} />}
+          <Input
+            label="Account Number"
+            placeholder="Enter account number"
+            value={accountNumber}
+            onChangeText={setAccountNumber}
+            style={{borderColor: COLOR.primary}}
+            keyboardType="numeric"
+          />
+          {error.accountNumber && <ErrorBox error={error.accountNumber} />}
 
-        <Input
-          label="IFSC Code"
-          placeholder="Enter IFSC code"
-          value={ifscCode}
-          onChangeText={setIfscCode}
-          style={{borderColor: COLOR.primary}}
-        />
-        {error.ifscCode && <ErrorBox error={error.ifscCode} />}
+          <Input
+            label="IFSC Code"
+            placeholder="Enter IFSC code"
+            value={ifscCode}
+            onChangeText={setIfscCode}
+            style={{borderColor: COLOR.primary}}
+          />
+          {error.ifscCode && <ErrorBox error={error.ifscCode} />}
 
-        <Text style={[styles.label, {marginTop: 18}]}>Bank Type</Text>
-        <Dropdown
-          style={styles.dropdown}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          data={bankTypeOptions}
-          maxHeight={150}
-          labelField="label"
-          valueField="value"
-          placeholder="Select Bank Type"
-          value={bankType}
-          onChange={item => setBankType(item.value)}
-        />
-        {error.bankType && <ErrorBox error={error.bankType} />}
-      </ScrollView>
+          <Text style={[styles.label, {marginTop: 18}]}>Bank Type</Text>
+          <Dropdown
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            data={bankTypeOptions}
+            maxHeight={150}
+            labelField="label"
+            valueField="value"
+            placeholder="Select Bank Type"
+            value={bankType}
+            onChange={item => setBankType(item.value)}
+          />
+          {error.bankType && <ErrorBox error={error.bankType} />}
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Submit</Text>

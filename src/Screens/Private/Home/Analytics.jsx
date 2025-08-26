@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
+import LinearGradient from 'react-native-linear-gradient';
 
 const MyAnalytics = ({navigation}) => {
   return (
@@ -24,36 +25,51 @@ const MyAnalytics = ({navigation}) => {
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Performance Overview</Text>
 
-          <View style={styles.statBox}>
+          <LinearGradient
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 1}}
+            colors={['#FFEEF0', '#E6E6FA']} // light pink to lavender
+            style={styles.statBox}>
             <Text style={styles.amount}>$1200.00</Text>
             <Text style={styles.label}>Revenue This Month</Text>
-          </View>
+          </LinearGradient>
 
-          <View style={styles.statBox}>
+          <LinearGradient
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 1}}
+            colors={['#FFEEF0', '#E6E6FA']} // light pink to lavender
+            style={styles.statBox}>
+            {' '}
             <Text style={styles.amount}>150</Text>
             <Text style={styles.label}>Total Customers</Text>
-          </View>
+          </LinearGradient>
 
-          <View style={styles.statBox}>
+          <LinearGradient
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 1}}
+            colors={['#FFEEF0', '#E6E6FA']} // light pink to lavender
+            style={styles.statBox}>
             <Text style={styles.amount}>5% ↑</Text>
             <Text style={styles.label}>Reach (vs. Last Month)</Text>
-          </View>
+          </LinearGradient>
 
-          <View style={styles.statBox}>
+          <LinearGradient
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 1}}
+            colors={['#FFEEF0', '#E6E6FA']} // light pink to lavender
+            style={styles.statBox}>
             <Text style={styles.amount}>50 / Day</Text>
             <Text style={styles.label}>Estimated Footfall</Text>
-          </View>
+          </LinearGradient>
         </View>
 
         {/* Promotion Card */}
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Promote Your Business</Text>
-
           <View style={styles.promoBox}>
             <Text style={styles.promoText}>
               Increase Profile Visibility{'\n'}Get noticed by more customers.
             </Text>
-
             <TouchableOpacity
               style={styles.boostBtn}
               onPress={() => {
@@ -80,8 +96,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     borderWidth: 1,
-    borderColor: COLOR.lightGrey,
+    borderColor: COLOR.lavender,
     marginBottom: 15,
+    // elevation: 10,
   },
   sectionTitle: {
     fontWeight: '600',
@@ -96,23 +113,23 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   amount: {
-    color: COLOR.white,
+    color: COLOR.deepPurple,
     fontWeight: 'bold',
     fontSize: 16,
   },
   label: {
-    color: COLOR.white,
+    color: COLOR.grey,
     fontSize: 12,
     marginTop: 4,
   },
   promoBox: {
-    backgroundColor: COLOR.primary,
+    backgroundColor: COLOR.lavender,
     borderRadius: 8,
     padding: 15,
     alignItems: 'center',
   },
   promoText: {
-    color: COLOR.white,
+    color: COLOR.black,
     fontSize: 14,
     textAlign: 'center',
     marginBottom: 10,

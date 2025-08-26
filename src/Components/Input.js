@@ -15,6 +15,8 @@ const Input = ({
   labelStyle,
   mainStyle,
   showStar = false,
+  multiline = false,
+  height,
   error,
   ...rest
 }) => {
@@ -31,20 +33,17 @@ const Input = ({
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
-        style={[styles.input, style]}
+        multiline={multiline}
+        style={[
+          styles.input,
+          multiline && styles.multilineInput,
+          height && {height},
+          style,
+        ]}
+        textAlignVertical={multiline ? 'top' : 'center'}
         {...rest}
       />
-      {error && (
-        <Text
-          style={{
-            color: COLOR.red,
-            fontSize: 12,
-            marginLeft: windowWidth * 0.03,
-            marginTop: 3,
-          }}>
-          {error}
-        </Text>
-      )}
+      {error && <ErrorBox error={error} style={{marginTop: 2}} />}
     </View>
   );
 };
@@ -56,6 +55,7 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 20,
     // alignItems: 'center',
+    // marginVertical: 10,
   },
   label: {
     alignSelf: 'flex-start',
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: COLOR.white,
     borderWidth: 1,
-    borderColor: '#2196F3FF',
+    borderColor: COLOR.primary,
     borderRadius: 10,
     paddingHorizontal: 15,
     paddingVertical: 12,
@@ -75,5 +75,9 @@ const styles = StyleSheet.create({
     color: COLOR.black,
     width: '100%',
     alignSelf: 'center',
+  },
+  multilineInput: {
+    paddingVertical: 10,
+    minHeight: 100, // default height for multiline
   },
 });

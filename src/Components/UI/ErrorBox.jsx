@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, TextStyle, StyleProp} from 'react-native';
+import {Text} from 'react-native';
 
 export const ErrorBox = ({error, style}) => {
   return (
@@ -10,10 +10,9 @@ export const ErrorBox = ({error, style}) => {
         {
           fontSize: 13,
           color: 'red',
-          alignSelf: 'flex-end',
-          width: '100%',
+          alignSelf: 'flex-start',
+          // width: '95%',
           marginTop: 5,
-          textAlign: 'right',
         },
         style,
       ]}>
