@@ -8,6 +8,7 @@ import {validators} from '../../Backend/Validator';
 import {isValidForm} from '../../Backend/Utility';
 import {ErrorBox} from '../../Components/UI/ErrorBox';
 import Button from '../../Components/UI/Button';
+import GoogleAuthButton from '../../Components/UI/GoogleAuthButton';
 
 const Login = ({navigation}) => {
   const [error, setError] = React.useState({});
@@ -21,7 +22,8 @@ const Login = ({navigation}) => {
       navigation.navigate('OtpScreen');
     }
   };
-
+  const handleLoginSuccess = user => {
+  };
   return (
     <LinearGradient
       colors={[COLOR.white, COLOR.white]}
@@ -70,15 +72,9 @@ const Login = ({navigation}) => {
       </View>
 
       {/* Google Login Button */}
-      <View style={styles.googleLoginContainer}>
-        <Image
-          source={{
-            uri: 'https://cdn-icons-png.flaticon.com/128/281/281764.png',
-          }}
-          style={styles.googleIcon}
-        />
-        <Text style={styles.googleText}>Login Using Google</Text>
-      </View>
+    
+      <GoogleAuthButton onLoginSuccess={handleLoginSuccess} />
+
       <View style={styles.registerContainer}>
         <Text style={styles.registerText}>Don’t have an account? </Text>
         <Text
