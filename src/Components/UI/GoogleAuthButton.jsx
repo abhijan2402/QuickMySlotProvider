@@ -1,11 +1,5 @@
 import React, {useEffect} from 'react';
-import {
-  Alert,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-  Text,
-} from 'react-native';
+import {Alert, TouchableOpacity, StyleSheet, Image, Text} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {COLOR} from '../../Constants/Colors';
@@ -14,11 +8,12 @@ import {windowWidth} from '../../Constants/Dimensions';
 const GoogleAuthButton = ({onLoginSuccess}) => {
   // ✅ Configure Google Sign-In once
   useEffect(() => {
-     GoogleSignin.configure({
-       webClientId:
-         '218547319777-4dbc8eridimnd6c8d3m78oqu66m297vj.apps.googleusercontent.com',
-     });
-   }, []);
+    GoogleSignin.configure({
+      webClientId:
+        '218547319777-4dbc8eridimnd6c8d3m78oqu66m297vj.apps.googleusercontent.com',
+      offlineAccess: true,
+    });
+  }, []);
 
   const handleGoogleLogin = async () => {
     try {

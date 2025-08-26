@@ -13,6 +13,16 @@ export const COLOR = {
   red: '#da2727ff',
 
   // Added colors
-  yellow: '#FFD700',       // standard yellow (gold-like)
-  lightYellow: '#FFFFE0',  // very light yellow
+  yellow: '#FFD700', // standard yellow (gold-like)
+  lightYellow: '#FFFFE0', // very light yellow
+
+  // New harmonious additions
+  deepPurple: '#5D4E9A', // darker complement to royal blue
+  lavender: '#E6E6FA', // soft and light purple
+  lightPink: '#FFEEF0', // subtle background pink
+  softBlue: '#DDE7FF', // for info backgrounds / cards
+  lightGreen: '#DFF5E3', // soft success indicators
+  darkGrey: '#444444', // for text contrast
+  orange: '#FFA500', // alerts or secondary buttons
+  softRed: '#FFE5E5', // gentle error background
 };
