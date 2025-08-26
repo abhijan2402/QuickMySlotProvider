@@ -95,8 +95,8 @@ export default BankDetails;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: COLOR.background || '#f5f5f5',
+    paddingHorizontal: 16,
+    backgroundColor: COLOR.white,
   },
   card: {
     width: windowWidth * 0.9,
@@ -178,11 +178,12 @@ const styles = StyleSheet.create({
   },
   addBtn: {
     backgroundColor: COLOR.primary || '#4CAF50',
-    paddingVertical: 6,
+    paddingVertical: 14,
     paddingHorizontal: 14,
     borderRadius: 8,
-    alignSelf:"flex-end",
-    marginHorizontal:8
+    marginHorizontal:8,
+    alignItems:"center",
+    marginTop:5
   },
   addBtnText: {
     color: '#fff',

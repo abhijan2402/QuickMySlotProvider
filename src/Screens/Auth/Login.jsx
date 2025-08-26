@@ -55,7 +55,7 @@ const Login = ({navigation}) => {
           />
         </View>
         <View style={{marginHorizontal: 20, width: '90%'}}>
-          <ErrorBox error={error.mobile} />
+          {error.mobile && <ErrorBox error={error.mobile} />}
           <Button
             containerStyle={{marginTop: 30}}
             title={'Continue'}

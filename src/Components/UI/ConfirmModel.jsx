@@ -5,11 +5,12 @@ import {
   Platform,
   TouchableOpacity,
   Image,
+  Text,
 } from 'react-native';
 import React from 'react';
-import { images } from './images';
-import { Typography } from './Typography';
-import Button from './Button';
+import {images} from './images';
+import {Typography} from './Typography';
+import {COLOR} from '../../Constants/Colors';
 
 const ConfirmModal = ({
   visible = false,
@@ -22,7 +23,6 @@ const ConfirmModal = ({
   noTitle = 'No',
   loading,
 }) => {
-
   return (
     <Modal
       statusBarTranslucent
@@ -37,18 +37,8 @@ const ConfirmModal = ({
             <Image source={images.cross} style={{height: 18, width: 18}} />
           </TouchableOpacity>
 
-          {/* Icon */}
-          <Image
-            source={images.tick}
-            style={{height: 42, width: 42, alignSelf: 'center'}}
-          />
-
           {/* Title */}
-          <Typography
-            size={22}
-            lineHeight={27}
-            textAlign="center"
-            style={{marginTop: 20}}>
+          <Typography size={22} textAlign="center" fontWeight={'500'}>
             {title}
           </Typography>
 
@@ -59,25 +49,29 @@ const ConfirmModal = ({
               textAlign="center"
               size={16}
               lineHeight={20}
-              color="rgba(0, 0, 0, 0.69)">
+              color="rgba(0, 0, 0, 0.69)" >
               {description}
             </Typography>
           )}
 
           {/* Buttons Row */}
           <View style={styles.btnRow}>
-            <Button
-              title={noTitle}
-              onPress={onPressNo || close}
-              containerStyle={[styles.btn, {backgroundColor: ''}]}
-              textStyle={{color:''}}
-            />
-            <Button
-              loading={loading}
-              title={yesTitle}
+            {/* No Button */}
+            <TouchableOpacity
+              style={[styles.btn, styles.noBtn]}
+              onPress={onPressNo || close}>
+              <Text style={styles.noBtnText}>{noTitle}</Text>
+            </TouchableOpacity>
+
+            {/* Yes Button */}
+            <TouchableOpacity
+              style={[styles.btn, styles.yesBtn]}
               onPress={onPressYes}
-              containerStyle={[styles.btn, {marginLeft: 10}]}
-            />
+              disabled={loading}>
+              <Text style={styles.yesBtnText}>
+                {loading ? '...' : yesTitle}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -87,39 +81,60 @@ const ConfirmModal = ({
 
 export default ConfirmModal;
 
-const styles = () =>
-  StyleSheet.create({
-    overlay: {
-      backgroundColor: 'rgba(0, 0, 0, 0.4)',
-      justifyContent: 'center',
-      alignItems: 'center',   // ✅ This centers the modal horizontally
-      paddingHorizontal: 22,
-    },
-    modalView: {
-      width: '90%',            // ✅ Prevents modal from shrinking too much
-      backgroundColor: 'white',
-      borderRadius: 7,
-      padding: 24,
-      paddingTop: 30,
-      shadowColor: 'rgba(0, 0, 0, 0.15)',
-      shadowOffset: {width: 0, height: 4},
-      shadowOpacity: Platform.OS === 'ios' ? 0.2 : 0.2,
-      shadowRadius: 4,
-      elevation: Platform.OS === 'ios' ? 0 : 5,
-    },
-    crossBtn: {
-      position: 'absolute',
-      top: 12,
-      right: 12,
-      padding: 6,
-    },
-    btnRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginTop: 26,
-    },
-    btn: {
-      flex: 1,
-      borderRadius: 5,
-    },
-  });
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  modalView: {
+    width: '95%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 24,
+    paddingTop: 30,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  crossBtn: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    padding: 6,
+  },
+  btnRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 26,
+  },
+  btn: {
+    flex: 1,
+    borderRadius: 6,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  noBtn: {
+    borderWidth: 1,
+    borderColor: COLOR.primary,
+    marginRight: 10,
+    backgroundColor: 'transparent',
+  },
+  yesBtn: {
+    backgroundColor: COLOR.primary,
+  },
+  noBtnText: {
+    color: COLOR.primary,
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  yesBtnText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+});

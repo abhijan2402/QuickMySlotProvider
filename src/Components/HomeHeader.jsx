@@ -53,7 +53,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 10,
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 5 : 0,
     paddingHorizontal: 5,
   },
   icon: {

@@ -39,6 +39,7 @@ import ConfirmModal from '../../../Components/UI/ConfirmModel';
 const Account = ({navigation}) => {
   const {setUser} = useContext(AuthContext);
   const [visible, setVisible] = useState(false);
+  const [deleteAccount, setDeleteAccount] = useState(false);
 
   const handleLogout = () => {
     setVisible(false);
@@ -172,7 +173,7 @@ const Account = ({navigation}) => {
           title={'Log Out'}
           style={{marginTop: '10%'}}
           onPress={() => {
-           setVisible(true)
+            setVisible(true);
           }}
         />
         <CustomButton
@@ -185,10 +186,11 @@ const Account = ({navigation}) => {
             borderColor: COLOR.red,
           }}
           onPress={() => {
-            setUser('ABCC');
+            setDeleteAccount(true);
           }}
         />
-        <ConfirmModal
+      </ScrollView>
+      <ConfirmModal
         visible={visible}
         close={() => setVisible(false)}
         title="Logout"
@@ -198,8 +200,16 @@ const Account = ({navigation}) => {
         onPressYes={handleLogout}
         onPressNo={() => setVisible(false)}
       />
-      </ScrollView>
-       
+      <ConfirmModal
+        visible={deleteAccount}
+        close={() => setDeleteAccount(false)}
+        title="Delete Account"
+        description="Are you sure you want to Delete Account?"
+        yesTitle="Yes"
+        noTitle="No"
+        onPressYes={handleLogout}
+        onPressNo={() => setDeleteAccount(false)}
+      />
     </View>
   );
 };
@@ -285,7 +295,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 5,
     alignItems: 'center',
-    marginBottom:10
+    marginBottom: 10,
   },
   planTitle: {
     fontSize: 14,
@@ -309,7 +319,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '700',
     color: '#2E86DE',
-    marginBottom: 10
+    marginBottom: 10,
   },
   upgradeBtn: {
     backgroundColor: '#2E86DE',

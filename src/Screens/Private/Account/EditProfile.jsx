@@ -7,19 +7,23 @@ import {
   ScrollView,
   Image,
   KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import Input from '../../../Components/Input';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import ImageModal from '../../../Components/UI/ImageModal';
 import useKeyboard from '../../../Constants/Utility';
+import {isValidForm} from '../../../Backend/Utility';
+import {ErrorBox} from '../../../Components/UI/ErrorBox';
+import { validators } from '../../../Backend/Validator';
 
 const EditProfile = ({navigation}) => {
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [isEditing, setIsEditing] = useState(false);
-  const { isKeyboardVisible, keyboardHeight } = useKeyboard();
+  const {isKeyboardVisible} = useKeyboard();
 
   const [profileImage, setProfileImage] = useState(
     'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
@@ -28,20 +32,32 @@ const EditProfile = ({navigation}) => {
   // Modal state
   const [showModal, setShowModal] = useState(false);
 
+  // Validation errors
+  const [error, setError] = useState({});
+
   const handleUpdate = () => {
-    console.log('Updated Profile:', {firstName, email, phone, profileImage});
-    setIsEditing(false);
+    let validationErrors = {
+      name: validators.checkRequire('Name', firstName),
+      email: validators.checkEmail('Email', email),
+      phone: validators.checkNumber('Phone Number', phone),
+    };
+
+    setError(validationErrors);
+
+    if (isValidForm(validationErrors)) {
+      console.log('✅ Updated Profile:', {firstName, email, phone, profileImage});
+      setIsEditing(false);
+    }
   };
 
-  const handleImageSelected = (response, from) => {
-    // for single image case
+  const handleImageSelected = response => {
     if (response?.path) {
       setProfileImage(response.path);
     }
   };
 
   return (
-    <View style={{flex: 1,backgroundColor: COLOR.white}}>
+    <View style={{flex: 1, backgroundColor: COLOR.white}}>
       <HomeHeader
         title="Edit Profile"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
@@ -63,11 +79,16 @@ const EditProfile = ({navigation}) => {
           </TouchableOpacity>
         )}
       </View>
+
       <KeyboardAvoidingView
         style={{flex: 1}}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : isKeyboardVisible ? 0 :  -40}>
-        <ScrollView style={{flex:1}} contentContainerStyle={styles.container}>
+        keyboardVerticalOffset={
+          Platform.OS === 'ios' ? 0 : isKeyboardVisible ? 0 : -40
+        }>
+        <ScrollView
+          style={{flex: 1, paddingHorizontal: 20}}
+          contentContainerStyle={styles.container}>
           {/* 🚀 Promo Card */}
           <View style={styles.card}>
             <Text style={styles.sectionTitle}>🚀 Promote Your Business</Text>
@@ -86,49 +107,54 @@ const EditProfile = ({navigation}) => {
             </View>
           </View>
 
-          {/* Inputs */}
+          {/* Inputs with Error */}
           <Input
             label="Name"
             placeholder="Enter Your name"
             value={firstName}
-            labelStyle={{marginLeft: 30, marginTop: -10}}
             style={{borderColor: COLOR.primary}}
             onChangeText={setFirstName}
             editable={isEditing}
           />
+          {error.name && <ErrorBox error={error.name} />}
 
           <Input
             label="Email"
             placeholder="Enter email"
             value={email}
             onChangeText={setEmail}
-            labelStyle={{marginLeft: 30}}
             style={{borderColor: COLOR.primary}}
             keyboardType="email-address"
             editable={isEditing}
           />
+          {error.email && <ErrorBox error={error.email} />}
 
           <Input
             label="Phone Number"
             placeholder="Enter phone number"
             value={phone}
             onChangeText={setPhone}
-            labelStyle={{marginLeft: 30}}
             style={{borderColor: COLOR.primary}}
             keyboardType="phone-pad"
             editable={isEditing}
           />
+          {error.phone && <ErrorBox error={error.phone} />}
         </ScrollView>
       </KeyboardAvoidingView>
+
       {/* Edit / Update Button */}
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          if (isEditing) handleUpdate();
-          setIsEditing(prev => !prev);
+          if (isEditing) {
+            handleUpdate();
+          } else {
+            setIsEditing(true);
+          }
         }}>
         <Text style={styles.buttonText}>{isEditing ? 'Update' : 'Edit'}</Text>
       </TouchableOpacity>
+
       {/* Image Modal */}
       <ImageModal
         showModal={showModal}
@@ -148,7 +174,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
-    marginTop: 20,
+    marginTop: 10,
     alignSelf: 'center',
   },
   profileImage: {
@@ -182,6 +208,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '90%',
     alignSelf: 'center',
+    marginBottom: 10,
   },
   buttonText: {
     color: COLOR.white,
@@ -198,7 +225,6 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 3},
     shadowRadius: 6,
     elevation: 4,
-    marginHorizontal: 20,
     marginBottom: 15,
   },
   sectionTitle: {

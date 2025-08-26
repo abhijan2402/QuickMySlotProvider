@@ -24,7 +24,7 @@ const MainNavigation = () => {
   }
 
   return (
-    <SafeAreaView style={{flex: 1}} edges={['bottom']}>
+    <SafeAreaView style={{flex: 1}}>
       <ToastProvider>
       {token ? <RootNavigation /> : <AuthStack />}
       </ToastProvider>

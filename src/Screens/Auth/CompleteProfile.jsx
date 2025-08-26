@@ -1,8 +1,9 @@
+
+
 import React, {useState} from 'react';
 import {
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
   ScrollView,
@@ -17,23 +18,32 @@ import ImageModal from '../../Components/UI/ImageModal';
 import {windowWidth} from '../../Constants/Dimensions';
 import {images} from '../../Components/UI/images';
 import ImageUpload from '../../Components/UI/ImageUpload';
-import DatePickerModal from '../../Components/UI/DatePicker';
-
+import Input from '../../Components/Input';
+import {ErrorBox} from '../../Components/UI/ErrorBox';
 
 const CompleteProfile = ({navigation}) => {
   const [showModal, setShowModal] = useState(false);
   const [currentField, setCurrentField] = useState(null);
+
+  // Upload states
   const [image, setImages] = useState({
     PhotoVerifi: null,
     businessProof: null,
     aadhaarFront: null,
-    aadhaarBack: null,
     pan: null,
   });
-  const [startDate, setStartDate] = useState(new Date());
-  const [openStartPicker, setOpenStartPicker] = useState(false);
 
-  const handleSelect = (response, source) => {
+  // Text field states
+  const [about, setAbout] = useState('');
+  const [experience, setExperience] = useState('');
+  const [location, setLocation] = useState('');
+  const [website, setWebsite] = useState('');
+  const [gst, setGst] = useState('');
+
+  // Error state
+  const [errors, setErrors] = useState({});
+
+  const handleSelect = (response) => {
     if (currentField) {
       setImages(prev => ({
         ...prev,
@@ -48,6 +58,30 @@ const CompleteProfile = ({navigation}) => {
     setShowModal(true);
   };
 
+  // Validate Form
+  const validateForm = () => {
+    let newErrors = {};
+
+    if (!image.PhotoVerifi) newErrors.PhotoVerifi = 'Photo Verification is required';
+    if (!image.businessProof) newErrors.businessProof = 'Business Proof is required';
+    if (!image.aadhaarFront) newErrors.aadhaarFront = 'Aadhaar Front is required';
+    if (!image.pan) newErrors.pan = 'PAN Card is required';
+
+    if (!about.trim()) newErrors.about = 'Please enter details about your business';
+    if (!experience.trim()) newErrors.experience = 'Experience is required';
+    if (!location.trim()) newErrors.location = 'Location is required';
+    if (!gst.trim()) newErrors.gst = 'GST Number is required';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    // if (validateForm()) {
+      navigation.navigate('Availability');
+    // }
+  };
+
   return (
     <View style={styles.container}>
       <HomeHeader
@@ -60,13 +94,12 @@ const CompleteProfile = ({navigation}) => {
       <KeyboardAvoidingView
         style={{flex: 1}}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}>
+        keyboardVerticalOffset={0}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled">
-          {/* Info Text */}
-          <View
+            <View
             style={{
               flexDirection: 'row',
               marginBottom: 15,
@@ -97,102 +130,51 @@ const CompleteProfile = ({navigation}) => {
           <Text style={styles.label}>Photo Verification</Text>
           {image.PhotoVerifi ? (
             <View style={styles.imgWrapper}>
-              <Image
-                source={{uri: image.PhotoVerifi}}
-                style={styles.previewImg}
-              />
+              <Image source={{uri: image.PhotoVerifi}} style={styles.previewImg} />
               <TouchableOpacity
                 style={styles.deleteBtn}
-                onPress={() =>
-                  setImages(prev => ({...prev, PhotoVerifi: null}))
-                }>
-                <Image
-                  source={images.cross}
-                  style={{height: 12, width: 12}}
-                  tintColor={'white'}
-                />
+                onPress={() => setImages(prev => ({...prev, PhotoVerifi: null}))}>
+                <Image source={images.cross} style={{height: 12, width: 12}} tintColor={'white'} />
               </TouchableOpacity>
             </View>
           ) : (
             <ImageUpload onPress={() => openUpload('PhotoVerifi')} />
           )}
+          {errors.PhotoVerifi && <ErrorBox error={errors.PhotoVerifi} />}
 
           {/* Business Proof */}
           <Text style={styles.label}>Business Proof</Text>
           {image.businessProof ? (
             <View style={styles.imgWrapper}>
-              <Image
-                source={{uri: image.businessProof}}
-                style={styles.previewImg}
-              />
+              <Image source={{uri: image.businessProof}} style={styles.previewImg} />
               <TouchableOpacity
                 style={styles.deleteBtn}
-                onPress={() =>
-                  setImages(prev => ({...prev, businessProof: null}))
-                }>
-                <Image
-                  source={images.cross}
-                  style={{height: 12, width: 12}}
-                  tintColor={'white'}
-                />
+                onPress={() => setImages(prev => ({...prev, businessProof: null}))}>
+                <Image source={images.cross} style={{height: 12, width: 12}} tintColor={'white'} />
               </TouchableOpacity>
             </View>
           ) : (
             <ImageUpload onPress={() => openUpload('businessProof')} />
           )}
+          {errors.businessProof &&<ErrorBox error={errors.businessProof} />}
 
           {/* Aadhaar Front */}
           <Text style={styles.label}>Aadhaar Card Verification</Text>
           {image.aadhaarFront ? (
             <View style={styles.imgWrapper}>
-              <Image
-                source={{uri: image.aadhaarFront}}
-                style={styles.previewImg}
-              />
+              <Image source={{uri: image.aadhaarFront}} style={styles.previewImg} />
               <TouchableOpacity
                 style={styles.deleteBtn}
-                onPress={() =>
-                  setImages(prev => ({...prev, aadhaarFront: null}))
-                }>
-                <Image
-                  source={images.cross}
-                  style={{height: 12, width: 12}}
-                  tintColor={'white'}
-                />
+                onPress={() => setImages(prev => ({...prev, aadhaarFront: null}))}>
+                <Image source={images.cross} style={{height: 12, width: 12}} tintColor={'white'} />
               </TouchableOpacity>
             </View>
           ) : (
             <ImageUpload onPress={() => openUpload('aadhaarFront')} />
           )}
+          {errors.aadhaarFront &&<ErrorBox error={errors.aadhaarFront} />}
 
-          {/* Aadhaar Back */}
-          {/* {image.aadhaarBack ? (
-            <View style={styles.imgWrapper}>
-              <Image
-                source={{uri: image.aadhaarBack}}
-                style={styles.previewImg}
-              />
-              <TouchableOpacity
-                style={styles.deleteBtn}
-                onPress={() =>
-                  setImages(prev => ({...prev, aadhaarBack: null}))
-                }>
-                <Image
-                  source={images.cross}
-                  style={{height: 12, width: 12}}
-                  tintColor={'white'}
-                />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <TouchableOpacity
-              style={styles.uploadBtn}
-              onPress={() => openUpload('aadhaarBack')}>
-              <Text style={styles.uploadBtnText}>📄 Back Side Image</Text>
-            </TouchableOpacity>
-          )} */}
-
-          {/* PAN Card */}
+          {/* PAN */}
           <Text style={styles.label}>PAN Card</Text>
           {image.pan ? (
             <View style={styles.imgWrapper}>
@@ -200,66 +182,66 @@ const CompleteProfile = ({navigation}) => {
               <TouchableOpacity
                 style={styles.deleteBtn}
                 onPress={() => setImages(prev => ({...prev, pan: null}))}>
-                <Image
-                  source={images.cross}
-                  style={{height: 12, width: 12}}
-                  tintColor={'white'}
-                />
+                <Image source={images.cross} style={{height: 12, width: 12}} tintColor={'white'} />
               </TouchableOpacity>
             </View>
           ) : (
             <ImageUpload onPress={() => openUpload('pan')} />
           )}
+          {errors.pan && <ErrorBox error={errors.pan} />}
 
           {/* About Business */}
-          <Text style={styles.label}>About Your Business</Text>
-          <TextInput
-            style={[styles.input, {height: 90, textAlignVertical: 'top'}]}
-            placeholder="Tell customers about your services..."
-            multiline
+          <Input
+            label="About Your Business"
+            placeholder="Tell customers about your services.."
+            style={{borderColor: COLOR.primary, height: 90, textAlignVertical: 'top'}}
+            value={about}
+            onChangeText={setAbout}
           />
+          {errors.about && <ErrorBox error={errors.about} />}
 
-          {/* Years of Experience */}
-          <Text style={styles.label}>Years of Experience</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="ex., 5"
-            keyboardType="numeric"
+          {/* Experience */}
+          <Input
+            label="Years of Experience"
+            placeholder="Enter Your Experience"
+            style={{borderColor: COLOR.primary}}
+            value={experience}
+            onChangeText={setExperience}
           />
+          {errors.experience &&<ErrorBox error={errors.experience} />}
 
           {/* Location */}
-          <Text style={styles.label}>
-            Exact Location (Street, City, State, Zip/Postal Code)
-          </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="ex., 123 Main Street, Anytown, CA 90210"
+          <Input
+            label="Exact Location"
+            placeholder="Street, City, State, ZIP"
+            style={{borderColor: COLOR.primary}}
+            value={location}
+            onChangeText={setLocation}
           />
+          { errors.location &&<ErrorBox error={errors.location} />}
 
-          {/* Website */}
-          <Text style={styles.label}>Business Website (optional)</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="ex., https://yourbusiness.com"
+          {/* Website (optional, no error) */}
+          <Input
+            label="Business Website (optional)"
+            placeholder="https://yourbusiness.com"
+            style={{borderColor: COLOR.primary}}
+            value={website}
+            onChangeText={setWebsite}
           />
 
           {/* GST */}
-          <Text style={styles.label}>GSTIN No.</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="GSTIN"
-            value={''}
-            placeholderTextColor={'black'}
-            onChangeText={() => {}}
+          <Input
+            label="GSTIN No."
+            placeholder="Enter GST Number"
+            style={{borderColor: COLOR.primary}}
+            value={gst}
+            onChangeText={setGst}
           />
+          { errors.gst && <ErrorBox error={errors.gst} />}
         </ScrollView>
       </KeyboardAvoidingView>
 
-      <CustomButton
-        title="Next"
-        style={{width: '90%'}}
-        onPress={() => navigation.navigate('Availability')}
-      />
+      <CustomButton title="Next" style={{width: '90%'}} onPress={handleNext} />
 
       {/* Image Modal */}
       <ImageModal
@@ -273,6 +255,7 @@ const CompleteProfile = ({navigation}) => {
 };
 
 export default CompleteProfile;
+
 
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: COLOR.white},
@@ -293,7 +276,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: COLOR.black,
-    marginTop: 8,
+    marginTop: 20,
     marginBottom: 6,
   },
   uploadBtn: {

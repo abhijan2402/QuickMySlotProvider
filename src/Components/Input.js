@@ -54,12 +54,11 @@ export default Input;
 const styles = StyleSheet.create({
   inputWrapper: {
     width: '100%',
-    marginVertical: 10,
+    marginTop: 20,
     // alignItems: 'center',
   },
   label: {
     alignSelf: 'flex-start',
-    marginLeft: windowWidth * 0.03,
     marginBottom: 5,
     fontSize: 14,
     fontWeight: '500',
@@ -74,7 +73,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     fontSize: 16,
     color: COLOR.black,
-    width: '90%',
+    width: '100%',
     alignSelf: 'center',
   },
 });
