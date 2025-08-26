@@ -29,7 +29,7 @@ const BankDetails = ({navigation}) => {
   };
 
   const renderBankCard = ({item}) => (
-    <TouchableOpacity style={styles.card} activeOpacity={0.9}>
+    <TouchableOpacity style={styles.card} activeOpacity={0.9}  onPress={() => toggleSelect(item.id)}>
       <View style={styles.headerRow}>
         <Text style={styles.title}>{item.name}</Text>
         <TouchableOpacity
