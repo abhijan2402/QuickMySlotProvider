@@ -17,7 +17,7 @@ import ImageUpload from '../../Components/UI/ImageUpload';
 import Input from '../../Components/Input';
 import {ErrorBox} from '../../Components/UI/ErrorBox';
 import Button from '../../Components/UI/Button';
-import {Typography} from '../../Components/UI/Typography'; // ✅ import Typography
+import {Typography} from '../../Components/UI/Typography'; 
 
 const CompleteProfile = ({navigation}) => {
   const [showModal, setShowModal] = useState(false);
@@ -79,7 +79,7 @@ const CompleteProfile = ({navigation}) => {
 
   const handleNext = () => {
     if (validateForm()) {
-    navigation.navigate('Availability');
+      navigation.navigate('Availability');
     }
   };
 
@@ -100,8 +100,6 @@ const CompleteProfile = ({navigation}) => {
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled">
-
-          {/* Info Banner */}
           <View
             style={{
               flexDirection: 'row',
