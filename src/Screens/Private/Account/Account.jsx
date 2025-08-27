@@ -1,40 +1,18 @@
-// import {StyleSheet, Text, View} from 'react-native';
-// import React from 'react';
-// import Header from '../../../Components/FeedHeader';
-// import HomeHeader from '../../../Components/HomeHeader';
-// import {COLOR} from '../../../Constants/Colors';
-
-// const Account = () => {
-//   return (
-//     <View>
-//       <HomeHeader
-//         title="Profile"
-//         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
-//         leftTint={COLOR.black}
-//       />
-//     </View>
-//   );
-// };
-
-// export default Account;
-
-// const styles = StyleSheet.create({});
-
 import React, {useContext, useState} from 'react';
 import {
   StyleSheet,
-  Text,
   View,
   Image,
   TouchableOpacity,
   ScrollView,
+  Text,
 } from 'react-native';
-import Header from '../../../Components/FeedHeader';
-import {COLOR} from '../../../Constants/Colors';
-import CustomButton from '../../../Components/CustomButton';
-import {AuthContext} from '../../../Backend/AuthContent';
 import HomeHeader from '../../../Components/HomeHeader';
+import CustomButton from '../../../Components/CustomButton';
 import ConfirmModal from '../../../Components/UI/ConfirmModel';
+import {AuthContext} from '../../../Backend/AuthContent';
+import {COLOR} from '../../../Constants/Colors';
+import {Typography} from '../../../Components/UI/Typography';
 
 const Account = ({navigation}) => {
   const {setUser} = useContext(AuthContext);
@@ -43,14 +21,13 @@ const Account = ({navigation}) => {
 
   const handleLogout = () => {
     setVisible(false);
-    // your logout logic here
     console.log('User logged out');
   };
 
   const profileImage =
-    'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'; // default profile icon
+    'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
 
-  const arrowIcon = 'https://cdn-icons-png.flaticon.com/512/271/271228.png'; // right arrow icon
+  const arrowIcon = 'https://cdn-icons-png.flaticon.com/512/271/271228.png';
 
   const tabs = [
     {
@@ -59,7 +36,6 @@ const Account = ({navigation}) => {
       icon: 'https://cdn-icons-png.flaticon.com/512/2922/2922561.png',
       navigate: 'EditProfile',
     },
-
     {
       id: 7,
       title: 'QuickMySlot Wallet',
@@ -82,7 +58,6 @@ const Account = ({navigation}) => {
       icon: 'https://cdn-icons-png.flaticon.com/128/3258/3258446.png',
       navigate: 'BankDetails',
     },
-
     {
       id: 4,
       title: 'About Us',
@@ -99,12 +74,6 @@ const Account = ({navigation}) => {
       icon: 'https://cdn-icons-png.flaticon.com/128/8898/8898827.png',
       navigate: 'Support',
     },
-    // {
-    //   id: 6,
-    //   title: 'Invite family and Friends',
-    //   icon: 'https://cdn-icons-png.flaticon.com/128/10206/10206656.png',
-    //   navigate: 'Invite',
-    // },
     {
       id: 6,
       title: 'Change Password',
@@ -126,35 +95,37 @@ const Account = ({navigation}) => {
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
+
       {/* Profile Section */}
       <View style={styles.profileSection}>
         <Image source={{uri: profileImage}} style={styles.profileImage} />
-        <Text style={styles.profileName}>John Doe</Text>
-        <Text style={styles.profileEmail}>john@example.com</Text>
+        <Typography variant="h2" color={COLOR.black}>
+          John Doe
+        </Typography>
+        <Typography variant="body2" color={COLOR.GRAY}>
+          john@example.com
+        </Typography>
       </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 20}}>
-        {/* Tabs */}
+        {/* Plan Card */}
         <View style={styles.tabContainer}>
           <View style={styles.planCard}>
             <Text style={styles.planTitle}>⭐ Current Plan</Text>
-
-            <Text style={styles.planName}>Basic Visibility Boost</Text>
+            <Text style={styles.planName}>Basic Visibility Boost</Text>{' '}
             <Text style={styles.planDesc}>
               Appear higher in search results for 7 days.
             </Text>
-
-            <Text style={styles.planPrice}>$25.00</Text>
-
+            <Text style={styles.planPrice}>$25.00</Text>{' '}
             <TouchableOpacity
               style={styles.upgradeBtn}
               onPress={() => navigation.navigate('BoostProfile')}>
               <Text style={styles.upgradeText}>Upgrade Your Plan</Text>
             </TouchableOpacity>
           </View>
-
+          {/* Tabs */}
           {tabs.map(item => (
             <TouchableOpacity
               key={item.id}
@@ -163,18 +134,20 @@ const Account = ({navigation}) => {
               onPress={() => navigation.navigate(item.navigate, item.params)}>
               <View style={styles.tabLeft}>
                 <Image source={{uri: item.icon}} style={styles.leftIcon} />
-                <Text style={styles.tabText}>{item.title}</Text>
+                <Typography variant="body1" color={COLOR.black}>
+                  {item.title}
+                </Typography>
               </View>
               <Image source={{uri: arrowIcon}} style={styles.arrowIcon} />
             </TouchableOpacity>
           ))}
         </View>
+
+        {/* Logout / Delete */}
         <CustomButton
           title={'Log Out'}
-          style={{marginTop: '10%'}}
-          onPress={() => {
-            setVisible(true);
-          }}
+          style={{marginTop: 20}}
+          onPress={() => setVisible(true)}
         />
         <CustomButton
           textStyle={{color: COLOR.red}}
@@ -185,11 +158,11 @@ const Account = ({navigation}) => {
             borderWidth: 1,
             borderColor: COLOR.red,
           }}
-          onPress={() => {
-            setDeleteAccount(true);
-          }}
+          onPress={() => setDeleteAccount(true)}
         />
       </ScrollView>
+
+      {/* Confirm Modals */}
       <ConfirmModal
         visible={visible}
         close={() => setVisible(false)}
@@ -227,23 +200,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
-    backgroundColor: COLOR.white || '#f9f9f9',
+    backgroundColor: COLOR.white,
   },
   profileImage: {
     width: 90,
     height: 90,
     borderRadius: 45,
     marginBottom: 10,
-  },
-  profileName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLOR.black,
-  },
-  profileEmail: {
-    fontSize: 14,
-    color: COLOR.GRAY,
-    marginTop: 4,
   },
   tabContainer: {
     marginTop: 20,
@@ -279,11 +242,6 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     tintColor: '#999',
   },
-  tabText: {
-    fontSize: 16,
-    color: COLOR.black,
-  },
-
   planCard: {
     backgroundColor: '#fff',
     padding: 15,

@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
 } from 'react-native';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
-import CustomButton from '../../../Components/CustomButton';
+import Button from '../../../Components/UI/Button';
+import {Typography} from '../../../Components/UI/Typography'; // ✅ import Typography
 
 const BoostProfile = ({navigation}) => {
   const boosts = [
@@ -49,9 +49,11 @@ const BoostProfile = ({navigation}) => {
         leftTint={COLOR.black}
       />
 
-      <ScrollView contentContainerStyle={{padding: 15}}>
+      <ScrollView contentContainerStyle={{paddingVertical: 15, paddingHorizontal: 5}}>
         {/* Boost Options */}
-        <Text style={styles.sectionTitle}>Choose Plan</Text>
+        <Typography size={15} fontWeight="600" style={styles.sectionTitle}>
+          Choose Plan
+        </Typography>
 
         {boosts.map(item => (
           <TouchableOpacity
@@ -66,42 +68,50 @@ const BoostProfile = ({navigation}) => {
             </View>
 
             <View style={{flex: 1}}>
-              <Text style={styles.boostTitle}>{item.title}</Text>
-              <Text style={styles.boostDesc}>{item.desc}</Text>
+              <Typography size={14} fontWeight="600" style={styles.boostTitle}>
+                {item.title}
+              </Typography>
+              <Typography size={12} color={COLOR.darkGrey} style={styles.boostDesc}>
+                {item.desc}
+              </Typography>
             </View>
 
-            <Text style={styles.boostPrice}>${item.price.toFixed(2)}</Text>
+            <Typography size={14} fontWeight="600" color={COLOR.primary} style={styles.boostPrice}>
+              ${item.price.toFixed(2)}
+            </Typography>
           </TouchableOpacity>
         ))}
 
         {/* Order Summary */}
         <View style={styles.summaryBox}>
-          <Text style={styles.summaryTitle}>Order Summary</Text>
+          <Typography size={14} fontWeight="600" style={styles.summaryTitle}>
+            Order Summary
+          </Typography>
 
           <View style={styles.summaryRow}>
-            <Text style={styles.summaryText}>{selected?.title}</Text>
-            <Text style={styles.summaryText}>
+            <Typography size={13} style={styles.summaryText}>
+              {selected?.title}
+            </Typography>
+            <Typography size={13} style={styles.summaryText}>
               ${selected?.price.toFixed(2)}
-            </Text>
+            </Typography>
           </View>
 
           <View style={styles.divider} />
 
           <View style={styles.summaryRow}>
-            <Text style={[styles.summaryText, {fontWeight: 'bold'}]}>
+            <Typography size={13} fontWeight="bold" style={styles.summaryText}>
               Total:
-            </Text>
-            <Text style={[styles.summaryText, {fontWeight: 'bold'}]}>
+            </Typography>
+            <Typography size={13} fontWeight="bold" style={styles.summaryText}>
               ${selected?.price.toFixed(2)}
-            </Text>
+            </Typography>
           </View>
         </View>
-        {/* Checkout Button */}
-        {/* <TouchableOpacity style={styles.checkoutBtn}>
-          <Text style={styles.checkoutText}>Checkout</Text>
-          </TouchableOpacity> */}
       </ScrollView>
-      <CustomButton title={'Checkout'} style={{marginBottom: 50}} />
+
+      {/* Checkout Button */}
+      <Button title={'Checkout'} />
     </View>
   );
 };
@@ -112,10 +122,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLOR.white,
+    paddingHorizontal: 15,
   },
   sectionTitle: {
-    fontWeight: '600',
-    fontSize: 15,
     marginBottom: 10,
     color: COLOR.black,
   },
@@ -134,19 +143,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4e9ff',
   },
   boostTitle: {
-    fontSize: 14,
-    fontWeight: '600',
     color: COLOR.black,
   },
   boostDesc: {
-    fontSize: 12,
-    color: COLOR.darkGrey,
     marginTop: 2,
   },
   boostPrice: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLOR.primary,
     marginLeft: 8,
   },
   radioCircle: {
@@ -174,8 +176,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   summaryTitle: {
-    fontWeight: '600',
-    fontSize: 14,
     marginBottom: 10,
     color: COLOR.black,
   },
@@ -185,24 +185,11 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   summaryText: {
-    fontSize: 13,
     color: COLOR.black,
   },
   divider: {
     height: 1,
     backgroundColor: COLOR.lightGrey,
     marginVertical: 8,
-  },
-  checkoutBtn: {
-    backgroundColor: COLOR.primary,
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  checkoutText: {
-    color: COLOR.white,
-    fontWeight: '600',
-    fontSize: 15,
   },
 });

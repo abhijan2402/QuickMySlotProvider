@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
@@ -9,6 +8,7 @@ import {
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import LinearGradient from 'react-native-linear-gradient';
+import {Typography} from '../../../Components/UI/Typography';
 
 const MyAnalytics = ({navigation}) => {
   return (
@@ -20,62 +20,61 @@ const MyAnalytics = ({navigation}) => {
         leftTint={COLOR.black}
       />
 
-      <ScrollView contentContainerStyle={{padding: 15}}>
+      <ScrollView contentContainerStyle={{paddingHorizontal: 5, paddingVertical: 15}}>
         {/* Performance Overview */}
         <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Performance Overview</Text>
+          <Typography style={styles.sectionTitle}>Performance Overview</Typography>
 
           <LinearGradient
             start={{x: 0, y: 0}}
             end={{x: 1, y: 1}}
-            colors={['#FFEEF0', '#E6E6FA']} // light pink to lavender
+            colors={['#FFEEF0', '#E6E6FA']}
             style={styles.statBox}>
-            <Text style={styles.amount}>$1200.00</Text>
-            <Text style={styles.label}>Revenue This Month</Text>
+            <Typography style={styles.amount}>$1200.00</Typography>
+            <Typography style={styles.label}>Revenue This Month</Typography>
           </LinearGradient>
 
           <LinearGradient
             start={{x: 0, y: 0}}
             end={{x: 1, y: 1}}
-            colors={['#FFEEF0', '#E6E6FA']} // light pink to lavender
+            colors={['#FFEEF0', '#E6E6FA']}
             style={styles.statBox}>
-            {' '}
-            <Text style={styles.amount}>150</Text>
-            <Text style={styles.label}>Total Customers</Text>
+            <Typography style={styles.amount}>150</Typography>
+            <Typography style={styles.label}>Total Customers</Typography>
           </LinearGradient>
 
           <LinearGradient
             start={{x: 0, y: 0}}
             end={{x: 1, y: 1}}
-            colors={['#FFEEF0', '#E6E6FA']} // light pink to lavender
+            colors={['#FFEEF0', '#E6E6FA']}
             style={styles.statBox}>
-            <Text style={styles.amount}>5% ↑</Text>
-            <Text style={styles.label}>Reach (vs. Last Month)</Text>
+            <Typography style={styles.amount}>5% ↑</Typography>
+            <Typography style={styles.label}>Reach (vs. Last Month)</Typography>
           </LinearGradient>
 
           <LinearGradient
             start={{x: 0, y: 0}}
             end={{x: 1, y: 1}}
-            colors={['#FFEEF0', '#E6E6FA']} // light pink to lavender
+            colors={['#FFEEF0', '#E6E6FA']}
             style={styles.statBox}>
-            <Text style={styles.amount}>50 / Day</Text>
-            <Text style={styles.label}>Estimated Footfall</Text>
+            <Typography style={styles.amount}>50 / Day</Typography>
+            <Typography style={styles.label}>Estimated Footfall</Typography>
           </LinearGradient>
         </View>
 
         {/* Promotion Card */}
         <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Promote Your Business</Text>
+          <Typography style={styles.sectionTitle}>Promote Your Business</Typography>
           <View style={styles.promoBox}>
-            <Text style={styles.promoText}>
+            <Typography style={styles.promoText}>
               Increase Profile Visibility{'\n'}Get noticed by more customers.
-            </Text>
+            </Typography>
             <TouchableOpacity
               style={styles.boostBtn}
               onPress={() => {
                 navigation.navigate('BoostProfile');
               }}>
-              <Text style={styles.boostText}>Boost Profile</Text>
+              <Typography style={styles.boostText}>Boost Profile</Typography>
             </TouchableOpacity>
           </View>
         </View>
@@ -90,6 +89,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLOR.white,
+    paddingHorizontal: 15,
   },
   card: {
     backgroundColor: COLOR.white,
@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLOR.lavender,
     marginBottom: 15,
-    // elevation: 10,
   },
   sectionTitle: {
     fontWeight: '600',

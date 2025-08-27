@@ -17,6 +17,7 @@ import DatePicker from 'react-native-date-picker';
 import {validators} from '../../../Backend/Validator';
 import {ErrorBox} from '../../../Components/UI/ErrorBox';
 import useKeyboard from '../../../Constants/Utility';
+import Button from '../../../Components/UI/Button';
 
 const AddPromotion = ({navigation}) => {
   const [title, setTitle] = useState('');
@@ -75,7 +76,7 @@ const AddPromotion = ({navigation}) => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: COLOR.white}}>
+    <View style={{flex: 1, backgroundColor: COLOR.white,paddingHorizontal:15}}>
       <HomeHeader
         title="Add Promotion"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
@@ -88,7 +89,7 @@ const AddPromotion = ({navigation}) => {
           Platform.OS === 'ios' ? 0 : isKeyboardVisible ? 40 : -40
         }>
         <ScrollView
-          style={{paddingHorizontal: 20}}
+          style={{paddingHorizontal: 5}}
           contentContainerStyle={styles.container}>
           <Input
             label="Promotion Code"
@@ -178,10 +179,8 @@ const AddPromotion = ({navigation}) => {
           />
         </ScrollView>
       </KeyboardAvoidingView>
-
-      <TouchableOpacity style={styles.button} onPress={handleAddPromotion}>
-        <Text style={styles.buttonText}>Save Promotion</Text>
-      </TouchableOpacity>
+      <Button onPress={handleAddPromotion} title={'Save Promotion'} />
+     
       <DatePicker
         modal
         open={openStartPicker || openEndPicker}

@@ -5,11 +5,11 @@ import moment from 'moment';
 import {ErrorBox} from './ErrorBox';
 import {COLOR} from '../../Constants/Colors';
 
-const DatePickerModal = ({value, onChange, label, mode, error}) => {
+const DatePickerModal = ({value, onChange, label, mode, error,containerStyle}) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <View style={{marginBottom: 12}}>
+    <View style={[{marginBottom: 12,containerStyle}]}>
       {label && <Text style={styles.label}>{label}</Text>}
 
       <TouchableOpacity

@@ -3,17 +3,16 @@ import {
   Image,
   SafeAreaView,
   StyleSheet,
-  Text,
   TextInput,
   View,
   Keyboard,
 } from 'react-native';
-import Header from '../../Components/FeedHeader';
 import {COLOR} from '../../Constants/Colors';
 import CustomButton from '../../Components/CustomButton';
 import {windowHeight} from '../../Constants/Dimensions';
 import HomeHeader from '../../Components/HomeHeader';
 import {AuthContext} from '../../Backend/AuthContent';
+import {Typography} from '../../Components/UI/Typography';  // ✅ import Typography
 
 const OtpScreen = ({navigation}) => {
   const {setUser, setToken} = useContext(AuthContext);
@@ -53,12 +52,12 @@ const OtpScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <Header showBack title={'OTP Verification'} /> */}
       <HomeHeader
         title="OTP Verification"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
+
       <Image
         source={{
           uri: 'https://cdn-icons-png.flaticon.com/128/9042/9042592.png',
@@ -67,11 +66,23 @@ const OtpScreen = ({navigation}) => {
       />
 
       <View style={{padding: 20, alignItems: 'center'}}>
-        <Text style={styles.title}>OTP Verification</Text>
-        <Text style={styles.subtitle}>
+        <Typography
+          size={18}
+          fontWeight="800"
+          color={COLOR.black}
+          lineHeight={20}>
+          OTP Verification
+        </Typography>
+
+        <Typography
+          size={14}
+          color={COLOR.black}
+          textAlign="center"
+          lineHeight={20}
+          style={{marginTop: 10}}>
           We have sent a 6-digit verification code to your registered mobile
           number ending in **** 1234. Please enter it below.
-        </Text>
+        </Typography>
       </View>
 
       {/* OTP Input Fields */}
@@ -96,12 +107,19 @@ const OtpScreen = ({navigation}) => {
           verifyOtp();
         }}
       />
+
       <View
         style={{marginTop: 20, flexDirection: 'row', justifyContent: 'center'}}>
-        <Text>Didn't receive the code? </Text>
-        <Text style={{fontWeight: '600', color: COLOR.primary}}>
+        <Typography size={14} color={COLOR.black}>
+          Didn't receive the code?{' '}
+        </Typography>
+        <Typography
+          size={14}
+          color={COLOR.primary}
+          fontWeight="600"
+          onPress={() => console.log('Resend OTP pressed')}>
           Resend OTP
-        </Text>
+        </Typography>
       </View>
     </SafeAreaView>
   );
@@ -113,7 +131,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
   },
   image: {
     width: 80,
@@ -122,21 +140,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 40,
   },
-  title: {
-    fontSize: 18,
-    fontWeight: '800',
-    lineHeight: 20,
-    color: COLOR.black,
-  },
-  subtitle: {
-    textAlign: 'center',
-    marginTop: 10,
-    lineHeight: 20,
-  },
   otpContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    marginHorizontal: 15,
+    marginHorizontal: 5,
     marginVertical: 20,
     marginBottom: windowHeight * 0.06,
   },

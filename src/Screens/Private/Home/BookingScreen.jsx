@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
@@ -10,6 +9,7 @@ import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import CustomButton from '../../../Components/CustomButton';
 import {windowHeight, windowWidth} from '../../../Constants/Dimensions';
+import {Typography} from '../../../Components/UI/Typography'; // ✅ Import Typography
 
 const BookingScreen = ({navigation}) => {
   const [selectedServices, setSelectedServices] = useState([]);
@@ -81,49 +81,60 @@ const BookingScreen = ({navigation}) => {
         onLeftPress={() => navigation.goBack()}
       />
 
-      <View
-        style={{
-          height: windowHeight / 1.2,
-        }}
-        showsVerticalScrollIndicator={false}>
+      <View style={{height: windowHeight / 1.2}}>
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* Salon Card */}
           <View style={styles.salonCard}>
-            <Text style={styles.salonName}>Glamour Touch Salon</Text>
-            <Text style={styles.salonSubtitle}>Luxury salon services</Text>
+            <Typography size={16} fontWeight="600" color="#fff" style={styles.salonName}>
+              Glamour Touch Salon
+            </Typography>
+            <Typography size={14} color="#eee" style={styles.salonSubtitle}>
+              Luxury salon services
+            </Typography>
           </View>
 
           {/* Services */}
-          <Text style={styles.sectionTitle}>Our Services</Text>
+          <Typography size={16} fontWeight="600" style={styles.sectionTitle}>
+            Our Services
+          </Typography>
           {services.map(service => (
             <View style={styles.serviceCard} key={service.id}>
               <View style={{flex: 1}}>
-                <Text style={styles.serviceName}>{service.name}</Text>
-                <Text style={styles.serviceDetails}>{service.details}</Text>
+                <Typography size={15} fontWeight="600" style={styles.serviceName}>
+                  {service.name}
+                </Typography>
+                <Typography size={12} color="#666" style={styles.serviceDetails}>
+                  {service.details}
+                </Typography>
               </View>
               <View style={{alignItems: 'flex-end'}}>
-                <Text style={styles.price}>${service.price.toFixed(2)}</Text>
+                <Typography size={14} fontWeight="600" style={styles.price}>
+                  ${service.price.toFixed(2)}
+                </Typography>
                 <TouchableOpacity
                   style={[
                     styles.addBtn,
                     selectedServices.includes(service.id) && styles.addedBtn,
                   ]}
                   onPress={() => toggleService(service.id)}>
-                  <Text
+                  <Typography
+                    size={13}
+                    color={selectedServices.includes(service.id) ? '#2E7D32' : COLOR.primary}
                     style={[
                       styles.addBtnText,
-                      selectedServices.includes(service.id) &&
-                        styles.addedBtnText,
+                      selectedServices.includes(service.id) && styles.addedBtnText,
                     ]}>
                     {selectedServices.includes(service.id) ? 'Added' : 'Add'}
-                  </Text>
+                  </Typography>
                 </TouchableOpacity>
               </View>
             </View>
           ))}
 
           {/* Date Selector */}
-          <Text style={styles.sectionTitle}>Choose date</Text>
+          <Typography size={16} fontWeight="600" style={styles.sectionTitle}>
+            Choose date
+          </Typography>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -136,26 +147,27 @@ const BookingScreen = ({navigation}) => {
                   selectedDate === d.day && styles.selectedDateBox,
                 ]}
                 onPress={() => setSelectedDate(d.day)}>
-                <Text
-                  style={[
-                    styles.dateDay,
-                    selectedDate === d.day && styles.selectedDateText,
-                  ]}>
+                <Typography
+                  size={16}
+                  fontWeight="600"
+                  color={selectedDate === d.day ? '#fff' : '#333'}
+                  style={styles.dateDay}>
                   {d.day}
-                </Text>
-                <Text
-                  style={[
-                    styles.dateLabel,
-                    selectedDate === d.day && styles.selectedDateText,
-                  ]}>
+                </Typography>
+                <Typography
+                  size={12}
+                  color={selectedDate === d.day ? '#fff' : '#666'}
+                  style={styles.dateLabel}>
                   {d.label}
-                </Text>
+                </Typography>
               </TouchableOpacity>
             ))}
           </ScrollView>
 
           {/* Time Selector */}
-          <Text style={styles.sectionTitle}>Choose time</Text>
+          <Typography size={16} fontWeight="600" style={styles.sectionTitle}>
+            Choose time
+          </Typography>
           <View style={styles.timeGrid}>
             {times.map(time => (
               <TouchableOpacity
@@ -165,13 +177,12 @@ const BookingScreen = ({navigation}) => {
                   selectedTime === time && styles.selectedTimeBox,
                 ]}
                 onPress={() => setSelectedTime(time)}>
-                <Text
-                  style={[
-                    styles.timeText,
-                    selectedTime === time && styles.selectedTimeText,
-                  ]}>
+                <Typography
+                  size={13}
+                  color={selectedTime === time ? '#fff' : '#333'}
+                  style={styles.timeText}>
                   {time}
-                </Text>
+                </Typography>
               </TouchableOpacity>
             ))}
           </View>
@@ -192,32 +203,19 @@ export default BookingScreen;
 
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: '#fff'},
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  headerTitle: {textAlign: 'center', fontSize: 18, fontWeight: '600'},
-
   salonCard: {
     backgroundColor: COLOR.primary,
     padding: 15,
     borderRadius: 8,
     margin: 15,
   },
-  salonName: {color: '#fff', fontSize: 16, fontWeight: '600'},
-  salonSubtitle: {color: '#eee', fontSize: 14},
-
+  salonName: {},
+  salonSubtitle: {},
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
     marginHorizontal: 15,
     marginTop: 15,
     marginBottom: 5,
   },
-
   serviceCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -227,9 +225,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     marginBottom: 10,
   },
-  serviceName: {fontSize: 15, fontWeight: '600'},
-  serviceDetails: {fontSize: 12, color: '#666', marginTop: 4},
-  price: {fontSize: 14, fontWeight: '600', marginBottom: 8},
+  serviceName: {},
+  serviceDetails: {marginTop: 4},
+  price: {marginBottom: 8},
   addBtn: {
     paddingHorizontal: 14,
     paddingVertical: 5,
@@ -237,9 +235,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   addedBtn: {backgroundColor: '#C7E9C0'},
-  addBtnText: {fontSize: 13, color: COLOR.primary},
-  addedBtnText: {color: '#2E7D32'},
-
+  addBtnText: {},
+  addedBtnText: {},
   dateRow: {paddingHorizontal: 15},
   dateBox: {
     backgroundColor: '#f5f5f5',
@@ -249,10 +246,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedDateBox: {backgroundColor: COLOR.primary},
-  dateDay: {fontSize: 16, fontWeight: '600', color: '#333'},
-  dateLabel: {fontSize: 12, color: '#666'},
-  selectedDateText: {color: '#fff'},
-
+  dateDay: {},
+  dateLabel: {},
+  selectedDateText: {},
   timeGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -270,19 +266,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedTimeBox: {backgroundColor: COLOR.primary},
-  timeText: {color: '#333', fontSize: 13},
-  selectedTimeText: {color: '#fff'},
-
-  checkoutBtn: {
-    backgroundColor: COLOR.primary,
-    margin: 15,
-    paddingVertical: 14,
-    borderRadius: 8,
-  },
-  checkoutText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontWeight: '600',
-    fontSize: 16,
-  },
+  timeText: {},
+  selectedTimeText: {},
 });

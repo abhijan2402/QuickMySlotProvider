@@ -16,6 +16,7 @@ import {validators} from '../../../Backend/Validator';
 import {isValidForm} from '../../../Backend/Utility';
 import {ErrorBox} from '../../../Components/UI/ErrorBox';
 import useKeyboard from '../../../Constants/Utility';
+import Button from '../../../Components/UI/Button';
 
 const AddBank = ({navigation}) => {
   const [bankName, setBankName] = useState('');
@@ -57,7 +58,7 @@ const AddBank = ({navigation}) => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: 'white'}}>
+    <View style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 15}}>
       <HomeHeader
         title="Add Bank"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
@@ -71,7 +72,7 @@ const AddBank = ({navigation}) => {
           Platform.OS === 'ios' ? 0 : isKeyboardVisible ? 0 : -40
         }>
         <ScrollView
-          style={{paddingHorizontal: 20}}
+          style={{paddingHorizontal: 5}}
           contentContainerStyle={styles.container}>
           <Input
             label="Bank Name"
@@ -79,8 +80,8 @@ const AddBank = ({navigation}) => {
             value={bankName}
             onChangeText={setBankName}
             style={{borderColor: COLOR.primary}}
+            error={error.bankName}
           />
-          {error.bankName && <ErrorBox error={error.bankName} />}
 
           <Input
             label="Account Number"
@@ -89,8 +90,8 @@ const AddBank = ({navigation}) => {
             onChangeText={setAccountNumber}
             style={{borderColor: COLOR.primary}}
             keyboardType="numeric"
+            error={error.accountNumber}
           />
-          {error.accountNumber && <ErrorBox error={error.accountNumber} />}
 
           <Input
             label="IFSC Code"
@@ -98,8 +99,8 @@ const AddBank = ({navigation}) => {
             value={ifscCode}
             onChangeText={setIfscCode}
             style={{borderColor: COLOR.primary}}
+            error={error.ifscCode}
           />
-          {error.ifscCode && <ErrorBox error={error.ifscCode} />}
 
           <Text style={[styles.label, {marginTop: 18}]}>Bank Type</Text>
           <Dropdown
@@ -118,9 +119,7 @@ const AddBank = ({navigation}) => {
         </ScrollView>
       </KeyboardAvoidingView>
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Submit</Text>
-      </TouchableOpacity>
+      <Button title={'Submit'} onPress={handleSubmit} />
     </View>
   );
 };
@@ -130,7 +129,7 @@ export default AddBank;
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    paddingVertical: 20,
+    paddingVertical: 10,
     backgroundColor: COLOR.bgColor,
   },
   label: {

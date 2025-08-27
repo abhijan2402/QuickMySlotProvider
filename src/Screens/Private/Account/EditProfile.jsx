@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Text,
   ScrollView,
   Image,
   KeyboardAvoidingView,
@@ -15,8 +14,9 @@ import HomeHeader from '../../../Components/HomeHeader';
 import ImageModal from '../../../Components/UI/ImageModal';
 import useKeyboard from '../../../Constants/Utility';
 import {isValidForm} from '../../../Backend/Utility';
-import {ErrorBox} from '../../../Components/UI/ErrorBox';
-import { validators } from '../../../Backend/Validator';
+import {validators} from '../../../Backend/Validator';
+import Button from '../../../Components/UI/Button';
+import {Typography} from '../../../Components/UI/Typography'; 
 
 const EditProfile = ({navigation}) => {
   const [firstName, setFirstName] = useState('');
@@ -45,7 +45,12 @@ const EditProfile = ({navigation}) => {
     setError(validationErrors);
 
     if (isValidForm(validationErrors)) {
-      console.log('✅ Updated Profile:', {firstName, email, phone, profileImage});
+      console.log('✅ Updated Profile:', {
+        firstName,
+        email,
+        phone,
+        profileImage,
+      });
       setIsEditing(false);
     }
   };
@@ -57,7 +62,8 @@ const EditProfile = ({navigation}) => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: COLOR.white}}>
+    <View
+      style={{flex: 1, backgroundColor: COLOR.white, paddingHorizontal: 15}}>
       <HomeHeader
         title="Edit Profile"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
@@ -87,22 +93,40 @@ const EditProfile = ({navigation}) => {
           Platform.OS === 'ios' ? 0 : isKeyboardVisible ? 0 : -40
         }>
         <ScrollView
-          style={{flex: 1, paddingHorizontal: 20}}
+          style={{flex: 1, paddingHorizontal: 5}}
           contentContainerStyle={styles.container}>
           {/* 🚀 Promo Card */}
           <View style={styles.card}>
-            <Text style={styles.sectionTitle}>🚀 Promote Your Business</Text>
+            <Typography
+              size={18}
+              fontWeight="700"
+              color="#333"
+              style={styles.sectionTitle}>
+              🚀 Promote Your Business
+            </Typography>
             <View style={styles.promoBox}>
-              <Text style={styles.promoTitle}>Boost Your Profile</Text>
-              <Text style={styles.promoText}>
+              <Typography
+                size={16}
+                fontWeight="600"
+                color="#0057FF"
+                style={styles.promoTitle}>
+                Boost Your Profile
+              </Typography>
+              <Typography
+                size={14}
+                color="#555"
+                textAlign="center"
+                style={styles.promoText}>
                 Increase visibility and attract more customers by appearing
                 {'\n'}
                 higher in search results.
-              </Text>
+              </Typography>
               <TouchableOpacity
                 style={styles.boostBtn}
                 onPress={() => navigation.navigate('BoostProfile')}>
-                <Text style={styles.boostText}>View Plans</Text>
+                <Typography size={15} fontWeight="600" color="#fff">
+                  View Plans
+                </Typography>
               </TouchableOpacity>
             </View>
           </View>
@@ -115,8 +139,8 @@ const EditProfile = ({navigation}) => {
             style={{borderColor: COLOR.primary}}
             onChangeText={setFirstName}
             editable={isEditing}
+            error={error.name}
           />
-          {error.name && <ErrorBox error={error.name} />}
 
           <Input
             label="Email"
@@ -126,8 +150,8 @@ const EditProfile = ({navigation}) => {
             style={{borderColor: COLOR.primary}}
             keyboardType="email-address"
             editable={isEditing}
+            error={error.email}
           />
-          {error.email && <ErrorBox error={error.email} />}
 
           <Input
             label="Phone Number"
@@ -137,23 +161,22 @@ const EditProfile = ({navigation}) => {
             style={{borderColor: COLOR.primary}}
             keyboardType="phone-pad"
             editable={isEditing}
+            error={error.phone}
           />
-          {error.phone && <ErrorBox error={error.phone} />}
         </ScrollView>
       </KeyboardAvoidingView>
 
       {/* Edit / Update Button */}
-      <TouchableOpacity
-        style={styles.button}
+      <Button
+        title={isEditing ? 'Update' : 'Edit'}
         onPress={() => {
           if (isEditing) {
             handleUpdate();
           } else {
             setIsEditing(true);
           }
-        }}>
-        <Text style={styles.buttonText}>{isEditing ? 'Update' : 'Edit'}</Text>
-      </TouchableOpacity>
+        }}
+      />
 
       {/* Image Modal */}
       <ImageModal
@@ -172,8 +195,6 @@ const styles = StyleSheet.create({
   profileSection: {
     alignItems: 'center',
     paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
     marginTop: 10,
     alignSelf: 'center',
   },
@@ -201,21 +222,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: COLOR.bgColor,
   },
-  button: {
-    marginTop: 20,
-    backgroundColor: COLOR.primary,
-    paddingVertical: 14,
-    borderRadius: 10,
-    width: '90%',
-    alignSelf: 'center',
-    marginBottom: 10,
-  },
-  buttonText: {
-    color: COLOR.white,
-    fontSize: 16,
-    textAlign: 'center',
-    fontWeight: '600',
-  },
   card: {
     padding: 15,
     borderRadius: 16,
@@ -225,12 +231,8 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 3},
     shadowRadius: 6,
     elevation: 4,
-    marginBottom: 15,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#333',
     marginBottom: 12,
   },
   promoBox: {
@@ -240,15 +242,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   promoTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#0057FF',
     marginBottom: 6,
   },
   promoText: {
-    fontSize: 14,
-    color: '#555',
-    textAlign: 'center',
     marginBottom: 14,
   },
   boostBtn: {
@@ -256,10 +252,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
-  },
-  boostText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 15,
   },
 });

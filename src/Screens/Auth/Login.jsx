@@ -1,19 +1,20 @@
 import React from 'react';
-import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
+import {Image, StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {windowHeight, windowWidth} from '../../Constants/Dimensions';
 import {COLOR} from '../../Constants/Colors';
-import CustomButton from '../../Components/CustomButton';
 import {validators} from '../../Backend/Validator';
 import {isValidForm} from '../../Backend/Utility';
-import {ErrorBox} from '../../Components/UI/ErrorBox';
 import Button from '../../Components/UI/Button';
 import GoogleAuthButton from '../../Components/UI/GoogleAuthButton';
 import {ScrollView} from 'react-native';
+import Input from '../../Components/Input';
+import {Typography} from '../../Components/UI/Typography';  
 
 const Login = ({navigation}) => {
   const [error, setError] = React.useState({});
   const [number, setNumber] = React.useState('');
+
   const onSubmit = () => {
     let error = {
       mobile: validators.checkNumber('Mobile Number', number),
@@ -23,14 +24,18 @@ const Login = ({navigation}) => {
       navigation.navigate('OtpScreen');
     }
   };
+
   const handleLoginSuccess = user => {};
+
   return (
-    <View style={{flex: 1}}>
+    <View
+      style={{flex: 1, paddingHorizontal: 20, backgroundColor: COLOR.white}}>
       <LinearGradient
         colors={[COLOR.white, COLOR.white]}
         start={{x: 0, y: 0}}
         end={{x: 0, y: 1}}
         style={styles.container}>
+        
         {/* Logo */}
         <Image
           source={require('../../assets/Images/logo.png')}
@@ -38,52 +43,55 @@ const Login = ({navigation}) => {
         />
 
         {/* Tagline */}
-        <Text style={styles.text}>
+        <Typography
+          size={18}
+          fontWeight="600"
+          color="#242524"
+          textAlign="center"
+          lineHeight={28}
+          style={{width: windowWidth / 1.2, marginTop: 10}}>
           Get Bookings, Expand Business with QuickSlot
-        </Text>
+        </Typography>
 
         {/* Mobile Number Input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.countryCode}>+91 | </Text>
-          <TextInput
-            keyboardType="numeric"
-            placeholder="Enter Mobile Number"
-            placeholderTextColor={COLOR.black}
-            style={styles.input}
-            value={number}
-            onChangeText={text => setNumber(text)}
-          />
-        </View>
-        <View style={{marginHorizontal: 20, width: '90%'}}>
-          {error.mobile && <ErrorBox error={error.mobile} />}
-          <Button
-            containerStyle={{marginTop: 30}}
-            title={'Continue'}
-            onPress={() => {
-              onSubmit();
-            }}
-          />
-        </View>
+        <Input
+          keyboardType="numeric"
+          placeholder="Enter Mobile Number"
+          value={number}
+          onChangeText={text => setNumber(text)}
+          error={error.mobile}
+        />
+
+        {/* Continue Button */}
+        <Button
+          containerStyle={{marginTop: 30, width: '100%'}}
+          title={'Continue'}
+          onPress={onSubmit}
+        />
 
         {/* Divider with text */}
         <View style={styles.dividerContainer}>
           <View style={styles.divider} />
-          <Text style={styles.dividerText}>Or</Text>
+          <Typography size={14} color="#888">Or</Typography>
           <View style={styles.divider} />
         </View>
 
         {/* Google Login Button */}
-
         <GoogleAuthButton onLoginSuccess={handleLoginSuccess} />
+
+        {/* Register Section (if needed) */}
         {/* 
         <View style={styles.registerContainer}>
-          <Text style={styles.registerText}>Don’t have an account? </Text>
-          <Text
-            style={styles.registerLink}
+          <Typography size={14} color="#555">Don’t have an account? </Typography>
+          <Typography
+            size={14}
+            color={COLOR.primary}
+            fontWeight="600"
             onPress={() => navigation.navigate('SignUp')}>
             Register
-          </Text>
-        </View> */}
+          </Typography>
+        </View> 
+        */}
       </LinearGradient>
     </View>
   );
@@ -101,33 +109,6 @@ const styles = StyleSheet.create({
     height: 200,
     marginTop: windowHeight * 0.1,
   },
-  text: {
-    fontSize: 18,
-    color: '#242524FF',
-    fontWeight: '600',
-    width: windowWidth / 1.5,
-    textAlign: 'center',
-    lineHeight: 28,
-  },
-  inputContainer: {
-    borderWidth: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderColor: '#2196F3FF',
-    backgroundColor: COLOR.white,
-    borderRadius: 6,
-    width: windowWidth - 40,
-    padding: 5,
-    paddingHorizontal: 10,
-    marginTop: 30,
-  },
-  countryCode: {
-    color: COLOR.black,
-  },
-  input: {
-    flex: 1,
-    color: COLOR.black,
-  },
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -138,51 +119,5 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 1,
     backgroundColor: '#ccc',
-  },
-  dividerText: {
-    marginHorizontal: 10,
-    color: '#888',
-    fontSize: 14,
-  },
-  googleLoginContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: windowWidth - 40,
-    backgroundColor: COLOR.white,
-    justifyContent: 'center',
-    paddingVertical: 15,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
-  },
-  googleIcon: {
-    width: 25,
-    height: 25,
-    marginRight: 8,
-  },
-  googleText: {
-    color: COLOR.black,
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  registerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'absolute',
-    bottom: 70,
-  },
-  registerText: {
-    color: '#555',
-    fontSize: 14,
-  },
-  registerLink: {
-    color: COLOR.primary,
-    fontSize: 14,
-    fontWeight: '600',
   },
 });

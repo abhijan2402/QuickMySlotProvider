@@ -1,7 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   Image,
@@ -9,8 +8,12 @@ import {
 } from 'react-native';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
+import {Typography} from '../../../Components/UI/Typography';
+import ConfirmModal from '../../../Components/UI/ConfirmModel';
 
 const ManageServices = ({navigation}) => {
+  const [deletes, setDelete] = useState(false);
+
   const services = [
     {
       id: 1,
@@ -41,7 +44,8 @@ const ManageServices = ({navigation}) => {
         leftTint={COLOR.black}
       />
 
-      <ScrollView contentContainerStyle={{padding: 15}}>
+      <ScrollView
+        contentContainerStyle={{paddingHorizontal: 5, paddingVertical: 15}}>
         {/* Add New Service */}
         <TouchableOpacity
           onPress={() => navigation.navigate('AddService')}
@@ -52,24 +56,36 @@ const ManageServices = ({navigation}) => {
             }}
             style={styles.addIcon}
           />
-          <Text style={styles.addServiceText}>Add New Service</Text>
+          <Typography size={14} color={COLOR.white} fontWeight="600">
+            Add New Service
+          </Typography>
         </TouchableOpacity>
 
         {/* Current Services */}
-        <Text style={styles.sectionTitle}>Your Current Services</Text>
+        <Typography
+          size={15}
+          fontWeight="600"
+          color={COLOR.black}
+          style={{marginBottom: 10}}>
+          Your Current Services
+        </Typography>
 
         {services.map(item => (
           <View key={item.id} style={styles.serviceCard}>
             {/* Category Icon */}
             <View style={[styles.categoryBox, {backgroundColor: item.color}]}>
-              <Text style={styles.categoryText}>{item.category}</Text>
+              <Typography size={12} fontWeight="600" color={COLOR.white}>
+                {item.category}
+              </Typography>
             </View>
 
             {/* Service Details */}
             <View style={{flex: 1, marginLeft: 10}}>
               {/* Title + Actions */}
               <View style={styles.rowBetween}>
-                <Text style={styles.serviceName}>{item.name}</Text>
+                <Typography size={14} fontWeight="600" color={COLOR.black}>
+                  {item.name}
+                </Typography>
 
                 <View style={styles.actionsRow}>
                   <TouchableOpacity
@@ -84,7 +100,9 @@ const ManageServices = ({navigation}) => {
                       style={styles.actionIcon}
                     />
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.actionBtn}>
+                  <TouchableOpacity
+                    style={styles.actionBtn}
+                    onPress={() => setDelete(true)}>
                     <Image
                       tintColor={'red'}
                       source={{
@@ -97,25 +115,56 @@ const ManageServices = ({navigation}) => {
               </View>
 
               {/* Description */}
-              <Text style={styles.serviceDesc}>{item.desc}</Text>
+              <Typography
+                size={12}
+                color={COLOR.darkGrey}
+                style={{marginVertical: 2}}>
+                {item.desc}
+              </Typography>
 
               {/* Price + Time */}
               <View style={styles.rowBetween}>
-                <Text style={styles.servicePrice}>
+                <Typography size={13} fontWeight="600" color={COLOR.black}>
                   ${item.price.toFixed(2)}
-                </Text>
-                <Text style={styles.serviceTime}>{item.time}</Text>
+                </Typography>
+                <Typography
+                  size={12}
+                  fontWeight="600"
+                  color="#004aad"
+                  style={{
+                    backgroundColor: '#e6f0ff',
+                    paddingHorizontal: 8,
+                    paddingVertical: 2,
+                    borderRadius: 6,
+                    overflow: 'hidden',
+                  }}>
+                  {item.time}
+                </Typography>
               </View>
 
               {/* Labels */}
               <View style={styles.labelsRow}>
-                <Text style={styles.labelOrange}>Peak Eligible</Text>
-                <Text style={styles.labelGreen}>Discount Eligible</Text>
+                <Typography size={11} style={styles.labelOrange}>
+                  Peak Eligible
+                </Typography>
+                <Typography size={11} style={styles.labelGreen}>
+                  Discount Eligible
+                </Typography>
               </View>
             </View>
           </View>
         ))}
       </ScrollView>
+      <ConfirmModal
+        visible={deletes}
+        close={() => setDelete(false)}
+        title="Delete services"
+        description="Are you sure you want to delete this services?"
+        yesTitle="Yes"
+        noTitle="No"
+        onPressYes={() => {}}
+        onPressNo={() => setDelete(false)}
+      />
     </View>
   );
 };
@@ -126,6 +175,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLOR.white,
+    paddingHorizontal: 15,
   },
   addServiceBtn: {
     flexDirection: 'row',
@@ -141,17 +191,6 @@ const styles = StyleSheet.create({
     height: 18,
     tintColor: COLOR.white,
     marginRight: 8,
-  },
-  addServiceText: {
-    color: COLOR.white,
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  sectionTitle: {
-    fontWeight: '600',
-    fontSize: 15,
-    marginBottom: 10,
-    color: COLOR.black,
   },
   serviceCard: {
     flexDirection: 'row',
@@ -170,40 +209,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  categoryText: {
-    color: COLOR.white,
-    fontWeight: '600',
-    fontSize: 12,
-  },
-  serviceName: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLOR.black,
-  },
-  serviceDesc: {
-    fontSize: 12,
-    color: COLOR.darkGrey,
-    marginVertical: 2,
-  },
   rowBetween: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  servicePrice: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: COLOR.black,
-  },
-  serviceTime: {
-    fontSize: 12,
-    backgroundColor: '#e6f0ff',
-    color: '#004aad',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
-    overflow: 'hidden',
-    fontWeight: '600',
   },
   labelsRow: {
     flexDirection: 'row',
@@ -211,7 +220,6 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   labelOrange: {
-    fontSize: 11,
     backgroundColor: COLOR.lightYellow,
     color: '#9a5c00',
     paddingHorizontal: 6,
@@ -220,7 +228,6 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   labelGreen: {
-    fontSize: 11,
     backgroundColor: COLOR.lightGreen,
     color: '#056b26',
     paddingHorizontal: 6,
@@ -238,6 +245,5 @@ const styles = StyleSheet.create({
   actionIcon: {
     width: 15,
     height: 15,
-    // tintColor: COLOR.black,
   },
 });

@@ -208,16 +208,24 @@ export const validators = {
     }
   },
 
-  checkMatch: (name, value, name2, value2) => {
-    if (value2) {
-      if (value === value2) {
-        return '';
-      } else {
-        return `${name} and ${name2} does'nt match`;
-      }
-    } else {
-      return `${name2} field is required.`;
+  checkMatch: (label, value, matchValue) => {
+    // if (value2) {
+    //   if (value === value2) {
+    //     return '';
+    //   } else {
+    //     return `${name} and ${name2} does'nt match`;
+    //   }
+    // } else {
+    //   return `${name2} field is required.`;
+    // }
+    if (!value || !value.trim()) {
+      return `${label} is required`;
     }
+    if (value !== matchValue) {
+      return `Passwords do not match`;
+    }
+    return '';
+  
   },
 
   checkStreet: (name, min, max, value) => {

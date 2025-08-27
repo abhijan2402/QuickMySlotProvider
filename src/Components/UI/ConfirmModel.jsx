@@ -2,10 +2,8 @@ import {
   StyleSheet,
   View,
   Modal,
-  Platform,
   TouchableOpacity,
   Image,
-  Text,
 } from 'react-native';
 import React from 'react';
 import {images} from './images';
@@ -38,18 +36,18 @@ const ConfirmModal = ({
           </TouchableOpacity>
 
           {/* Title */}
-          <Typography size={22} textAlign="center" fontWeight={'500'}>
+          <Typography size={20} textAlign="center" fontWeight={'500'}>
             {title}
           </Typography>
 
           {/* Description */}
           {description && (
             <Typography
-              style={{marginTop: 10}}
+              style={{marginTop: 15}}
               textAlign="center"
               size={16}
               lineHeight={20}
-              color="rgba(0, 0, 0, 0.69)" >
+              color="rgba(0, 0, 0, 0.69)">
               {description}
             </Typography>
           )}
@@ -60,7 +58,9 @@ const ConfirmModal = ({
             <TouchableOpacity
               style={[styles.btn, styles.noBtn]}
               onPress={onPressNo || close}>
-              <Text style={styles.noBtnText}>{noTitle}</Text>
+              <Typography size={16} fontWeight={'500'} color={COLOR.primary}>
+                {noTitle}
+              </Typography>
             </TouchableOpacity>
 
             {/* Yes Button */}
@@ -68,9 +68,9 @@ const ConfirmModal = ({
               style={[styles.btn, styles.yesBtn]}
               onPress={onPressYes}
               disabled={loading}>
-              <Text style={styles.yesBtnText}>
+              <Typography size={16} fontWeight={'500'} color={'#fff'}>
                 {loading ? '...' : yesTitle}
-              </Text>
+              </Typography>
             </TouchableOpacity>
           </View>
         </View>
@@ -126,15 +126,5 @@ const styles = StyleSheet.create({
   },
   yesBtn: {
     backgroundColor: COLOR.primary,
-  },
-  noBtnText: {
-    color: COLOR.primary,
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  yesBtnText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '500',
   },
 });

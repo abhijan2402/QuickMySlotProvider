@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {
   StyleSheet,
-  Text,
   View,
   TouchableOpacity,
   FlatList,
@@ -9,9 +8,13 @@ import {
 } from 'react-native';
 import HomeHeader from '../../../Components/HomeHeader';
 import {COLOR} from '../../../Constants/Colors';
+import ConfirmModal from '../../../Components/UI/ConfirmModel';
+import {Typography} from '../../../Components/UI/Typography';
 
 const VendorAppointments = () => {
   const [tab, setTab] = useState('Upcoming');
+  const [accept, setAccept] = useState(false);
+  const [reject, setReject] = useState(false);
 
   const appointments = [
     {
@@ -52,44 +55,64 @@ const VendorAppointments = () => {
     return (
       <View style={styles.card}>
         {/* Customer Info */}
-        <Text style={styles.sectionTitle}>👤 Customer Details</Text>
-        <Text style={styles.infoText}>Name: {item.customerName}</Text>
-        <Text
+        <Typography style={styles.sectionTitle}>👤 Customer Details</Typography>
+        <Typography style={styles.infoText}>
+          Name: {item.customerName}
+        </Typography>
+        <Typography
           style={styles.linkText}
-          onPress={() => Linking.openURL(`tel:${item.customerPhone}`)}>
+          onPress={() => Linking.openURL(`tel:${item.customerPhone}`)}
+          disabled={false}>
           📞 {item.customerPhone}
-        </Text>
-        <Text style={styles.infoText}>📍 {item.customerAddress}</Text>
+        </Typography>
+        <Typography style={styles.infoText}>
+          📍 {item.customerAddress}
+        </Typography>
+
         <View style={styles.divider} />
+
         {/* Services */}
-        <Text style={styles.sectionTitle}>💇 Services Booked</Text>
+        <Typography style={styles.sectionTitle}>💇 Services Booked</Typography>
         {item.services.map((s, index) => (
-          <Text key={index} style={styles.infoText}>
+          <Typography key={index} style={styles.infoText}>
             • {s.name} - {s.price}
-          </Text>
+          </Typography>
         ))}
-        <Text style={styles.totalPrice}>Total: ₹{totalPrice}</Text>
+        <Typography style={styles.totalPrice}>
+          Total: ₹{totalPrice}
+        </Typography>
+
         <View style={styles.divider} />
+
         {/* Booking Details */}
-        <Text style={styles.sectionTitle}>🗓 Booking Details</Text>
-        <Text style={styles.infoText}>
+        <Typography style={styles.sectionTitle}>🗓 Booking Details</Typography>
+        <Typography style={styles.infoText}>
           Date & Time: {item.date}, {item.time}
-        </Text>
-        <Text style={styles.infoText}>Duration: {item.duration}</Text>
+        </Typography>
+        <Typography style={styles.infoText}>
+          Duration: {item.duration}
+        </Typography>
+
         {/* Actions */}
         {tab === 'Upcoming' && (
           <View style={styles.actionRow}>
-            <TouchableOpacity style={styles.acceptBtn}>
-              <Text style={styles.actionText}>Accept</Text>
+            <TouchableOpacity
+              style={styles.acceptBtn}
+              onPress={() => setAccept(true)}>
+              <Typography style={styles.actionText}>Accept</Typography>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.rejectBtn}>
-              <Text style={styles.actionText}>Reject</Text>
+            <TouchableOpacity
+              style={styles.rejectBtn}
+              onPress={() => setReject(true)}>
+              <Typography style={styles.actionText}>Reject</Typography>
             </TouchableOpacity>
           </View>
         )}
         {tab === 'Past' && (
           <TouchableOpacity style={styles.feedbackBtn}>
-            <Text style={styles.feedbackText}>✍️ Give Feedback</Text>
+            <Typography style={styles.feedbackText}>
+              ✍️ Give Feedback
+            </Typography>
           </TouchableOpacity>
         )}
       </View>
@@ -113,22 +136,45 @@ const VendorAppointments = () => {
               tab === label && {backgroundColor: COLOR.primary},
             ]}
             onPress={() => setTab(label)}>
-            <Text
+            <Typography
               style={[
                 styles.tabText,
                 {color: tab === label ? COLOR.white : COLOR.black},
               ]}>
               {label}
-            </Text>
+            </Typography>
           </TouchableOpacity>
         ))}
       </View>
+
       {/* List */}
       <FlatList
         data={filteredAppointments}
         keyExtractor={item => item.id}
         renderItem={renderCard}
         contentContainerStyle={{paddingBottom: 20}}
+      />
+
+      {/* Confirm Modals */}
+      <ConfirmModal
+        visible={accept}
+        close={() => setAccept(false)}
+        title="Accept Appointment"
+        description="Are you sure you want to Accept this Appointment?"
+        yesTitle="Yes"
+        noTitle="No"
+        onPressYes={() => {}}
+        onPressNo={() => setAccept(false)}
+      />
+      <ConfirmModal
+        visible={reject}
+        close={() => setReject(false)}
+        title="Reject Appointment"
+        description="Are you sure you want to Reject this Appointment?"
+        yesTitle="Yes"
+        noTitle="No"
+        onPressYes={() => {}}
+        onPressNo={() => setReject(false)}
       />
     </View>
   );
@@ -158,14 +204,15 @@ const styles = StyleSheet.create({
     elevation: 2,
     borderWidth: 1,
     borderColor: '#eee',
+    marginHorizontal: 5,
   },
-  sectionTitle: {fontSize: 14, fontWeight: '700', marginBottom: 4},
-  infoText: {fontSize: 13, color: '#333', marginBottom: 2},
+  sectionTitle: {fontSize: 14, fontWeight: '700', marginBottom: 8},
+  infoText: {fontSize: 13, color: '#333', marginBottom: 5},
   linkText: {
     fontSize: 13,
     color: COLOR.primary,
     textDecorationLine: 'underline',
-    marginBottom: 2,
+    marginBottom: 5,
   },
   totalPrice: {
     fontSize: 14,

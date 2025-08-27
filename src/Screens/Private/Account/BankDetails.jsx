@@ -1,11 +1,14 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity, FlatList} from 'react-native';
-import {COLOR} from '../../../Constants/Colors'; // adjust path
-import {windowWidth} from '../../../Constants/Dimensions'; // adjust path
+import {StyleSheet, View, TouchableOpacity, FlatList} from 'react-native';
+import {COLOR} from '../../../Constants/Colors'; 
+import {windowWidth} from '../../../Constants/Dimensions'; 
 import HomeHeader from '../../../Components/HomeHeader';
+import ConfirmModal from '../../../Components/UI/ConfirmModel';
+import {Typography} from '../../../Components/UI/Typography'; // ✅ Import Typography
 
 const BankDetails = ({navigation}) => {
   const [selectedBankId, setSelectedBankId] = useState(null);
+  const [deletes, setDelete] = useState(false);
 
   const bankList = [
     {
@@ -29,9 +32,14 @@ const BankDetails = ({navigation}) => {
   };
 
   const renderBankCard = ({item}) => (
-    <TouchableOpacity style={styles.card} activeOpacity={0.9}  onPress={() => toggleSelect(item.id)}>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.9}
+      onPress={() => toggleSelect(item.id)}>
       <View style={styles.headerRow}>
-        <Text style={styles.title}>{item.name}</Text>
+        <Typography size={18} fontWeight="700" color={COLOR.primary || '#333'}>
+          {item.name}
+        </Typography>
         <TouchableOpacity
           style={[
             styles.checkbox,
@@ -39,32 +47,54 @@ const BankDetails = ({navigation}) => {
           ]}
           onPress={() => toggleSelect(item.id)}>
           {selectedBankId === item.id && (
-            <Text style={styles.checkmark}>✔</Text>
+            <Typography size={16} fontWeight="bold" color="#fff">
+              ✔
+            </Typography>
           )}
         </TouchableOpacity>
       </View>
 
       <View style={styles.detailRow}>
-        <Text style={styles.label}>Account No:</Text>
-        <Text style={styles.value}>{item.accountNumber}</Text>
+        <Typography size={15} fontWeight="600" color="#444">
+          Account No:
+        </Typography>
+        <Typography size={15} color="#666">
+          {item.accountNumber}
+        </Typography>
       </View>
 
       <View style={styles.detailRow}>
-        <Text style={styles.label}>IFSC Code:</Text>
-        <Text style={styles.value}>{item.ifsc}</Text>
+        <Typography size={15} fontWeight="600" color="#444">
+          IFSC Code:
+        </Typography>
+        <Typography size={15} color="#666">
+          {item.ifsc}
+        </Typography>
       </View>
 
       <View style={styles.detailRow}>
-        <Text style={styles.label}>Account Type:</Text>
-        <Text style={styles.value}>{item.type}</Text>
+        <Typography size={15} fontWeight="600" color="#444">
+          Account Type:
+        </Typography>
+        <Typography size={15} color="#666">
+          {item.type}
+        </Typography>
       </View>
 
       <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.editBtn} onPress={() => navigation.navigate('AddBank')}>
-          <Text style={styles.btnText}>Edit</Text>
+        <TouchableOpacity
+          style={styles.editBtn}
+          onPress={() => navigation.navigate('AddBank')}>
+          <Typography size={14} fontWeight="600" color="#fff">
+            Edit
+          </Typography>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.deleteBtn}>
-          <Text style={styles.btnText}>Delete</Text>
+        <TouchableOpacity
+          style={styles.deleteBtn}
+          onPress={() => setDelete(true)}>
+          <Typography size={14} fontWeight="600" color="#fff">
+            Delete
+          </Typography>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -77,14 +107,31 @@ const BankDetails = ({navigation}) => {
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
-      <TouchableOpacity style={styles.addBtn} onPress={() => navigation.navigate('AddBank')}>
-        <Text style={styles.addBtnText}>+ Add Bank</Text>
+
+      <TouchableOpacity
+        style={styles.addBtn}
+        onPress={() => navigation.navigate('AddBank')}>
+        <Typography size={14} fontWeight="700" color="#fff">
+          + Add Bank
+        </Typography>
       </TouchableOpacity>
+
       <FlatList
         data={bankList}
         keyExtractor={item => item.id}
         renderItem={renderBankCard}
         contentContainerStyle={{paddingBottom: 20, marginTop: 20}}
+      />
+
+      <ConfirmModal
+        visible={deletes}
+        close={() => setDelete(false)}
+        title="Delete Bank"
+        description="Are you sure you want to delete this Bank?"
+        yesTitle="Yes"
+        noTitle="No"
+        onPressYes={() => {}}
+        onPressNo={() => setDelete(false)}
       />
     </View>
   );
@@ -118,24 +165,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
-  title: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: COLOR.primary || '#333',
-  },
   detailRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 6,
-  },
-  label: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#444',
-  },
-  value: {
-    fontSize: 15,
-    color: '#666',
   },
   buttonRow: {
     flexDirection: 'row',
@@ -155,10 +188,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 8,
   },
-  btnText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
   checkbox: {
     width: 24,
     height: 24,
@@ -171,23 +200,13 @@ const styles = StyleSheet.create({
   checkboxSelected: {
     backgroundColor: COLOR.primary || '#4CAF50',
   },
-  checkmark: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
   addBtn: {
     backgroundColor: COLOR.primary || '#4CAF50',
     paddingVertical: 14,
     paddingHorizontal: 14,
     borderRadius: 8,
-    marginHorizontal:8,
-    alignItems:"center",
-    marginTop:5
-  },
-  addBtnText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 14,
+    marginHorizontal: 8,
+    alignItems: 'center',
+    marginTop: 15,
   },
 });

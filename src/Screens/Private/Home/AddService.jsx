@@ -1,14 +1,22 @@
 import {
   StyleSheet,
-  Text,
   View,
-  TextInput,
   TouchableOpacity,
   ScrollView,
+  Image,
 } from 'react-native';
 import React, {useState} from 'react';
 import HomeHeader from '../../../Components/HomeHeader';
 import {COLOR} from '../../../Constants/Colors';
+import {Typography} from '../../../Components/UI/Typography';
+import ImageModal from '../../../Components/UI/ImageModal';
+import ImageUpload from '../../../Components/UI/ImageUpload';
+import {images} from '../../../Components/UI/images';
+import {windowWidth} from '../../../Constants/Dimensions';
+import Input from '../../../Components/Input';
+import Button from '../../../Components/UI/Button';
+import {ErrorBox} from '../../../Components/UI/ErrorBox';
+import { validators } from '../../../Backend/Validator';
 
 const AddService = () => {
   const [serviceName, setServiceName] = useState('');
@@ -19,128 +27,193 @@ const AddService = () => {
   const [discount, setDiscount] = useState(false);
   const [peak, setPeak] = useState(false);
 
+  // image upload states
+  const [image, setImage] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  // validation error state
+  const [errors, setErrors] = useState({});
+
+  const handleImageSelected = (response, type) => {
+    if (Array.isArray(response)) {
+      setImage(response[0].path);
+    } else {
+      setImage(response.path);
+    }
+    setShowModal(false);
+  };
+
+  const validateForm = () => {
+  let validationErrors = {
+    serviceName: validators.checkRequire('Service Name', serviceName),
+    description: validators.checkRequire('Description', description),
+    category: validators.checkRequire('Category', category),
+    price: validators.checkRequire('Price', price),
+    duration: validators.checkRequire('Duration', duration),
+    image: validators.checkRequire('Service Image', image),
+  };
+
+  setErrors(validationErrors);
+
+  return Object.values(validationErrors).every(error => error === '');
+};
+
+  const handleSubmit = () => {
+    if (validateForm()) {
+      console.log('✅ Form is valid. Proceed with API call or submission...');
+    }
+  };
+
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <HomeHeader
         title="Add New service"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
 
-      {/* Wrap everything below header in content */}
-      <View style={styles.content}>
+      <ScrollView style={styles.content}>
         {/* Service Name */}
-        <Text style={styles.label}>Service Name</Text>
-        <TextInput
-          style={styles.input}
+        <Input
+          label="Service Name"
           placeholder="eg., Haircut & Styling"
           value={serviceName}
           onChangeText={setServiceName}
+          showStar
+          error={errors.serviceName}
         />
 
         {/* Description */}
-        <Text style={styles.label}>Description</Text>
-        <TextInput
-          style={[styles.input, {height: 80}]}
+        <Input
+          label="Description"
           placeholder="Briefly describe the service..."
-          multiline
           value={description}
           onChangeText={setDescription}
+          multiline
+          error={errors.description}
         />
 
         {/* Category */}
-        <Text style={styles.label}>Service Category</Text>
-        <TextInput
-          style={styles.input}
+        <Input
+          label="Service Category"
           placeholder="Select a Service"
           value={category}
           onChangeText={setCategory}
+          error={errors.category}
         />
 
         {/* Price */}
-        <Text style={styles.label}>Price ($)</Text>
-        <TextInput
-          style={styles.input}
+        <Input
+          label="Price ($)"
           placeholder="eg., 45.00"
           keyboardType="numeric"
           value={price}
           onChangeText={setPrice}
+          error={errors.price}
         />
 
         {/* Duration */}
-        <Text style={styles.label}>Estimated Duration (minutes)</Text>
-        <TextInput
-          style={styles.input}
+        <Input
+          label="Estimated Duration (minutes)"
           placeholder="eg., 45"
           keyboardType="numeric"
           value={duration}
           onChangeText={setDuration}
+          error={errors.duration}
         />
 
         {/* Upload Image */}
-        <Text style={styles.label}>Service Image (Optional)</Text>
-        <TouchableOpacity style={styles.uploadBtn}>
-          <Text style={{color: '#fff', fontWeight: '600'}}>Upload Image</Text>
-        </TouchableOpacity>
-        <Text style={styles.note}>Max file size: 2MB. JPG, PNG allowed.</Text>
+        <Typography
+          size={14}
+          fontWeight="600"
+          color="#333"
+          style={[styles.label, {marginTop: 20}]}>
+          Service Image (Optional)
+        </Typography>
+
+        {image ? (
+          <View style={styles.imgWrapper}>
+            <Image source={{uri: image}} style={styles.previewImg} />
+            <TouchableOpacity
+              style={styles.deleteBtn}
+              onPress={() => setImage(null)}>
+              <Image
+                source={images.cross}
+                style={{height: 12, width: 12}}
+                tintColor={'white'}
+              />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <ImageUpload onPress={() => setShowModal(true)} />
+        )}
+        <Typography size={12} color="#777" style={[styles.note,{marginBottom:0}]}>
+          Max file size: 2MB. JPG, PNG allowed.
+        </Typography>
+         {/* show error below image */}
+        {errors.image && <ErrorBox error={errors.image} />}
 
         {/* Checkboxes */}
         <TouchableOpacity
-          style={styles.checkboxContainer}
+          style={[styles.checkboxContainer,{marginTop:20}]}
           onPress={() => setDiscount(!discount)}>
           <View style={[styles.checkbox, discount && styles.checkboxChecked]} />
-          <Text style={styles.checkboxText}>
+          <Typography size={14} color="#333" style={styles.checkboxText}>
             Offer as Discounted Service (5% App Margin)
-          </Text>
+          </Typography>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.checkboxContainer}
           onPress={() => setPeak(!peak)}>
           <View style={[styles.checkbox, peak && styles.checkboxChecked]} />
-          <Text style={styles.checkboxText}>
+          <Typography size={14} color="#333" style={styles.checkboxText}>
             Can be offered as Peak Service (25% App Margin)
-          </Text>
+          </Typography>
         </TouchableOpacity>
-        <Text style={styles.subNote}>
-          Allows this service to be booked during peak times with extra charges.
-        </Text>
 
-        {/* Add Button */}
-        <TouchableOpacity style={styles.addBtn}>
-          <Text style={styles.addBtnText}>Add</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        <Typography size={12} color="#777" style={styles.subNote}>
+          Allows this service to be booked during peak times with extra charges.
+        </Typography>
+      </ScrollView>
+
+      {/* Add Button */}
+      <Button title={'Add'} onPress={handleSubmit} />
+
+      {/* Image Modal */}
+      <ImageModal
+        showModal={showModal}
+        close={() => setShowModal(false)}
+        selected={handleImageSelected}
+      />
+    </View>
   );
 };
 
 export default AddService;
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#fff'},
-  content: {
-    paddingHorizontal: 20, // 👈 added horizontal padding for all inner content
-    paddingBottom: 55,
+  container: {flex: 1, backgroundColor: '#fff', paddingHorizontal: 15},
+  content: {paddingHorizontal: 10, paddingBottom: 55, marginTop: 0},
+  label: {marginBottom: 5},
+  note: {marginBottom: 15, marginTop: 5},
+  imgWrapper: {
+    position: 'relative',
+    alignSelf: 'flex-start',
   },
-  label: {fontSize: 14, fontWeight: '600', marginBottom: 5, color: '#333'},
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
+  previewImg: {
+    width: windowWidth * 0.88,
+    height: 180,
     borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 14,
-    marginBottom: 15,
   },
-  uploadBtn: {
-    backgroundColor: COLOR.primary,
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 5,
+  deleteBtn: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 12,
+    padding: 6,
   },
-  note: {fontSize: 12, color: '#777', marginBottom: 15},
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -155,13 +228,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   checkboxChecked: {backgroundColor: COLOR.primary},
-  checkboxText: {fontSize: 14, color: '#333', flexShrink: 1},
-  subNote: {fontSize: 12, color: '#777', marginTop: 5, marginBottom: 20},
-  addBtn: {
-    backgroundColor: COLOR.primary,
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  addBtnText: {color: '#fff', fontWeight: '700', fontSize: 16},
+  checkboxText: {flexShrink: 1},
+  subNote: {marginTop: 5, marginBottom: 20},
 });

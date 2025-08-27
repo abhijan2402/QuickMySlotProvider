@@ -1,6 +1,5 @@
 import {
   StyleSheet,
-  Text,
   View,
   TouchableOpacity,
   Image,
@@ -12,6 +11,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import {FlatList} from 'react-native';
+import { Typography } from '../../../Components/UI/Typography';
 
 const MainHome = ({navigation}) => {
   const {width} = Dimensions.get('window');
@@ -50,6 +50,7 @@ const MainHome = ({navigation}) => {
 
     return () => clearInterval(interval);
   }, [currentIndex]);
+
   const renderItem = ({item}) => {
     return (
       <TouchableOpacity
@@ -64,10 +65,9 @@ const MainHome = ({navigation}) => {
       </TouchableOpacity>
     );
   };
+
   return (
     <View style={styles.container}>
-      {/* Header */}
-
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 30}}>
@@ -80,13 +80,19 @@ const MainHome = ({navigation}) => {
             style={styles.cardIcon}
           />
           <View style={{marginLeft: 10, flex: 1}}>
-            <Text style={styles.cardTitle}>Glamour Touch Salon</Text>
-            <Text style={styles.cardSub}>John Doe | +1 (555) 123-4567</Text>
-            <Text style={styles.cardSub}>
+            <Typography style={styles.cardTitle}>
+              Glamour Touch Salon
+            </Typography>
+            <Typography style={styles.cardSub}>
+              John Doe | +1 (555) 123-4567
+            </Typography>
+            <Typography style={styles.cardSub}>
               123 main Street., Anytown, CA 90210
-            </Text>
+            </Typography>
           </View>
         </View>
+
+        {/* Banner */}
         <View
           style={{
             backgroundColor: '#f5f3ff',
@@ -105,11 +111,13 @@ const MainHome = ({navigation}) => {
             showsHorizontalScrollIndicator={false}
             onMomentumScrollEnd={e => {
               const offsetX = e.nativeEvent.contentOffset.x;
-              const index = Math.round(offsetX / (width - 40)); // item width
+              const index = Math.round(offsetX / (width - 40));
               setCurrentIndex(index);
             }}
           />
         </View>
+
+        {/* Dots */}
         <View style={styles.dotsContainer}>
           {banners.map((_, index) => (
             <View
@@ -125,9 +133,7 @@ const MainHome = ({navigation}) => {
         {/* Grid Menu */}
         <View style={styles.grid}>
           <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('Appointment');
-            }}
+            onPress={() => navigation.navigate('Appointment')}
             style={styles.gridItem}>
             <Image
               source={{
@@ -135,55 +141,49 @@ const MainHome = ({navigation}) => {
               }}
               style={styles.gridIcon}
             />
-            <Text style={styles.gridText}>Appointments</Text>
+            <Typography style={styles.gridText}>Appointments</Typography>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.gridItem}
-            onPress={() => {
-              navigation.navigate('MyAnalytics');
-            }}>
+            onPress={() => navigation.navigate('MyAnalytics')}>
             <Image
               source={{
                 uri: 'https://cdn-icons-png.flaticon.com/128/1828/1828911.png',
               }}
               style={styles.gridIcon}
             />
-            <Text style={styles.gridText}>Analytics</Text>
+            <Typography style={styles.gridText}>Analytics</Typography>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.gridItem}
-            onPress={() => {
-              navigation.navigate('Promotion');
-            }}>
+            onPress={() => navigation.navigate('Promotion')}>
             <Image
               source={{
                 uri: 'https://cdn-icons-png.flaticon.com/128/1828/1828961.png',
               }}
               style={styles.gridIcon}
             />
-            <Text style={styles.gridText}>Promotions</Text>
+            <Typography style={styles.gridText}>Promotions</Typography>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.gridItem}
-            onPress={() => {
-              navigation.navigate('ManageServices');
-            }}>
+            onPress={() => navigation.navigate('ManageServices')}>
             <Image
               source={{
                 uri: 'https://cdn-icons-png.flaticon.com/128/3524/3524659.png',
               }}
               style={styles.gridIcon}
             />
-            <Text style={styles.gridText}>Manage Services</Text>
+            <Typography style={styles.gridText}>Manage Services</Typography>
           </TouchableOpacity>
         </View>
 
         {/* Upcoming Booking Section */}
         <View style={styles.bookingContainer}>
-          <Text style={styles.sectionTitle}>Upcoming Booking</Text>
+          <Typography style={styles.sectionTitle}>Upcoming Booking</Typography>
           <View style={styles.bookingCard}>
             <View style={styles.bookingRow}>
               <Image
@@ -193,16 +193,22 @@ const MainHome = ({navigation}) => {
                 style={styles.customerImg}
               />
               <View style={{flex: 1, marginLeft: 12}}>
-                <Text style={styles.customerName}>Jane Smith</Text>
-                <Text style={styles.bookingDetail}>Service: Hair Styling</Text>
-                <Text style={styles.bookingDetail}>
+                <Typography style={styles.customerName}>
+                  Jane Smith
+                </Typography>
+                <Typography style={styles.bookingDetail}>
+                  Service: Hair Styling
+                </Typography>
+                <Typography style={styles.bookingDetail}>
                   Time: 18 Aug, 3:00 PM - 4:00 PM
-                </Text>
-                <Text style={styles.bookingPrice}>₹1200</Text>
+                </Typography>
+                <Typography style={styles.bookingPrice}>₹1200</Typography>
               </View>
             </View>
             <TouchableOpacity style={styles.viewButton}>
-              <Text style={styles.viewButtonText}>View Details</Text>
+              <Typography style={styles.viewButtonText}>
+                View Details
+              </Typography>
             </TouchableOpacity>
           </View>
         </View>
@@ -212,6 +218,7 @@ const MainHome = ({navigation}) => {
 };
 
 export default MainHome;
+
 
 const styles = StyleSheet.create({
   container: {

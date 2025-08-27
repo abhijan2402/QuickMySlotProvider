@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
-  Text,
   View,
   TouchableOpacity,
   FlatList,
@@ -13,8 +12,12 @@ import Button from '../../../Components/UI/Button';
 import {images} from '../../../Components/UI/images';
 import EmptyView from '../../../Components/UI/EmptyView';
 import LinearGradient from 'react-native-linear-gradient';
+import ConfirmModal from '../../../Components/UI/ConfirmModel';
+import {Typography} from '../../../Components/UI/Typography';
 
 const Promotion = ({navigation}) => {
+  const [deletes, setDelete] = useState(false);
+
   const offers = [
     {
       code: 'FIRST40',
@@ -49,21 +52,22 @@ const Promotion = ({navigation}) => {
     <View style={styles.card}>
       {/* Left Strip */}
       <LinearGradient
-        colors={['#fbc2eb', '#a6c1ee']} // light pink to lavender
+        colors={['#fbc2eb', '#a6c1ee']}
         start={{x: 0, y: 0}}
         end={{x: 0, y: 1}}
         style={styles.strip}>
-        <Text style={styles.stripText}>{item.code}</Text>
+        <Typography style={styles.stripText}>{item.code}</Typography>
       </LinearGradient>
+
       {/* Content */}
       <View style={styles.content}>
         <View style={styles.headerRow}>
-          <Text style={styles.title}>{item.title}</Text>
+          <Typography style={styles.title}>{item.title}</Typography>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <TouchableOpacity
               style={[styles.addButton, {marginRight: 10}]}
               onPress={() => {
-                // Handle apply action
+                // Handle edit
               }}>
               <Image
                 source={images.edit}
@@ -73,7 +77,7 @@ const Promotion = ({navigation}) => {
             <TouchableOpacity
               style={styles.addButton}
               onPress={() => {
-                // Handle apply action
+                setDelete(true);
               }}>
               <Image
                 source={images.delete}
@@ -82,23 +86,25 @@ const Promotion = ({navigation}) => {
             </TouchableOpacity>
           </View>
         </View>
-        <Text style={styles.offerText}>
+
+        <Typography style={styles.offerText}>
           {item.discount} Discount + {item.cashback} Cashback
-        </Text>
-        <Text style={styles.validity}>{item.validity}</Text>
-        <Text style={styles.description}>{item.description}</Text>
+        </Typography>
+        <Typography style={styles.validity}>{item.validity}</Typography>
+        <Typography style={styles.description}>{item.description}</Typography>
       </View>
     </View>
   );
 
   return (
-    <View style={{flex: 1, backgroundColor: '#fff'}}>
+    <View style={{flex: 1, backgroundColor: '#fff', paddingHorizontal: 15}}>
       <HomeHeader
         title="Promotion"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
-      <View style={{flex: 1, backgroundColor: '#fff', paddingHorizontal: 15}}>
+
+      <View style={{flex: 1, backgroundColor: '#fff', paddingHorizontal: 5}}>
         <FlatList
           data={offers}
           renderItem={renderOffer}
@@ -108,12 +114,24 @@ const Promotion = ({navigation}) => {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={<EmptyView title="No promotions available." />}
         />
-        <View style={{marginBottom: 20, marginTop: 10}}>
+
+        <View style={{ marginTop: 10}}>
           <Button
             onPress={() => navigation.navigate('AddPromotion')}
             title={'+ Add Promotion'}
           />
         </View>
+
+        <ConfirmModal
+          visible={deletes}
+          close={() => setDelete(false)}
+          title="Delete Promotion"
+          description="Are you sure you want to delete this Promotion?"
+          yesTitle="Yes"
+          noTitle="No"
+          onPressYes={() => {}}
+          onPressNo={() => setDelete(false)}
+        />
       </View>
     </View>
   );
@@ -130,10 +148,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#fff',
     borderRadius: 10,
-    marginVertical: 8,
+    marginVertical: 10,
     elevation: 3,
     overflow: 'hidden',
-    margin: 5,
   },
   strip: {
     backgroundColor: '#e0f3ff',
@@ -148,10 +165,7 @@ const styles = StyleSheet.create({
     color: '#007aff',
     textAlign: 'center',
     width: 120,
-    includeFontPadding: false,
-    textAlignVertical: 'center',
   },
-
   content: {
     flex: 1,
     padding: 12,
@@ -167,10 +181,6 @@ const styles = StyleSheet.create({
     color: '#000',
     flex: 1,
     marginRight: 8,
-  },
-  apply: {
-    color: '#007aff',
-    fontWeight: '600',
   },
   offerText: {
     fontSize: 14,
@@ -188,19 +198,9 @@ const styles = StyleSheet.create({
     color: '#666',
     marginVertical: 2,
   },
-  tc: {
-    fontSize: 12,
-    color: '#007aff',
-    marginTop: 4,
-  },
   addButton: {
     alignItems: 'center',
     alignSelf: 'flex-end',
     justifyContent: 'center',
-  },
-  addButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
