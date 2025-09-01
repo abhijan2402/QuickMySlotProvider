@@ -17,7 +17,9 @@ import ImageUpload from '../../Components/UI/ImageUpload';
 import Input from '../../Components/Input';
 import {ErrorBox} from '../../Components/UI/ErrorBox';
 import Button from '../../Components/UI/Button';
-import {Typography} from '../../Components/UI/Typography'; 
+import {Typography} from '../../Components/UI/Typography';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import useKeyboard from '../../Constants/Utility';
 
 const CompleteProfile = ({navigation}) => {
   const [showModal, setShowModal] = useState(false);
@@ -37,6 +39,8 @@ const CompleteProfile = ({navigation}) => {
   const [location, setLocation] = useState('');
   const [website, setWebsite] = useState('');
   const [gst, setGst] = useState('');
+    const {isKeyboardVisible} = useKeyboard();
+  
 
   // Error state
   const [errors, setErrors] = useState({});
@@ -78,13 +82,16 @@ const CompleteProfile = ({navigation}) => {
   };
 
   const handleNext = () => {
-    if (validateForm()) {
+    // if (validateForm()) {
       navigation.navigate('Availability');
-    }
+    // }
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : isKeyboardVisible ? 'height' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 40}>
       <HomeHeader
         title="Complete Your Profile"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
@@ -92,208 +99,216 @@ const CompleteProfile = ({navigation}) => {
         onLeftPress={() => navigation.goBack()}
       />
 
-      <KeyboardAvoidingView
-        style={{flex: 1}}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={0}>
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled">
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'flex-start',
-              marginBottom: 15,
-              backgroundColor: COLOR.lightYellow,
-              paddingVertical: 12,
-              paddingHorizontal: 15,
-              borderRadius: 10,
-              borderLeftWidth: 4,
-              borderLeftColor: '#f5a623',
-              elevation: 3,
-            }}>
-            <Image
-              style={{width: 22, height: 22, marginRight: 10, marginTop: 2}}
-              source={images.warning}
-              resizeMode="contain"
-            />
-            <Typography
-              size={14}
-              color="#444"
-              lineHeight={20}
-              style={{paddingRight: 10, width: windowWidth * 0.75}}>
-              Please make sure to provide accurate and complete business
-              details, including valid proof documents. This helps us verify
-              your profile and improves customer trust.
-            </Typography>
-          </View>
-
+      <KeyboardAwareScrollView
+      contentContainerStyle={{paddingBottom:20}}
+        style={{flex: 1,paddingHorizontal:5}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            marginBottom: 15,
+            backgroundColor: COLOR.lightYellow,
+            paddingVertical: 12,
+            paddingHorizontal: 15,
+            borderRadius: 10,
+            borderLeftWidth: 4,
+            borderLeftColor: '#f5a623',
+            elevation: 3,
+          }}>
+          <Image
+            style={{width: 22, height: 22, marginRight: 10, marginTop: 2}}
+            source={images.warning}
+            resizeMode="contain"
+          />
           <Typography
-            size={16}
-            fontWeight="600"
-            color={COLOR.black}
-            style={{marginBottom: 10}}>
-            Business Information
+            size={14}
+            color="#444"
+            lineHeight={20}
+            style={{paddingRight: 10, width: windowWidth * 0.75}}>
+            Please make sure to provide accurate and complete business details,
+            including valid proof documents. This helps us verify your profile
+            and improves customer trust.
           </Typography>
+        </View>
 
-          {/* Photo Verification */}
-          <Typography size={14} fontWeight="500" color={COLOR.black} style={{marginTop: 20, marginBottom: 6}}>
-            Photo Verification
-          </Typography>
-          {image.PhotoVerifi ? (
-            <View style={styles.imgWrapper}>
+        <Typography
+          size={16}
+          fontWeight="600"
+          color={COLOR.black}
+          style={{marginBottom: 10}}>
+          Business Information
+        </Typography>
+
+        {/* Photo Verification */}
+        <Typography
+          size={14}
+          fontWeight="500"
+          color={COLOR.black}
+          style={{marginTop: 20, marginBottom: 6}}>
+          Photo Verification
+        </Typography>
+        {image.PhotoVerifi ? (
+          <View style={styles.imgWrapper}>
+            <Image
+              source={{uri: image.PhotoVerifi}}
+              style={styles.previewImg}
+            />
+            <TouchableOpacity
+              style={styles.deleteBtn}
+              onPress={() => setImages(prev => ({...prev, PhotoVerifi: null}))}>
               <Image
-                source={{uri: image.PhotoVerifi}}
-                style={styles.previewImg}
+                source={images.cross}
+                style={{height: 12, width: 12}}
+                tintColor={'white'}
               />
-              <TouchableOpacity
-                style={styles.deleteBtn}
-                onPress={() =>
-                  setImages(prev => ({...prev, PhotoVerifi: null}))
-                }>
-                <Image
-                  source={images.cross}
-                  style={{height: 12, width: 12}}
-                  tintColor={'white'}
-                />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <ImageUpload onPress={() => openUpload('PhotoVerifi')} />
-          )}
-          {errors.PhotoVerifi && <ErrorBox error={errors.PhotoVerifi} />}
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <ImageUpload onPress={() => openUpload('PhotoVerifi')} />
+        )}
+        {errors.PhotoVerifi && <ErrorBox error={errors.PhotoVerifi} />}
 
-          {/* Business Proof */}
-          <Typography size={14} fontWeight="500" color={COLOR.black} style={{marginTop: 20, marginBottom: 6}}>
-            Business Proof
-          </Typography>
-          {image.businessProof ? (
-            <View style={styles.imgWrapper}>
+        {/* Business Proof */}
+        <Typography
+          size={14}
+          fontWeight="500"
+          color={COLOR.black}
+          style={{marginTop: 20, marginBottom: 6}}>
+          Business Proof
+        </Typography>
+        {image.businessProof ? (
+          <View style={styles.imgWrapper}>
+            <Image
+              source={{uri: image.businessProof}}
+              style={styles.previewImg}
+            />
+            <TouchableOpacity
+              style={styles.deleteBtn}
+              onPress={() =>
+                setImages(prev => ({...prev, businessProof: null}))
+              }>
               <Image
-                source={{uri: image.businessProof}}
-                style={styles.previewImg}
+                source={images.cross}
+                style={{height: 12, width: 12}}
+                tintColor={'white'}
               />
-              <TouchableOpacity
-                style={styles.deleteBtn}
-                onPress={() =>
-                  setImages(prev => ({...prev, businessProof: null}))
-                }>
-                <Image
-                  source={images.cross}
-                  style={{height: 12, width: 12}}
-                  tintColor={'white'}
-                />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <ImageUpload onPress={() => openUpload('businessProof')} />
-          )}
-          {errors.businessProof && <ErrorBox error={errors.businessProof} />}
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <ImageUpload onPress={() => openUpload('businessProof')} />
+        )}
+        {errors.businessProof && <ErrorBox error={errors.businessProof} />}
 
-          {/* Aadhaar Front */}
-          <Typography size={14} fontWeight="500" color={COLOR.black} style={{marginTop: 20, marginBottom: 6}}>
-            Aadhaar Card Verification
-          </Typography>
-          {image.aadhaarFront ? (
-            <View style={styles.imgWrapper}>
+        {/* Aadhaar Front */}
+        <Typography
+          size={14}
+          fontWeight="500"
+          color={COLOR.black}
+          style={{marginTop: 20, marginBottom: 6}}>
+          Aadhaar Card Verification
+        </Typography>
+        {image.aadhaarFront ? (
+          <View style={styles.imgWrapper}>
+            <Image
+              source={{uri: image.aadhaarFront}}
+              style={styles.previewImg}
+            />
+            <TouchableOpacity
+              style={styles.deleteBtn}
+              onPress={() =>
+                setImages(prev => ({...prev, aadhaarFront: null}))
+              }>
               <Image
-                source={{uri: image.aadhaarFront}}
-                style={styles.previewImg}
+                source={images.cross}
+                style={{height: 12, width: 12}}
+                tintColor={'white'}
               />
-              <TouchableOpacity
-                style={styles.deleteBtn}
-                onPress={() =>
-                  setImages(prev => ({...prev, aadhaarFront: null}))
-                }>
-                <Image
-                  source={images.cross}
-                  style={{height: 12, width: 12}}
-                  tintColor={'white'}
-                />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <ImageUpload onPress={() => openUpload('aadhaarFront')} />
-          )}
-          {errors.aadhaarFront && <ErrorBox error={errors.aadhaarFront} />}
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <ImageUpload onPress={() => openUpload('aadhaarFront')} />
+        )}
+        {errors.aadhaarFront && <ErrorBox error={errors.aadhaarFront} />}
 
-          {/* PAN */}
-          <Typography size={14} fontWeight="500" color={COLOR.black} style={{marginTop: 20, marginBottom: 6}}>
-            PAN Card
-          </Typography>
-          {image.pan ? (
-            <View style={styles.imgWrapper}>
-              <Image source={{uri: image.pan}} style={styles.previewImg} />
-              <TouchableOpacity
-                style={styles.deleteBtn}
-                onPress={() => setImages(prev => ({...prev, pan: null}))}>
-                <Image
-                  source={images.cross}
-                  style={{height: 12, width: 12}}
-                  tintColor={'white'}
-                />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <ImageUpload onPress={() => openUpload('pan')} />
-          )}
-          {errors.pan && <ErrorBox error={errors.pan} />}
+        {/* PAN */}
+        <Typography
+          size={14}
+          fontWeight="500"
+          color={COLOR.black}
+          style={{marginTop: 20, marginBottom: 6}}>
+          PAN Card
+        </Typography>
+        {image.pan ? (
+          <View style={styles.imgWrapper}>
+            <Image source={{uri: image.pan}} style={styles.previewImg} />
+            <TouchableOpacity
+              style={styles.deleteBtn}
+              onPress={() => setImages(prev => ({...prev, pan: null}))}>
+              <Image
+                source={images.cross}
+                style={{height: 12, width: 12}}
+                tintColor={'white'}
+              />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <ImageUpload onPress={() => openUpload('pan')} />
+        )}
+        {errors.pan && <ErrorBox error={errors.pan} />}
 
-          {/* About Business */}
-          <Input
-            label="About Your Business"
-            placeholder="Tell customers about your services.."
-            style={{
-              borderColor: COLOR.primary,
-              height: 90,
-              textAlignVertical: 'top',
-            }}
-            value={about}
-            onChangeText={setAbout}
-             error={errors.about}
-          />
+        {/* About Business */}
+        <Input
+          label="About Your Business"
+          placeholder="Tell customers about your services.."
+          style={{
+            borderColor: COLOR.primary,
+            height: 90,
+          }}
+          multiline
+          value={about}
+          onChangeText={setAbout}
+          error={errors.about}
+        />
 
-          {/* Experience */}
-          <Input
-            label="Years of Experience"
-            placeholder="Enter Your Experience"
-            style={{borderColor: COLOR.primary}}
-            value={experience}
-            onChangeText={setExperience}
-             error={errors.experience}
-          />
+        {/* Experience */}
+        <Input
+          label="Years of Experience"
+          placeholder="Enter Your Experience"
+          style={{borderColor: COLOR.primary}}
+          value={experience}
+          onChangeText={setExperience}
+          error={errors.experience}
+        />
 
-          {/* Location */}
-          <Input
-            label="Exact Location"
-            placeholder="Street, City, State, ZIP"
-            style={{borderColor: COLOR.primary}}
-            value={location}
-            onChangeText={setLocation}
-             error={errors.location}
-          />
+        {/* Location */}
+        <Input
+          label="Exact Location"
+          placeholder="Street, City, State, ZIP"
+          style={{borderColor: COLOR.primary}}
+          value={location}
+          onChangeText={setLocation}
+          error={errors.location}
+        />
 
-          {/* Website */}
-          <Input
-            label="Business Website (optional)"
-            placeholder="https://yourbusiness.com"
-            style={{borderColor: COLOR.primary}}
-            value={website}
-            onChangeText={setWebsite}
-          />
+        {/* Website */}
+        <Input
+          label="Business Website (optional)"
+          placeholder="https://yourbusiness.com"
+          style={{borderColor: COLOR.primary}}
+          value={website}
+          onChangeText={setWebsite}
+        />
 
-          {/* GST */}
-          <Input
-            label="GSTIN No."
-            placeholder="Enter GST Number"
-            style={{borderColor: COLOR.primary}}
-            value={gst}
-            onChangeText={setGst}
-             error={errors.gst}
-          />
-        </ScrollView>
-      </KeyboardAvoidingView>
+        {/* GST */}
+        <Input
+          label="GSTIN No."
+          placeholder="Enter GST Number"
+          style={{borderColor: COLOR.primary}}
+          value={gst}
+          onChangeText={setGst}
+          error={errors.gst}
+        />
+      </KeyboardAwareScrollView>
 
       <Button title="Next" onPress={handleNext} />
 
@@ -303,7 +318,7 @@ const CompleteProfile = ({navigation}) => {
         selected={handleSelect}
         mediaType="photo"
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -311,7 +326,7 @@ export default CompleteProfile;
 
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: COLOR.white, paddingHorizontal: 15},
-  scrollContainer: {paddingHorizontal: 10, paddingTop: 10, paddingBottom: 50},
+  scrollContainer: {paddingHorizontal: 5, paddingTop: 10, paddingBottom: 50},
   imgWrapper: {
     position: 'relative',
     marginBottom: 12,

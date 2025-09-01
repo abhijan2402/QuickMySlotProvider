@@ -17,6 +17,7 @@ import {isValidForm} from '../../../Backend/Utility';
 import {ErrorBox} from '../../../Components/UI/ErrorBox';
 import useKeyboard from '../../../Constants/Utility';
 import Button from '../../../Components/UI/Button';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const AddBank = ({navigation}) => {
   const [bankName, setBankName] = useState('');
@@ -58,20 +59,20 @@ const AddBank = ({navigation}) => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 15}}>
+    <KeyboardAvoidingView
+        style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 15}}
+        behavior={Platform.OS === 'ios' ? 'padding' : isKeyboardVisible ? 'height' : undefined}
+        keyboardVerticalOffset={
+          Platform.OS === 'ios' ? 0 : 40
+        }>
       <HomeHeader
         title="Add Bank"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
 
-      <KeyboardAvoidingView
-        style={{flex: 1}}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={
-          Platform.OS === 'ios' ? 0 : isKeyboardVisible ? 0 : -40
-        }>
-        <ScrollView
+      
+        <KeyboardAwareScrollView
           style={{paddingHorizontal: 5}}
           contentContainerStyle={styles.container}>
           <Input
@@ -89,7 +90,6 @@ const AddBank = ({navigation}) => {
             value={accountNumber}
             onChangeText={setAccountNumber}
             style={{borderColor: COLOR.primary}}
-            keyboardType="numeric"
             error={error.accountNumber}
           />
 
@@ -116,11 +116,10 @@ const AddBank = ({navigation}) => {
             onChange={item => setBankType(item.value)}
           />
           {error.bankType && <ErrorBox error={error.bankType} />}
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
 
       <Button title={'Submit'} onPress={handleSubmit} />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

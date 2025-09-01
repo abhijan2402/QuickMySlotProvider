@@ -58,7 +58,7 @@ const ConfirmModal = ({
             <TouchableOpacity
               style={[styles.btn, styles.noBtn]}
               onPress={onPressNo || close}>
-              <Typography size={16} fontWeight={'500'} color={COLOR.primary}>
+              <Typography size={16} fontWeight={'500'} color={COLOR.red}>
                 {noTitle}
               </Typography>
             </TouchableOpacity>
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
   noBtn: {
     borderWidth: 1,
-    borderColor: COLOR.primary,
+    borderColor: COLOR.red,
     marginRight: 10,
     backgroundColor: 'transparent',
   },

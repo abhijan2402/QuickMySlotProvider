@@ -4,6 +4,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import React, {useState} from 'react';
 import HomeHeader from '../../../Components/HomeHeader';
@@ -16,7 +18,9 @@ import {windowWidth} from '../../../Constants/Dimensions';
 import Input from '../../../Components/Input';
 import Button from '../../../Components/UI/Button';
 import {ErrorBox} from '../../../Components/UI/ErrorBox';
-import { validators } from '../../../Backend/Validator';
+import {validators} from '../../../Backend/Validator';
+import useKeyboard from '../../../Constants/Utility';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const AddService = () => {
   const [serviceName, setServiceName] = useState('');
@@ -26,6 +30,8 @@ const AddService = () => {
   const [duration, setDuration] = useState('');
   const [discount, setDiscount] = useState(false);
   const [peak, setPeak] = useState(false);
+    const {isKeyboardVisible} = useKeyboard();
+  
 
   // image upload states
   const [image, setImage] = useState(null);
@@ -44,19 +50,19 @@ const AddService = () => {
   };
 
   const validateForm = () => {
-  let validationErrors = {
-    serviceName: validators.checkRequire('Service Name', serviceName),
-    description: validators.checkRequire('Description', description),
-    category: validators.checkRequire('Category', category),
-    price: validators.checkRequire('Price', price),
-    duration: validators.checkRequire('Duration', duration),
-    image: validators.checkRequire('Service Image', image),
+    let validationErrors = {
+      serviceName: validators.checkRequire('Service Name', serviceName),
+      description: validators.checkRequire('Description', description),
+      category: validators.checkRequire('Category', category),
+      price: validators.checkRequire('Price', price),
+      duration: validators.checkRequire('Duration', duration),
+      image: validators.checkRequire('Service Image', image),
+    };
+
+    setErrors(validationErrors);
+
+    return Object.values(validationErrors).every(error => error === '');
   };
-
-  setErrors(validationErrors);
-
-  return Object.values(validationErrors).every(error => error === '');
-};
 
   const handleSubmit = () => {
     if (validateForm()) {
@@ -65,14 +71,17 @@ const AddService = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : isKeyboardVisible ? 'height' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 40}
+      style={styles.container}>
       <HomeHeader
         title="Add New service"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
 
-      <ScrollView style={styles.content}>
+      <KeyboardAwareScrollView style={styles.content}>
         {/* Service Name */}
         <Input
           label="Service Name"
@@ -106,7 +115,6 @@ const AddService = () => {
         <Input
           label="Price ($)"
           placeholder="eg., 45.00"
-          keyboardType="numeric"
           value={price}
           onChangeText={setPrice}
           error={errors.price}
@@ -116,7 +124,6 @@ const AddService = () => {
         <Input
           label="Estimated Duration (minutes)"
           placeholder="eg., 45"
-          keyboardType="numeric"
           value={duration}
           onChangeText={setDuration}
           error={errors.duration}
@@ -147,15 +154,18 @@ const AddService = () => {
         ) : (
           <ImageUpload onPress={() => setShowModal(true)} />
         )}
-        <Typography size={12} color="#777" style={[styles.note,{marginBottom:0}]}>
+        <Typography
+          size={12}
+          color="#777"
+          style={[styles.note, {marginBottom: 0}]}>
           Max file size: 2MB. JPG, PNG allowed.
         </Typography>
-         {/* show error below image */}
+        {/* show error below image */}
         {errors.image && <ErrorBox error={errors.image} />}
 
         {/* Checkboxes */}
         <TouchableOpacity
-          style={[styles.checkboxContainer,{marginTop:20}]}
+          style={[styles.checkboxContainer, {marginTop: 20}]}
           onPress={() => setDiscount(!discount)}>
           <View style={[styles.checkbox, discount && styles.checkboxChecked]} />
           <Typography size={14} color="#333" style={styles.checkboxText}>
@@ -175,7 +185,7 @@ const AddService = () => {
         <Typography size={12} color="#777" style={styles.subNote}>
           Allows this service to be booked during peak times with extra charges.
         </Typography>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       {/* Add Button */}
       <Button title={'Add'} onPress={handleSubmit} />
@@ -186,7 +196,7 @@ const AddService = () => {
         close={() => setShowModal(false)}
         selected={handleImageSelected}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -194,7 +204,7 @@ export default AddService;
 
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: '#fff', paddingHorizontal: 15},
-  content: {paddingHorizontal: 10, paddingBottom: 55, marginTop: 0},
+  content: {paddingHorizontal: 5, paddingBottom: 55, marginTop: 0},
   label: {marginBottom: 5},
   note: {marginBottom: 15, marginTop: 5},
   imgWrapper: {

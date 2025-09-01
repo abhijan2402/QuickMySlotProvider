@@ -1,21 +1,36 @@
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {useState} from 'react';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import Input from '../../../Components/Input';
 import Button from '../../../Components/UI/Button';
-import { validators } from '../../../Backend/Validator';
+import {validators} from '../../../Backend/Validator';
+import useKeyboard from '../../../Constants/Utility';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const ForgotPassword = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+    const {isKeyboardVisible} = useKeyboard();
+  
 
   const [errors, setErrors] = useState({});
 
   const validateForm = () => {
     let validationErrors = {
-      currentPassword: validators.checkRequire('Current Password', currentPassword),
+      currentPassword: validators.checkRequire(
+        'Current Password',
+        currentPassword,
+      ),
       newPassword: validators.checkPassword('New Password', newPassword),
       confirmPassword: validators.checkMatch(
         'Confirm Password',
@@ -36,14 +51,17 @@ const ForgotPassword = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : isKeyboardVisible ? 'height' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 40}>
       <HomeHeader
-        title="Forgot Password"
+        title="Change Password"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
 
-      <ScrollView contentContainerStyle={{paddingHorizontal: 10}}>
+      <KeyboardAwareScrollView contentContainerStyle={{paddingHorizontal: 10}}>
         <Input
           showLabel
           label="Current Password"
@@ -74,21 +92,21 @@ const ForgotPassword = () => {
           error={errors.confirmPassword}
         />
 
-        <View>
+        <TouchableOpacity>
           <Text
             style={{
               textAlign: 'right',
               textDecorationLine: 'underline',
-              paddingRight: 10,
               color: COLOR.black,
+              marginTop:3
             }}>
             Forgot Password?
           </Text>
-        </View>
-      </ScrollView>
+        </TouchableOpacity>
+      </KeyboardAwareScrollView>
 
       <Button title="Change Password" onPress={handleChangePassword} />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

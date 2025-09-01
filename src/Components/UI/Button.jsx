@@ -83,7 +83,7 @@ const createStyles = theme =>
       backgroundColor: COLOR.royalBlue,
       borderRadius: 7,
       height: 55,
-      width: '95%',
+      width: '100%',
       alignSelf: 'center',
       justifyContent: 'center',
       shadowColor: 'rgba(0, 0, 0, 0.25)',
