@@ -145,7 +145,7 @@ const AddPromotion = ({navigation}) => {
                   color: startDate ? COLOR.black : COLOR.grey,
                   fontSize: 14,
                 }}>
-                {!!startDate ? startDate.toISOString().split('T')[0] : ''}
+                {!!startDate ? startDate : ''}
               </Text>
             </TouchableOpacity>
           </View>
@@ -163,7 +163,7 @@ const AddPromotion = ({navigation}) => {
                   color: endDate ? COLOR.black : COLOR.grey,
                   fontSize: 14,
                 }}>
-                {!!endDate ? endDate.toISOString().split('T')[0] : ''}
+                {!!endDate ? endDate : ''}
               </Text>
             </TouchableOpacity>
           </View>

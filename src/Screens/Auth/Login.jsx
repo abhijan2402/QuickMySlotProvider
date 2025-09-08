@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
+import React from 'react';
+import {Image, KeyboardAvoidingView, Platform, StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {windowHeight, windowWidth} from '../../Constants/Dimensions';
 import {COLOR} from '../../Constants/Colors';
@@ -11,6 +11,9 @@ import GoogleAuthButton from '../../Components/UI/GoogleAuthButton';
 import {POST, useApi} from '../../Backend/Api';
 import {SIGN_UP} from '../../Constants/ApiRoute';
 import { isAuth, Token, userDetails } from '../../Redux/action';
+import {ScrollView} from 'react-native';
+import Input from '../../Components/Input';
+import {Typography} from '../../Components/UI/Typography';
 
 const Login = ({navigation}) => {
   const [number, setNumber] = useState('');
@@ -55,67 +58,78 @@ const Login = ({navigation}) => {
 
   const handleLoginSuccess = user => {};
   return (
-    <View style={{flex: 1}}>
-      <LinearGradient
-        colors={[COLOR.white, COLOR.white]}
-        start={{x: 0, y: 0}}
-        end={{x: 0, y: 1}}
-        style={styles.container}>
-        {/* Logo */}
-        <Image
-          source={require('../../assets/Images/logo.png')}
-          style={styles.logo}
-        />
+    <KeyboardAvoidingView
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height' }
+    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      style={{flex: 1, paddingHorizontal: 20, backgroundColor: COLOR.white}}>
+      <ScrollView style={{flex:1}}>
+        <LinearGradient
+          colors={[COLOR.white, COLOR.white]}
+          start={{x: 0, y: 0}}
+          end={{x: 0, y: 1}}
+          style={styles.container}>
+          {/* Logo */}
+          <Image
+            source={require('../../assets/Images/logo.png')}
+            style={styles.logo}
+          />
 
-        {/* Tagline */}
-        <Text style={styles.text}>
-          Get Bookings, Expand Business with QuickSlot
-        </Text>
+          {/* Tagline */}
+          <Typography
+            size={18}
+            fontWeight="600"
+            color="#242524"
+            textAlign="center"
+            lineHeight={28}
+            style={{width: windowWidth / 1.2, marginTop: 10}}>
+            Get Bookings, Expand Business with QuickSlot
+          </Typography>
 
-        {/* Mobile Number Input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.countryCode}>+91 | </Text>
-          <TextInput
+          {/* Mobile Number Input */}
+          <Input
             keyboardType="numeric"
             placeholder="Enter Mobile Number"
-            placeholderTextColor={COLOR.black}
-            style={styles.input}
             value={number}
             onChangeText={text => setNumber(text)}
+            error={error.mobile}
+            text={'+ 91'}
+            leftIcon={true}
+            style={{marginLeft:5}}
           />
-        </View>
-        <View style={{marginHorizontal: 20, width: '90%'}}>
-          {error.mobile && <ErrorBox error={error.mobile} />}
+
+          {/* Continue Button */}
           <Button
-            containerStyle={{marginTop: 30}}
+            containerStyle={{marginTop: 30, width: '100%'}}
             title={'Continue'}
-            onPress={() => {
-              onSubmit();
-            }}
+            onPress={onSubmit}
           />
-        </View>
 
-        {/* Divider with text */}
-        <View style={styles.dividerContainer}>
-          <View style={styles.divider} />
-          <Text style={styles.dividerText}>Or</Text>
-          <View style={styles.divider} />
-        </View>
+          {/* Divider with text */}
+          <View style={styles.dividerContainer}>
+            <View style={styles.divider} />
+            <Typography size={14} color="#888">
+              Or
+            </Typography>
+            <View style={styles.divider} />
+          </View>
 
-        {/* Google Login Button */}
+          {/* Google Login Button */}
+          <GoogleAuthButton onLoginSuccess={handleLoginSuccess} />
 
-        <GoogleAuthButton onLoginSuccess={handleLoginSuccess} />
-        {/* 
+          {/* Register Section (if needed) */}
+          {/* 
         <View style={styles.registerContainer}>
           <Text style={styles.registerText}>Don’t have an account? </Text>
           <Text
             style={styles.registerLink}
             onPress={() => navigation.navigate('SignUp')}>
             Register
-          </Text>
-        </View> */}
-      </LinearGradient>
-    </View>
+          </Typography>
+        </View> 
+        */}
+        </LinearGradient>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
