@@ -9,8 +9,7 @@ import {
   StatusBar,
   SafeAreaView,
 } from 'react-native';
-import LanguageSelector from './LanguageSelector';
-import { LanguageContext } from '../localization/LanguageContext';
+// import LanguageSelector from './LanguageSelector';
 
 const Header = ({ title, onBackPress, showBack = false }) => {
   const langShow = ['Vendor Dashboard', 'विक्रेता डैशबोर्ड'];
@@ -34,11 +33,11 @@ const Header = ({ title, onBackPress, showBack = false }) => {
           </TouchableOpacity>
         )}
         <Text style={styles.title}>{title}</Text>
-        {langShow.includes(title) && (
+        {/* {langShow.includes(title) && (
           <View style={styles.languageWrapper}>
             <LanguageSelector />
           </View>
-        )}
+        )} */}
       </View>
     </SafeAreaView>
   );

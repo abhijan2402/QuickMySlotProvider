@@ -1,4 +1,3 @@
-// hooks/useKeyboard.js
 import { useEffect, useState } from 'react';
 import { Keyboard } from 'react-native';
 

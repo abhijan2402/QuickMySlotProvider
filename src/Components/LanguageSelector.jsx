@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
-import {LanguageContext} from '../localization/LanguageContext';
+// import {LanguageContext} from '../localization/LanguageContext';
 
 const LanguageSelector = () => {
   const {language, changeLanguage} = useContext(LanguageContext);
