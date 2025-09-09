@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {Image, KeyboardAvoidingView, Platform, StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {windowHeight, windowWidth} from '../../Constants/Dimensions';
@@ -26,7 +26,8 @@ const Login = ({navigation}) => {
     };
     setError(error);
     if (isValidForm(error)) {
-      handleSignup();
+      navigation.navigate('OtpScreen');
+      // handleSignup();
     }
   };
   const handleSignup = async () => {
@@ -46,7 +47,6 @@ const Login = ({navigation}) => {
       },
       error => {
         console.log(error,'errorerrorerror>>');
-        
         setLoading(false);
         ToastMsg(error?.message);
       },
