@@ -19,7 +19,6 @@ const Login = ({navigation}) => {
   const [number, setNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
   const onSubmit = () => {
     let error = {
       mobile: validators.checkNumber('Mobile Number', number),
@@ -37,7 +36,6 @@ const Login = ({navigation}) => {
       SIGN_UP,
       body,
       success => {
-        console.log(success,'successsuccesssuccess-->>>');
         setLoading(false);
         ToastMsg(success?.message);
         dispatch(Token(success?.token));
@@ -46,7 +44,6 @@ const Login = ({navigation}) => {
         dispatch(userDetails(d));
       },
       error => {
-        console.log(error,'errorerrorerror>>');
         setLoading(false);
         ToastMsg(error?.message);
       },

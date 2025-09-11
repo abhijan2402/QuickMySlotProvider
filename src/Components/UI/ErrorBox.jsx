@@ -1,9 +1,9 @@
 import React from 'react';
-import {Text} from 'react-native';
+import { Typography } from './Typography';
 
 export const ErrorBox = ({error, style}) => {
   return (
-    <Text
+    <Typography
       numberOfLines={2}
       adjustsFontSizeToFit
       style={[
@@ -17,6 +17,6 @@ export const ErrorBox = ({error, style}) => {
         style,
       ]}>
       {error}
-    </Text>
+    </Typography>
   );
 };

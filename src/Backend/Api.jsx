@@ -168,7 +168,7 @@ export const POST_FORM_DATA = async (
   try {
     await axios({
       method: 'post',
-      url: `${BASE_URL2}${route}`,
+      url: `${API}${route}`,
       data: body,
       headers: {
         'Content-Type': 'multipart/form-data',
