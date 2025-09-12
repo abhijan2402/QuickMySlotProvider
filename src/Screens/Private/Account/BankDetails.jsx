@@ -1,31 +1,40 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, TouchableOpacity, FlatList} from 'react-native';
-import {COLOR} from '../../../Constants/Colors'; 
-import {windowWidth} from '../../../Constants/Dimensions'; 
+import {COLOR} from '../../../Constants/Colors';
+import {windowWidth} from '../../../Constants/Dimensions';
 import HomeHeader from '../../../Components/HomeHeader';
 import ConfirmModal from '../../../Components/UI/ConfirmModel';
 import {Typography} from '../../../Components/UI/Typography'; // ✅ Import Typography
+import {GET_WITH_TOKEN} from '../../../Backend/Api';
+import { ADD_BANK } from '../../../Constants/ApiRoute';
+import { useIsFocused } from '@react-navigation/native';
 
 const BankDetails = ({navigation}) => {
   const [selectedBankId, setSelectedBankId] = useState(null);
   const [deletes, setDelete] = useState(false);
+  const [bankList, setBankList] = useState([]);
+  const isFocus = useIsFocused()
+  const [loading, setLoading] = useState(false)
 
-  const bankList = [
-    {
-      id: '1',
-      name: 'HDFC Bank',
-      accountNumber: 'XXXX-XXXX-1234',
-      ifsc: 'HDFC0001234',
-      type: 'Savings',
-    },
-    {
-      id: '2',
-      name: 'SBI Bank',
-      accountNumber: 'XXXX-XXXX-5678',
-      ifsc: 'SBIN0004567',
-      type: 'Current',
-    },
-  ];
+  useEffect(() => {
+    if(isFocus){
+      GET_WITH_TOKEN(
+      'bank-accounts',
+      success => {
+        console.log(success, 'successsuccesssuccess-->>>');
+        setLoading(false);
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+      },
+      fail => {
+        console.log(fail, 'errorerrorerror>>');
+        setLoading(false);
+      },
+    );
+    }
+  }, [isFocus]);
 
   const toggleSelect = id => {
     setSelectedBankId(selectedBankId === id ? null : id);

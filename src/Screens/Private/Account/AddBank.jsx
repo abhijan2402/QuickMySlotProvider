@@ -18,6 +18,8 @@ import {ErrorBox} from '../../../Components/UI/ErrorBox';
 import useKeyboard from '../../../Constants/Utility';
 import Button from '../../../Components/UI/Button';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { ADD_BANK } from '../../../Constants/ApiRoute';
+import { POST_FORM_DATA, POST_WITH_TOKEN } from '../../../Backend/Api';
 
 const AddBank = ({navigation}) => {
   const [bankName, setBankName] = useState('');
@@ -25,6 +27,7 @@ const AddBank = ({navigation}) => {
   const [ifscCode, setIfscCode] = useState('');
   const [bankType, setBankType] = useState(null);
   const {isKeyboardVisible} = useKeyboard();
+  const [loading, setLoading] = useState(false)
 
   // Validation errors
   const [error, setError] = useState({});
@@ -47,14 +50,30 @@ const AddBank = ({navigation}) => {
     setError(validationErrors);
 
     if (isValidForm(validationErrors)) {
-      console.log('✅ Bank Details:', {
-        bankName,
-        accountNumber,
-        ifscCode,
-        bankType,
-      });
-      navigation.goBack();
-      // Add API call here if needed
+      const formData = new FormData();
+            formData.append('bank_name', bankName);
+            formData.append('account_number', accountNumber);
+            formData.append('ifsc_code', ifscCode);
+            formData.append('bank_type', bankType);
+            console.log('FormData ====>', formData);
+
+            POST_FORM_DATA(
+              ADD_BANK,
+              formData,
+              success => {
+                console.log(success, 'successsuccesssuccess-->>>');
+                setLoading(false);
+              },
+              error => {
+                console.log(error, 'errorerrorerror>>');
+                setLoading(false);
+              },
+              fail => {
+                console.log(fail, 'errorerrorerror>>');
+      
+                setLoading(false);
+              },
+            );
     }
   };
 
@@ -118,7 +137,7 @@ const AddBank = ({navigation}) => {
           {error.bankType && <ErrorBox error={error.bankType} />}
         </KeyboardAwareScrollView>
 
-      <Button title={'Submit'} onPress={handleSubmit} />
+      <Button loading={loading} title={'Submit'} onPress={handleSubmit} />
     </KeyboardAvoidingView>
   );
 };
