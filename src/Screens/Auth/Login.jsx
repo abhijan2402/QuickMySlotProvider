@@ -19,7 +19,6 @@ const Login = ({navigation}) => {
   const [number, setNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
   const onSubmit = () => {
     let error = {
       mobile: validators.checkNumber('Mobile Number', number),
@@ -38,14 +37,12 @@ const Login = ({navigation}) => {
       SIGN_UP,
       body,
       success => {
-        console.log(success,'successsuccesssuccess-->>>');
         setLoading(false);
         navigation.navigate('OtpScreen',{
           id: success?.user_id
         });
       },
       error => {
-        console.log(error,'errorerrorerror>>');
         setLoading(false);
       },
       fail => {
