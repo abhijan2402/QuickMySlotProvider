@@ -21,6 +21,9 @@ import MultiModal from '../../../Components/MultiModal';
 import SortModal from '../../../Components/SortModal';
 import LottieView from 'lottie-react-native';
 import {windowHeight, windowWidth} from '../../../Constants/Dimensions';
+import {useIsFocused} from '@react-navigation/native';
+import {GET_WITH_TOKEN} from '../../../Backend/Api';
+import {GET_PROFILE} from '../../../Constants/ApiRoute';
 
 const {width} = Dimensions.get('window');
 
@@ -288,6 +291,31 @@ const Home = ({navigation}) => {
       setloader(false);
     }, 3000);
   }, []);
+    const isFocus = useIsFocused();
+
+  useEffect(() => {
+    if (isFocus) {
+      alert('kkkk')
+      fetchUserProfile();
+    }
+  }, [isFocus]);
+
+  global.fetchUserProfile = () => {
+    GET_WITH_TOKEN(
+      GET_PROFILE,
+      success => {
+        console.log(success, 'successsuccesssuccess-->>>');
+        setLoading(false);
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+      },
+      fail => {
+        setLoading(false);
+      },
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>

@@ -15,7 +15,13 @@ import {images} from '../../Components/UI/images';
 import Button from '../../Components/UI/Button';
 import {ErrorBox} from '../../Components/UI/ErrorBox';
 import {Typography} from '../../Components/UI/Typography'; // ✅ use Typography
-import { windowWidth } from '../../Constants/Dimensions';
+import {windowWidth} from '../../Constants/Dimensions';
+import {useDispatch, useSelector} from 'react-redux';
+import {POST_FORM_DATA, POST_WITH_TOKEN} from '../../Backend/Api';
+import {BUSINESS_AVAILABILITY} from '../../Constants/ApiRoute';
+import moment from 'moment';
+import {ToastMsg} from '../../Backend/Utility';
+import { isAuth, userDetails } from '../../Redux/action';
 
 const days = [
   'Monday',
@@ -32,6 +38,12 @@ const Availability = ({navigation}) => {
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [errors, setError] = useState('');
+  const userdata = useSelector(store => store.userDetails);
+  console.log(userdata);
+    const dispatch = useDispatch()
+
+  
+  const [loading, setLoading] = useState(false);
 
   const toggleDay = day => {
     if (selectedDays.includes(day)) {
@@ -41,7 +53,7 @@ const Availability = ({navigation}) => {
     }
   };
 
-  const handleSubmit = () => {
+  const validateForm = () => {
     let tempErrors = {};
 
     if (selectedDays.length === 0) {
@@ -55,13 +67,50 @@ const Availability = ({navigation}) => {
     }
 
     setError(tempErrors);
-    if (Object.keys(tempErrors).length > 0) {
-      return;
-    }
-    setError({});
 
-    console.log({selectedDays, startTime, endTime});
-    navigation.navigate('BottomNavigation');
+    if (Object.keys(tempErrors).length > 0) {
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = () => {
+    if (validateForm()) {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append('user_id', userdata?.id);
+      formData.append('daily_end_time', moment(endTime).format('HH:mm'));
+      formData.append('daily_start_time', moment(startTime).format('HH:mm'));
+      selectedDays.map((item, index) => {
+        formData.append(`working_days[${index}]`, item.toLowerCase());
+      });
+      console.log('FormData ====>', formData);
+      POST_FORM_DATA(
+        BUSINESS_AVAILABILITY,
+        formData,
+        success => {
+          console.log(success, 'successsuccesssuccess-->>>');
+          setLoading(false);
+          dispatch(userDetails(success?.data));
+          dispatch(isAuth(true))
+        },
+        error => {
+          console.log(error, 'errorerrorerror>>');
+          setLoading(false);
+          let tempErrors = {};
+
+          if (error?.data?.errors) {
+            tempErrors.end = error?.data?.errors?.daily_end_time;
+          }
+          setError(tempErrors);
+        },
+        fail => {
+          console.log(fail, 'errorerrorerror>>');
+          setLoading(false);
+        },
+      );
+    }
   };
 
   return (
@@ -81,7 +130,6 @@ const Availability = ({navigation}) => {
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled">
-
           {/* Warning box */}
           <View style={styles.warningBox}>
             <Image
@@ -89,7 +137,11 @@ const Availability = ({navigation}) => {
               source={images.warning}
               resizeMode="contain"
             />
-            <Typography size={14} color="#444" lineHeight={20} style={{width: windowWidth * 0.75}}>
+            <Typography
+              size={14}
+              color="#444"
+              lineHeight={20}
+              style={{width: windowWidth * 0.75}}>
               Select your working days and set start and end times for each.
               This schedule will let customers know when you’re available for
               bookings.
@@ -166,6 +218,7 @@ const Availability = ({navigation}) => {
 
       {/* Submit */}
       <Button
+        loading={loading}
         containerStyle={{
           marginBottom: 10,
           marginHorizontal: 20,

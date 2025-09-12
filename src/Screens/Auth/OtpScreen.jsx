@@ -12,12 +12,26 @@ import CustomButton from '../../Components/CustomButton';
 import {windowHeight} from '../../Constants/Dimensions';
 import HomeHeader from '../../Components/HomeHeader';
 import {AuthContext} from '../../Backend/AuthContent';
-import {Typography} from '../../Components/UI/Typography';  // ✅ import Typography
+import {Typography} from '../../Components/UI/Typography'; // ✅ import Typography
+import {POST} from '../../Backend/Api';
+import {VERIFY_OTP} from '../../Constants/ApiRoute';
+import {useDispatch} from 'react-redux';
+import {Token, userDetails} from '../../Redux/action';
+import {isValidForm, ToastMsg} from '../../Backend/Utility';
+import {validators} from '../../Backend/Validator';
 
-const OtpScreen = ({navigation}) => {
+const OtpScreen = ({navigation, route}) => {
   const {setUser, setToken} = useContext(AuthContext);
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  console.log(otp);
+
   const inputs = useRef([]);
+  const id = route.params.id;
+  console.log(id);
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const [error, setError] = useState('');
+  console.log(error);
 
   const handleChange = (text, index) => {
     let newOtp = [...otp];
@@ -42,12 +56,44 @@ const OtpScreen = ({navigation}) => {
     }
   };
 
+  const onSubmit = () => {
+    const otpCode = otp.join('');
+    if (!otpCode || otpCode.length < 6) {
+      setError('Please enter a valid 6-digit OTP');
+      return;
+    }
+    setError('');
+    if (isValidForm(error)) {
+      verifyOtp();
+    }
+  };
+
   const verifyOtp = () => {
     const otpCode = otp.join('');
     console.log('Entered OTP:', otpCode);
-    // setUser('dummyUser');
-    // setToken('dummyToken');
-    navigation.navigate('CompleteProfile');
+
+    const body = {
+      user_id: id,
+      otp: otpCode,
+    };
+    POST(
+      VERIFY_OTP,
+      body,
+      success => {
+        console.log(success, 'successsuccesssuccess-->>>');
+        setLoading(false);
+        navigation.navigate('CompleteProfile');
+        dispatch(Token(success?.token));
+        dispatch(userDetails(success?.user));
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+      },
+      fail => {
+        setLoading(false);
+      },
+    );
   };
 
   return (
@@ -86,7 +132,7 @@ const OtpScreen = ({navigation}) => {
       </View>
 
       {/* OTP Input Fields */}
-      <View style={styles.otpContainer}>
+      <View style={[styles.otpContainer,{marginBottom:error? 0:  windowHeight * 0.06}]}>
         {otp.map((digit, index) => (
           <TextInput
             key={index}
@@ -100,11 +146,21 @@ const OtpScreen = ({navigation}) => {
           />
         ))}
       </View>
+      {error ? (
+        <Typography
+          size={13}
+          color="red"
+          textAlign=""
+          style={{marginBottom: windowHeight * 0.06,marginTop:10,marginHorizontal:20}}>
+          {error}
+        </Typography>
+      ) : null}
 
       <CustomButton
+        loading={loading}
         title={'Verify'}
         onPress={() => {
-          verifyOtp();
+          onSubmit();
         }}
       />
 
@@ -144,8 +200,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     marginHorizontal: 5,
-    marginVertical: 20,
-    marginBottom: windowHeight * 0.06,
+    marginTop: 20,
   },
   otpInput: {
     borderWidth: 1,

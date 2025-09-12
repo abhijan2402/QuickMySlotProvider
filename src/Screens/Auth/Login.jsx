@@ -26,29 +26,27 @@ const Login = ({navigation}) => {
     };
     setError(error);
     if (isValidForm(error)) {
-      navigation.navigate('OtpScreen');
-      // handleSignup();
+      handleSignup()
     }
   };
   const handleSignup = async () => {
     setLoading(true);
-    const body = {};
+    const body = {
+      phone_number: number
+    };
     POST(
       SIGN_UP,
       body,
       success => {
         console.log(success,'successsuccesssuccess-->>>');
         setLoading(false);
-        ToastMsg(success?.message);
-        dispatch(Token(success?.token));
-        dispatch(isAuth(true));
-        const d = {...success?.user, is_remember_me: check};
-        dispatch(userDetails(d));
+        navigation.navigate('OtpScreen',{
+          id: success?.user_id
+        });
       },
       error => {
         console.log(error,'errorerrorerror>>');
         setLoading(false);
-        ToastMsg(error?.message);
       },
       fail => {
         setLoading(false);
@@ -99,6 +97,7 @@ const Login = ({navigation}) => {
 
           {/* Continue Button */}
           <Button
+          loading={loading}
             containerStyle={{marginTop: 30, width: '100%'}}
             title={'Continue'}
             onPress={onSubmit}

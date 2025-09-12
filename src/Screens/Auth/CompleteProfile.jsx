@@ -20,6 +20,11 @@ import Button from '../../Components/UI/Button';
 import {Typography} from '../../Components/UI/Typography';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import useKeyboard from '../../Constants/Utility';
+import {useDispatch, useSelector} from 'react-redux';
+import {BUSINESS_PROFILE} from '../../Constants/ApiRoute';
+import {POST_FORM_DATA} from '../../Backend/Api';
+import {ToastMsg} from '../../Backend/Utility';
+import { userDetails } from '../../Redux/action';
 
 const CompleteProfile = ({navigation}) => {
   const [showModal, setShowModal] = useState(false);
@@ -32,6 +37,7 @@ const CompleteProfile = ({navigation}) => {
     aadhaarFront: null,
     pan: null,
   });
+  console.log(image, 'lllllll');
 
   // Text field states
   const [about, setAbout] = useState('');
@@ -39,17 +45,30 @@ const CompleteProfile = ({navigation}) => {
   const [location, setLocation] = useState('');
   const [website, setWebsite] = useState('');
   const [gst, setGst] = useState('');
-    const {isKeyboardVisible} = useKeyboard();
-  
+  const {isKeyboardVisible} = useKeyboard();
+  const userdata = useSelector(store => store.userDetails);
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch()
 
   // Error state
   const [errors, setErrors] = useState({});
 
   const handleSelect = response => {
     if (currentField) {
+      let selected = response[0] || response; // in case it's an array
+
+      const fileObj = {
+        uri: selected.path || selected.uri,
+        type: selected.mime || 'image/jpeg', // fallback
+        name:
+          selected.fileName ||
+          `${currentField}.${(selected.mime || 'image/jpeg').split('/')[1]}`,
+      };
+      console.log(fileObj);
+
       setImages(prev => ({
         ...prev,
-        [currentField]: response.path || response[0]?.path,
+        [currentField]: fileObj,
       }));
     }
     setShowModal(false);
@@ -82,15 +101,77 @@ const CompleteProfile = ({navigation}) => {
   };
 
   const handleNext = () => {
-    // if (validateForm()) {
-      navigation.navigate('Availability');
-    // }
+    if (validateForm()) {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append('user_id', userdata?.id);
+      formData.append('business_description', about);
+      formData.append('exact_location', location);
+      formData.append('years_of_experience', experience);
+      formData.append('gstin_number', gst);
+      formData.append('business_website', website);
+      if (image?.PhotoVerifi) {
+        formData.append('photo_verification', image?.PhotoVerifi);
+      }
+
+      if (image?.businessProof) {
+        formData.append('business_proof', image?.businessProof);
+      }
+
+      if (image?.aadhaarFront) {
+        formData.append('adhaar_card_verification', image?.aadhaarFront);
+      }
+
+      if (image?.pan) {
+        formData.append('pan_card', image?.pan);
+      }
+
+      console.log('FormData ====>', formData);
+      POST_FORM_DATA(
+        BUSINESS_PROFILE,
+        formData,
+        success => {
+          console.log(success, 'successsuccesssuccess-->>>');
+          setLoading(false);
+          dispatch(userDetails(success?.data));
+          navigation.navigate('Availability');
+        },
+        error => {
+          console.log(error, 'errorerrorerror>>');
+          setLoading(false);
+          if (error?.data?.errors) {
+            const errorKeyMap = {
+              years_of_experience: 'experience',
+              business_website: 'website',
+            };
+            const apiErrors = {};
+            Object.keys(error.data.errors).forEach(key => {
+              const mappedKey = errorKeyMap[key] || key;
+              apiErrors[mappedKey] = error.data.errors[key]; // keep full array
+            });
+            setErrors(apiErrors);
+          } else {
+          }
+        },
+        fail => {
+          console.log(fail, 'errorerrorerror>>');
+
+          setLoading(false);
+        },
+      );
+    }
   };
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : isKeyboardVisible ? 'height' : undefined}
+      behavior={
+        Platform.OS === 'ios'
+          ? 'padding'
+          : isKeyboardVisible
+          ? 'height'
+          : undefined
+      }
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 40}>
       <HomeHeader
         title="Complete Your Profile"
@@ -100,8 +181,8 @@ const CompleteProfile = ({navigation}) => {
       />
 
       <KeyboardAwareScrollView
-      contentContainerStyle={{paddingBottom:20}}
-        style={{flex: 1,paddingHorizontal:5}}>
+        contentContainerStyle={{paddingBottom: 20}}
+        style={{flex: 1, paddingHorizontal: 5}}>
         <View
           style={{
             flexDirection: 'row',
@@ -150,7 +231,7 @@ const CompleteProfile = ({navigation}) => {
         {image.PhotoVerifi ? (
           <View style={styles.imgWrapper}>
             <Image
-              source={{uri: image.PhotoVerifi}}
+              source={{uri: image.PhotoVerifi.uri}}
               style={styles.previewImg}
             />
             <TouchableOpacity
@@ -179,7 +260,7 @@ const CompleteProfile = ({navigation}) => {
         {image.businessProof ? (
           <View style={styles.imgWrapper}>
             <Image
-              source={{uri: image.businessProof}}
+              source={{uri: image.businessProof.uri}}
               style={styles.previewImg}
             />
             <TouchableOpacity
@@ -210,7 +291,7 @@ const CompleteProfile = ({navigation}) => {
         {image.aadhaarFront ? (
           <View style={styles.imgWrapper}>
             <Image
-              source={{uri: image.aadhaarFront}}
+              source={{uri: image.aadhaarFront.uri}}
               style={styles.previewImg}
             />
             <TouchableOpacity
@@ -240,7 +321,7 @@ const CompleteProfile = ({navigation}) => {
         </Typography>
         {image.pan ? (
           <View style={styles.imgWrapper}>
-            <Image source={{uri: image.pan}} style={styles.previewImg} />
+            <Image source={{uri: image.pan.uri}} style={styles.previewImg} />
             <TouchableOpacity
               style={styles.deleteBtn}
               onPress={() => setImages(prev => ({...prev, pan: null}))}>
@@ -297,6 +378,7 @@ const CompleteProfile = ({navigation}) => {
           style={{borderColor: COLOR.primary}}
           value={website}
           onChangeText={setWebsite}
+          error={errors.website}
         />
 
         {/* GST */}
@@ -310,7 +392,7 @@ const CompleteProfile = ({navigation}) => {
         />
       </KeyboardAwareScrollView>
 
-      <Button title="Next" onPress={handleNext} />
+      <Button loading={loading} title="Next" onPress={handleNext} />
 
       <ImageModal
         showModal={showModal}

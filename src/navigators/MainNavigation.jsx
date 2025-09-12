@@ -5,9 +5,11 @@ import RootNavigation from './RootNavigation';
 import AuthStack from './AuthNavigation';
 import {ToastProvider, useToast} from '../Constants/ToastContext';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSelector} from 'react-redux';
 
 const MainNavigation = () => {
   const auth = useContext(AuthContext);
+  const isAuth = useSelector(store => store.isAuth);  
 
   if (!auth) {
     console.error('AuthContext not found');
@@ -26,7 +28,7 @@ const MainNavigation = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <ToastProvider>
-      {token ? <RootNavigation /> : <AuthStack />}
+        {isAuth ? <RootNavigation /> : <AuthStack />}
       </ToastProvider>
     </SafeAreaView>
   );

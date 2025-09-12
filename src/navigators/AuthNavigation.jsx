@@ -28,12 +28,22 @@ import BankDetails from '../Screens/Private/Account/BankDetails';
 import AddBank from '../Screens/Private/Account/AddBank';
 import Promotion from '../Screens/Private/Home/Promotion';
 import AddPromotion from '../Screens/Private/Home/AddPromotion';
+import {useSelector} from 'react-redux';
 const Stack = createNativeStackNavigator();
 
 const AuthStack = () => {
+  const userdata = useSelector(store => store.userDetails);
+  console.log(userdata);
+
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName={
+        userdata?.steps == 1
+          ? 'CompleteProfile'
+          : userdata?.steps == 2
+          ? 'Availability'
+          : 'Login'
+      }
       screenOptions={{
         headerShown: false,
       }}>
@@ -42,37 +52,6 @@ const AuthStack = () => {
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="CompleteProfile" component={CompleteProfile} />
       <Stack.Screen name="Availability" component={Availability} />
-      <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
-      <Stack.Screen name="MainHome" component={MainHome} />
-      <Stack.Screen name="Faq" component={Faq} />
-      <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-      <Stack.Screen name="Wallet" component={Wallet} />
-      <Stack.Screen name="Appointment" component={Appointment} />
-      <Stack.Screen name="Cms" component={Cms} />
-      <Stack.Screen name="Support" component={Support} />
-      <Stack.Screen name="Invite" component={Invite} />
-      <Stack.Screen name="MyAnalytics" component={MyAnalytics} />
-      <Stack.Screen name="SearchServices" component={SearchServices} />
-      <Stack.Screen name="ProviderDetails" component={ProviderDetails} />
-      <Stack.Screen name="BookingScreen" component={BookingScreen} />
-      <Stack.Screen name="Checkout" component={Checkout} />
-      <Stack.Screen name="ManageServices" component={ManageServices} />
-      <Stack.Screen name="BoostProfile" component={BoostProfile} />
-      <Stack.Screen
-        name="AvailabilityManagement"
-        component={AvailabilityManagement}
-      />
-      <Stack.Screen
-        name="BookingConfirmation"
-        component={BookingConfirmation}
-      />
-      <Stack.Screen name="AddService" component={AddService} />
-      <Stack.Screen name="EditProfile" component={EditProfile} />
-      <Stack.Screen name="BankDetails" component={BankDetails} />
-      <Stack.Screen name="AddBank" component={AddBank} />
-      <Stack.Screen name="Promotion" component={Promotion} />
-      <Stack.Screen name="AddPromotion" component={AddPromotion} />
-      {/* <Stack.Screen name="SignUp" component={SignUp} /> */}
     </Stack.Navigator>
   );
 };

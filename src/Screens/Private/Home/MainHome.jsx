@@ -12,12 +12,40 @@ import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import {FlatList} from 'react-native';
 import { Typography } from '../../../Components/UI/Typography';
+import { useIsFocused } from '@react-navigation/native';
+import { GET_WITH_TOKEN } from '../../../Backend/Api';
+import { GET_PROFILE } from '../../../Constants/ApiRoute';
+import { useDispatch } from 'react-redux';
+import { userDetails } from '../../../Redux/action';
 
 const MainHome = ({navigation}) => {
   const {width} = Dimensions.get('window');
   const AUTO_SCROLL_INTERVAL = 3000; // 3 seconds
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const isFocus = useIsFocused();
+  const dispatch = useDispatch()
+  
+    useEffect(() => {
+      if (isFocus) {
+        fetchUserProfile();
+      }
+    }, [isFocus]);
+  
+    global.fetchUserProfile = () => {
+      GET_WITH_TOKEN(
+        GET_PROFILE,
+        success => {
+          console.log(success, 'successsuccesssuccess-->>>');
+          dispatch(userDetails(success?.data))
+        },
+        error => {
+          console.log(error, 'errorerrorerror>>');
+        },
+        fail => {
+        },
+      );
+    };
 
   const banners = [
     {
