@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { store } from './src/Redux/store';
 import { AuthProvider } from './src/Backend/AuthContent';
 import AddService from './src/Screens/Private/Home/AddService';
+import AddBank from './src/Screens/Private/Account/AddBank';
 
 const App = () => {
   return (
@@ -14,8 +15,7 @@ const App = () => {
       <View style={styles.safeArea}>
         <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
         <NavigationContainer>
-          {/* <MainNavigation /> */}
-          <AddService />
+          <MainNavigation />
         </NavigationContainer>
       </View>
     </AuthProvider>

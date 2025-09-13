@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -18,67 +18,126 @@ import {validators} from '../../../Backend/Validator';
 import {ErrorBox} from '../../../Components/UI/ErrorBox';
 import useKeyboard from '../../../Constants/Utility';
 import Button from '../../../Components/UI/Button';
+import {POST_FORM_DATA} from '../../../Backend/Api';
+import {ADD_PROMOTION, UPDATE_PROMOTION} from '../../../Constants/ApiRoute';
+import SwitchButton from '../../../Components/UI/SwitchButton';
+import {Typography} from '../../../Components/UI/Typography';
+import {useIsFocused} from '@react-navigation/native';
 
-const AddPromotion = ({navigation}) => {
-  const [title, setTitle] = useState('');
+const AddPromotion = ({navigation, route}) => {
   const [error, setError] = useState({});
   const [description, setDescription] = useState('');
   const [promoCode, setPromoCode] = useState('');
   const [discount, setDiscount] = useState('');
   const [discountType, setDiscountType] = useState(null);
-  const [brandName, setBrandName] = useState('');
   const [openStartPicker, setOpenStartPicker] = useState(false);
   const [openEndPicker, setOpenEndPicker] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const {isKeyboardVisible} = useKeyboard();
+  const [loading, setLoading] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+  const data = route?.params?.data;
+  console.log(data);
+  const isEditing = route?.params?.isEditing;
+
+  const isFocus = useIsFocused();
+
+  useEffect(() => {
+    if (isFocus) {
+      setPromoCode(data?.promo_code);
+      setDiscount((data?.amount));
+      setDescription(data?.description);
+      setIsActive(data?.isActive);
+      setDiscountType(data?.type);
+    }
+  }, [isFocus]);
 
   const discountOptions = [
-    {label: 'Percent (%)', value: 'percent'},
-    {label: 'Amount (₹)', value: 'amount'},
+    {label: 'Flat', value: 'flat'},
+    // {label: 'Amount (₹)', value: 'amount'},
   ];
 
   const handleAddPromotion = () => {
-    let errorObj = {};
+    let validationErrors = {
+      promoCode: validators.checkRequire('Promotion code', promoCode),
+      discountType: validators.checkRequire('Discount Type', discountType),
+      discount: validators.checkNumber('Discount value', discount),
+      // startDate: validators.checkRequire('Start date', startDate),
+      // endDate: !endDate
+      //   ? 'End date is required.'
+      //   : endDate <= startDate
+      //   ? 'End date must be after start date.'
+      //   : '',
+      description: validators.checkRequire('Description', description),
+    };
 
-    if (!promoCode?.trim()) {
-      errorObj.promoCode = 'Promotion code is required.';
-    }
+    Object.keys(validationErrors).forEach(key => {
+      if (!validationErrors[key]) {
+        delete validationErrors[key];
+      }
+    });
 
-    if (!discountType) {
-      errorObj.discountType = 'Please select a discount type.';
-    }
+    setError(validationErrors);
 
-    if (!discount?.trim()) {
-      errorObj.discount = 'Discount value is required.';
-    }
+    if (Object.keys(validationErrors).length === 0) {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append('promo_code', promoCode);
+      formData.append('type', discountType);
+      formData.append('amount', discount);
+      formData.append('start_on', '2023-1-31');
+      formData.append('expired_on', '2023-12-31');
+      formData.append('description', description);
+      formData.append('isActive', isActive ? 1 : 0);
+      console.log('FormData ====>', formData);
+      if(isEditing){
+        POST_FORM_DATA(
+        UPDATE_PROMOTION + data?.id,
+        formData,
+        success => {
+          console.log(success, 'successsuccesssuccess-->>>');
+          setLoading(false);
+          navigation.goBack();
+        },
+        error => {
+          console.log(error, 'errorerrorerror>>');
+          setLoading(false);
+        },
+        fail => {
+          console.log(fail, 'errorerrorerror>>');
 
-    if (!startDate) {
-      errorObj.startDate = 'Start date is required.';
-    }
+          setLoading(false);
+        },
+      );
+      }else {
+        POST_FORM_DATA(
+        ADD_PROMOTION,
+        formData,
+        success => {
+          console.log(success, 'successsuccesssuccess-->>>');
+          setLoading(false);
+          navigation.goBack();
+        },
+        error => {
+          console.log(error, 'errorerrorerror>>');
+          setLoading(false);
+        },
+        fail => {
+          console.log(fail, 'errorerrorerror>>');
 
-    if (!endDate) {
-      errorObj.endDate = 'End date is required.';
-    } else if (endDate <= startDate) {
-      errorObj.endDate = 'End date must be after start date.';
-    }
-
-    if (!description?.trim()) {
-      errorObj.description = 'Description is required.';
-    }
-
-    setError(errorObj);
-
-    if (Object.keys(errorObj).length === 0) {
-      // Submit only if no errors
-      navigation.goBack();
+          setLoading(false);
+        },
+      );
+      }
     }
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: COLOR.white,paddingHorizontal:15}}>
+    <View
+      style={{flex: 1, backgroundColor: COLOR.white, paddingHorizontal: 15}}>
       <HomeHeader
-        title="Add Promotion"
+        title={isEditing ?  "Edit Promotion" : "Add Promotion"}
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
@@ -177,10 +236,24 @@ const AddPromotion = ({navigation}) => {
             multiline={true}
             error={error.description}
           />
+          <View
+            style={{flexDirection: 'row', alignItems: 'center', marginTop: 15}}>
+            <Typography size={18} fontWeight={'500'} style={{marginRight: 5}}>
+              IsActive
+            </Typography>
+            <SwitchButton
+              value={isActive}
+              onValueChange={() => setIsActive(!isActive)}
+            />
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
-      <Button onPress={handleAddPromotion} title={'Save Promotion'} />
-     
+      <Button
+        loading={loading}
+        onPress={handleAddPromotion}
+        title={isEditing ? 'Edit Promotion' : 'Save Promotion'}
+      />
+
       <DatePicker
         modal
         open={openStartPicker || openEndPicker}

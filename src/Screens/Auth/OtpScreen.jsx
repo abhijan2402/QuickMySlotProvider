@@ -14,7 +14,7 @@ import HomeHeader from '../../Components/HomeHeader';
 import {AuthContext} from '../../Backend/AuthContent';
 import {Typography} from '../../Components/UI/Typography'; // ✅ import Typography
 import {POST} from '../../Backend/Api';
-import {VERIFY_OTP} from '../../Constants/ApiRoute';
+import {RESEND_OTP, VERIFY_OTP} from '../../Constants/ApiRoute';
 import {useDispatch} from 'react-redux';
 import {Token, userDetails} from '../../Redux/action';
 import {isValidForm, ToastMsg} from '../../Backend/Utility';
@@ -23,11 +23,9 @@ import {validators} from '../../Backend/Validator';
 const OtpScreen = ({navigation, route}) => {
   const {setUser, setToken} = useContext(AuthContext);
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  console.log(otp);
-
   const inputs = useRef([]);
   const id = route.params.id;
-  console.log(id);
+  const PhoneNumber = route.params.phoneNumber;
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [error, setError] = useState('');
@@ -96,6 +94,27 @@ const OtpScreen = ({navigation, route}) => {
     );
   };
 
+  const handleResend = () => {
+    const body = {
+      phone_number: PhoneNumber,
+    };
+    POST(
+      RESEND_OTP,
+      body,
+      success => {
+        console.log(success, 'successsuccesssuccess-->>>');
+        setLoading(false);
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+      },
+      fail => {
+        setLoading(false);
+      },
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <HomeHeader
@@ -132,7 +151,11 @@ const OtpScreen = ({navigation, route}) => {
       </View>
 
       {/* OTP Input Fields */}
-      <View style={[styles.otpContainer,{marginBottom:error? 0:  windowHeight * 0.06}]}>
+      <View
+        style={[
+          styles.otpContainer,
+          {marginBottom: error ? 0 : windowHeight * 0.06},
+        ]}>
         {otp.map((digit, index) => (
           <TextInput
             key={index}
@@ -151,7 +174,11 @@ const OtpScreen = ({navigation, route}) => {
           size={13}
           color="red"
           textAlign=""
-          style={{marginBottom: windowHeight * 0.06,marginTop:10,marginHorizontal:20}}>
+          style={{
+            marginBottom: windowHeight * 0.06,
+            marginTop: 10,
+            marginHorizontal: 20,
+          }}>
           {error}
         </Typography>
       ) : null}
@@ -170,10 +197,11 @@ const OtpScreen = ({navigation, route}) => {
           Didn't receive the code?{' '}
         </Typography>
         <Typography
+          disabled={false}
           size={14}
           color={COLOR.primary}
           fontWeight="600"
-          onPress={() => console.log('Resend OTP pressed')}>
+          onPress={() => handleResend()}>
           Resend OTP
         </Typography>
       </View>

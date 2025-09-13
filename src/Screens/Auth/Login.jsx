@@ -39,7 +39,8 @@ const Login = ({navigation}) => {
       success => {
         setLoading(false);
         navigation.navigate('OtpScreen',{
-          id: success?.user_id
+          id: success?.user_id,
+          phoneNumber: number
         });
       },
       error => {

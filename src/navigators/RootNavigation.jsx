@@ -24,6 +24,7 @@ import ManageServices from '../Screens/Private/Home/ManageServices';
 import BoostProfile from '../Screens/Private/Home/BoostProfile';
 import AvailabilityManagement from '../Screens/Private/Home/AvailabilityManagement';
 import BookingConfirmation from '../Screens/Private/Home/BookingConfirmation';
+import AddAmount from '../Screens/Private/Account/AddAmount';
 const Stack = createNativeStackNavigator();
 
 const RootNavigation = () => {
@@ -42,29 +43,29 @@ const RootNavigation = () => {
         <Stack.Screen name="AddBank" component={AddBank} />
         <Stack.Screen name="Promotion" component={Promotion} />
         <Stack.Screen name="AddPromotion" component={AddPromotion} />
-      <Stack.Screen name="MainHome" component={MainHome} />
-      <Stack.Screen name="Faq" component={Faq} />
-      <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-      <Stack.Screen name="Wallet" component={Wallet} />
-      <Stack.Screen name="Appointment" component={VendorAppointments} />
-      <Stack.Screen name="Support" component={Support} />
-      <Stack.Screen name="Invite" component={Invite} />
-      <Stack.Screen name="MyAnalytics" component={MyAnalytics} />
-      <Stack.Screen name="SearchServices" component={SearchServices} />
-      <Stack.Screen name="ProviderDetails" component={ProviderDetails} />
-      <Stack.Screen name="BookingScreen" component={BookingScreen} />
-      <Stack.Screen name="Checkout" component={Checkout} />
-      <Stack.Screen name="ManageServices" component={ManageServices} />
-      <Stack.Screen name="BoostProfile" component={BoostProfile} />
-      <Stack.Screen
-        name="AvailabilityManagement"
-        component={AvailabilityManagement}
-      />
-      <Stack.Screen
-        name="BookingConfirmation"
-        component={BookingConfirmation}
-      />
-     
+        <Stack.Screen name="MainHome" component={MainHome} />
+        <Stack.Screen name="Faq" component={Faq} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+        <Stack.Screen name="Wallet" component={Wallet} />
+        <Stack.Screen name="Appointment" component={VendorAppointments} />
+        <Stack.Screen name="Support" component={Support} />
+        <Stack.Screen name="Invite" component={Invite} />
+        <Stack.Screen name="MyAnalytics" component={MyAnalytics} />
+        <Stack.Screen name="SearchServices" component={SearchServices} />
+        <Stack.Screen name="ProviderDetails" component={ProviderDetails} />
+        <Stack.Screen name="BookingScreen" component={BookingScreen} />
+        <Stack.Screen name="Checkout" component={Checkout} />
+        <Stack.Screen name="ManageServices" component={ManageServices} />
+        <Stack.Screen name="BoostProfile" component={BoostProfile} />
+        <Stack.Screen
+          name="AvailabilityManagement"
+          component={AvailabilityManagement}
+        />
+        <Stack.Screen
+          name="BookingConfirmation"
+          component={BookingConfirmation}
+        />
+        <Stack.Screen name="AddAmount" component={AddAmount} />
       </Stack.Navigator>
       {/* <View style={{marginBottom: 50}}></View> */}
     </>
