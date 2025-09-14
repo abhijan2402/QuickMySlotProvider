@@ -7,6 +7,7 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  Text,
 } from 'react-native';
 import Input from '../../../Components/Input';
 import {COLOR} from '../../../Constants/Colors';
@@ -19,10 +20,19 @@ import Button from '../../../Components/UI/Button';
 import {Typography} from '../../../Components/UI/Typography';
 import {useDispatch, useSelector} from 'react-redux';
 import {useIsFocused} from '@react-navigation/native';
-import {GET, POST_FORM_DATA, POST_WITH_TOKEN} from '../../../Backend/Api';
-import {GET_CATEGORY, UPDATE_PROFILE} from '../../../Constants/ApiRoute';
+import {
+  GET,
+  GET_WITH_TOKEN,
+  POST_FORM_DATA,
+  POST_WITH_TOKEN,
+} from '../../../Backend/Api';
+import {
+  CATEGORY,
+  GET_CATEGORY,
+  UPDATE_PROFILE,
+} from '../../../Constants/ApiRoute';
 import {userDetails} from '../../../Redux/action';
-import DropdownCommon from '../../../Components/UI/DropdownCommon';
+import {Dropdown} from 'react-native-element-dropdown';
 import {ErrorBox} from '../../../Components/UI/ErrorBox';
 
 const EditProfile = ({navigation}) => {
@@ -34,7 +44,8 @@ const EditProfile = ({navigation}) => {
   const [website, setWebsite] = useState('');
   const [buisness, setBuisness] = useState('');
   const [served, setServed] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState();
+
   const [isEditing, setIsEditing] = useState(false);
   const {isKeyboardVisible} = useKeyboard();
   const userdata = useSelector(store => store.userDetails);
@@ -48,8 +59,8 @@ const EditProfile = ({navigation}) => {
   const [error, setError] = useState({});
   const isFocus = useIsFocused();
   const [loading, setLoading] = useState(false);
-  const [categoryList, setCategoryList] = useState([]);
   const dispatch = useDispatch();
+  const [categoryList, setCategoryList] = useState([]);
 
   useEffect(() => {
     if (isFocus) {
@@ -65,6 +76,32 @@ const EditProfile = ({navigation}) => {
       setCompany('');
     }
   }, [isFocus]);
+
+  // useEffect(() => {
+  //   if (isFocus) {
+  //     GET_WITH_TOKEN(
+  //       CATEGORY,
+  //       success => {
+  //         setLoading(false);
+  //         console.log(success);
+  //         const formattedData = success?.data?.map(item => ({
+  //           label: item.name,
+  //           value: item.id,
+  //         }));
+  //         setCategoryList(formattedData || []);
+  //       },
+  //       error => {
+  //         setLoading(false);
+  //         console.log(error);
+
+  //         ToastMsg(error?.message);
+  //       },
+  //       fail => {
+  //         setLoading(false);
+  //       },
+  //     );
+  //   }
+  // }, [isFocus]);
 
   const handleImageSelected = response => {
     console.log(response);
@@ -86,7 +123,9 @@ const EditProfile = ({navigation}) => {
         });
         setCategoryList(d);
         if (userdata?.service_category) {
-          const selected = d.find(v => v?.id == userdata?.service_category);
+          const selected = d.find(v => v?.value == userdata?.service_category);
+          console.log(selected,'dsadasdsadsaddewqweweqeqwweq');
+          
           setCategory(selected);
         }
       },
@@ -127,8 +166,9 @@ const EditProfile = ({navigation}) => {
       formData.append('website', website);
       formData.append('business_name', buisness);
       formData.append('location_area_served', served);
+      formData.append('service_category', category);
       if (profileImage) {
-        formData.append('pan_card', profileImage);
+        formData.append('profile_picture', profileImage);
       }
       console.log('FormData ====>', formData);
       POST_WITH_TOKEN(
@@ -308,16 +348,23 @@ const EditProfile = ({navigation}) => {
             error={error.location_served}
           />
 
-          <DropdownCommon
-            label={'service category'}
+          <Text style={[styles.label, {marginTop: 18}]}>Service Category</Text>
+          <Dropdown
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
             data={categoryList}
             disable={!isEditing}
-            value={category}
-            onChange={v => {
-              setCategory(v);
-            }}
+            maxHeight={150}
+            labelField="label"
+            valueField="value"
+            placeholder="Select Service Category Type"
+            value={category} // category will hold the selected id
+            onChange={item => setCategory(item.value)} // store id when selected
           />
-          {error.category && <ErrorBox error={error.category} />}
+          {error.category && (
+            <ErrorBox error={error.category} style={{marginBottom: 20}} />
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -408,5 +455,21 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
+  },
+  dropdown: {
+    height: 50,
+    borderColor: COLOR.primary,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginTop: 5,
+  },
+  placeholderStyle: {
+    fontSize: 14,
+    color: 'gray',
+  },
+  selectedTextStyle: {
+    fontSize: 14,
+    color: COLOR.black,
   },
 });
