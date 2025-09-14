@@ -124,8 +124,8 @@ const EditProfile = ({navigation}) => {
         setCategoryList(d);
         if (userdata?.service_category) {
           const selected = d.find(v => v?.value == userdata?.service_category);
-          console.log(selected,'dsadasdsadsaddewqweweqeqwweq');
-          
+          console.log(selected, 'dsadasdsadsaddewqweweqeqwweq');
+
           setCategory(selected);
         }
       },
@@ -143,9 +143,7 @@ const EditProfile = ({navigation}) => {
       name: validators.checkRequire('Name', firstName),
       email: validators.checkEmail('Email', email),
       phone: validators.checkNumber('Phone Number', phone),
-      // website: validators.checkRequire('Website', website),
       address: validators.checkRequire('Address', address),
-      // company: validators.checkRequire('Company Name', company),
       buisness: validators.checkRequire('Buisness Name', buisness),
       location_served: validators.checkRequire('Location Area Served', served),
       category: validators.checkRequire('Service Category', category),
@@ -166,9 +164,13 @@ const EditProfile = ({navigation}) => {
       formData.append('website', website);
       formData.append('business_name', buisness);
       formData.append('location_area_served', served);
-      formData.append('service_category', category);
-      if (profileImage) {
-        formData.append('profile_picture', profileImage);
+      formData.append('service_category', category?.value);
+      if (profileImage && profileImage?.mime) {
+        formData.append('profile_picture', {
+          uri: profileImage?.path,
+          type: profileImage?.mime || 'image/jpeg',
+          name: profileImage?.filename || 'profileImage?.path',
+        });
       }
       console.log('FormData ====>', formData);
       POST_WITH_TOKEN(
@@ -188,7 +190,6 @@ const EditProfile = ({navigation}) => {
         },
         fail => {
           console.log(fail, 'errorerrorerror>>');
-
           setLoading(false);
         },
       );

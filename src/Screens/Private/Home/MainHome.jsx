@@ -39,7 +39,8 @@ const MainHome = ({navigation}) => {
       GET_PROFILE,
       success => {
         console.log(success, 'successsuccesssuccess-->>>');
-        dispatch(userDetails(success?.data));
+        // alert (JSON.stringify(success?.data))
+        // dispatch(userDetails(success?.data));
       },
       error => {
         console.log(error, 'errorerrorerror>>');

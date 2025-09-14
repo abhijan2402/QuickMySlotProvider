@@ -28,7 +28,6 @@ const ManageServices = ({navigation}) => {
   const [tab, setTab] = useState('services');
   const [subServices, setSubServices] = useState([]);
   console.log(subServices);
-
   const [services, setServices] = useState([]);
   const isFocus = useIsFocused();
   const [loading, setLoading] = useState(false);
@@ -125,30 +124,27 @@ const ManageServices = ({navigation}) => {
       );
     }
   };
-
   const Services = ({item}) => {
+    console.log(item, 'itemitemitemitemitem');
+
     return (
       <View key={item.id} style={styles.serviceCard}>
-        {/* Category Icon */}
-        {/* <View style={[styles.categoryBox, {backgroundColor: item.color}]}>
-                <Typography size={12} fontWeight="600" color={COLOR.white}>
-                  {item.category}
-                </Typography>
-              </View> */}
+        {/* Left Icon */}
         <Image
-          source={{uri: item?.image_url}}
-          style={{height: 30, width: 30}}
+          source={{uri: item?.image}}
+          style={styles.serviceImage}
           resizeMode="contain"
         />
 
-        {/* Service Details */}
-        <View style={{flex: 1, marginLeft: 10}}>
-          {/* Title + Actions */}
+        {/* Details */}
+        <View style={{flex: 1, marginLeft: 12}}>
+          {/* Header Row */}
           <View style={styles.rowBetween}>
-            <Typography size={14} fontWeight="600" color={COLOR.black}>
+            <Typography size={16} fontWeight="700" color={COLOR.black}>
               {item.name}
             </Typography>
 
+            {/* Action Icons */}
             <View style={styles.actionsRow}>
               <TouchableOpacity
                 onPress={() => {
@@ -172,11 +168,10 @@ const ManageServices = ({navigation}) => {
                   setDeleteServiceID(item?.id);
                 }}>
                 <Image
-                  tintColor={'red'}
                   source={{
                     uri: 'https://cdn-icons-png.flaticon.com/128/6861/6861362.png',
                   }}
-                  style={styles.actionIcon}
+                  style={[styles.actionIcon, {tintColor: 'red'}]}
                 />
               </TouchableOpacity>
             </View>
@@ -186,161 +181,77 @@ const ManageServices = ({navigation}) => {
           <Typography
             size={12}
             color={COLOR.darkGrey}
-            style={{marginVertical: 2}}>
+            style={{marginVertical: 4}}>
             {item.description}
           </Typography>
-          <Typography size={12} fontWeight="600" style={{marginTop: 4}}>
-            Category: {item.category.name}
-          </Typography>
-          <Typography size={12} fontWeight="600" style={{marginTop: 4}}>
-            Gender: {item.gender}
-          </Typography>
 
-          {/* Price + Time */}
-          <Typography
-            size={13}
-            fontWeight="600"
-            color={COLOR.black}
-            style={{marginTop: 4}}>
-            Price: ${Number(item.price).toFixed(2)}
-          </Typography>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginTop: 4,
-            }}>
-            <Typography
-              size={12}
-              fontWeight="600"
-              style={{
-                paddingRight: 8,
-                paddingVertical: 2,
-                borderRadius: 6,
-                overflow: 'hidden',
-                alignSelf: 'flex-start',
-              }}>
-              Duration:
+          {/* Info */}
+          <View style={styles.metaInfo}>
+            <Typography size={12} fontWeight="600">
+              Category: <Typography size={12}>{item.category?.name}</Typography>
             </Typography>
-            <Typography
-              size={12}
-              fontWeight="600"
-              color="#004aad"
-              style={{
-                backgroundColor: '#e6f0ff',
-                paddingHorizontal: 8,
-                paddingVertical: 2,
-                borderRadius: 6,
-                overflow: 'hidden',
-                alignSelf: 'flex-start',
-              }}>
-              {item.duration}
+            <Typography size={12} fontWeight="600">
+              Gender: <Typography size={12}>{item.gender}</Typography>
             </Typography>
           </View>
-          <View style={styles.rowBetween}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: 4,
-              }}>
-              <Typography size={13} fontWeight="600" color={COLOR.black}>
-                {'Peak Hours:'}{' '}
+
+          {/* Price & Duration */}
+          <View style={styles.metaInfo}>
+            <Typography size={12} fontWeight="600">
+              Price:{' '}
+              <Typography color="#004aad">
+                ${Number(item.price).toFixed(2)}
               </Typography>
-              {Object.entries(item.peak_hours).map(
-                ([timeRange, price], idx) => (
-                  <Typography
-                    key={idx}
-                    size={12}
-                    fontWeight="600"
-                    style={{
-                      overflow: 'hidden',
-                    }}>
-                    {`${timeRange}`}
+            </Typography>
+            <Typography size={12} fontWeight="600">
+              Duration:{' '}
+              <Typography color="#004aad" style={styles.pill}>
+                {item.duration}
+              </Typography>
+            </Typography>
+          </View>
+
+          {/* Peak Hours */}
+          {item.peak_hours && Object.keys(item.peak_hours).length > 0 && (
+            <>
+              <Typography
+                size={13}
+                fontWeight="700"
+                color={COLOR.black}
+                style={{marginTop: 6}}>
+                Peak Hours
+              </Typography>
+              {Object.entries(item.peak_hours).map(([time, price], idx) => (
+                <View key={idx} style={styles.metaInfo}>
+                  <Typography size={12}>{time}</Typography>
+                  <Typography size={12} color="#004aad">
+                    ${price}
                   </Typography>
-                ),
-              )}
-            </View>
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginTop: 4,
-            }}>
-            <Typography
-              size={12}
-              fontWeight="600"
-              style={{
-                paddingRight: 8,
-                paddingVertical: 2,
-                borderRadius: 6,
-                overflow: 'hidden',
-                alignSelf: 'flex-start',
-              }}>
-              Peak Hours Price:
-            </Typography>
-            {Object.entries(item.peak_hours).map(([timeRange, price], idx) => (
-              <Typography
-                key={idx}
-                size={12}
-                fontWeight="600"
-                color="#004aad"
-                style={{
-                  backgroundColor: '#e6f0ff',
-                  paddingHorizontal: 8,
-                  paddingVertical: 2,
-                  borderRadius: 6,
-                  overflow: 'hidden',
-                }}>
-                {`$${price}`}
-              </Typography>
-            ))}
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginTop: 4,
-            }}>
-            {Object.entries(item.addons).map(([timeRange, price], idx) => (
-              <Typography
-                key={idx}
-                size={12}
-                fontWeight="600"
-                style={{
-                  overflow: 'hidden',
-                }}>
-                {`${timeRange}`}
-              </Typography>
-            ))}
-            {Object.entries(item.addons).map(([timeRange, price], idx) => (
-              <Typography
-                key={idx}
-                size={12}
-                fontWeight="600"
-                color="#004aad"
-                style={{
-                  backgroundColor: '#e6f0ff',
-                  paddingHorizontal: 8,
-                  paddingVertical: 2,
-                  borderRadius: 6,
-                  overflow: 'hidden',
-                }}>
-                {`$${price}`}
-              </Typography>
-            ))}
-          </View>
+                </View>
+              ))}
+            </>
+          )}
 
-          {/* Labels */}
-          {/* <View style={styles.labelsRow}>
-                      <Typography size={11} style={styles.labelOrange}>
-                        Peak Eligible
-                      </Typography>
-                      <Typography size={11} style={styles.labelGreen}>
-                        Discount Eligible
-                      </Typography>
-                    </View> */}
+          {/* Addons */}
+          {item.addons && Object.keys(item.addons).length > 0 && (
+            <>
+              <Typography
+                size={13}
+                fontWeight="700"
+                color={COLOR.black}
+                style={{marginTop: 6}}>
+                Addons
+              </Typography>
+              {Object.entries(item.addons).map(([addon, price], idx) => (
+                <View key={idx} style={styles.metaInfo}>
+                  <Typography size={12}>{addon}</Typography>
+                  <Typography size={12} color="#004aad">
+                    ${price}
+                  </Typography>
+                </View>
+              ))}
+            </>
+          )}
         </View>
       </View>
     );
@@ -360,7 +271,7 @@ const ManageServices = ({navigation}) => {
           {/* Title + Actions */}
           <View style={styles.rowBetween}>
             <Typography size={14} fontWeight="600" color={COLOR.black}>
-              {item?.category?.name}
+              {item?.name}
             </Typography>
 
             <View style={styles.actionsRow}>
@@ -445,7 +356,7 @@ const ManageServices = ({navigation}) => {
           style={{marginTop: 20}}
         />
       ) : (
-        <View>
+        <View style={{flex: 1}}>
           {services.length > 0 && (
             <Typography
               size={15}
@@ -455,27 +366,30 @@ const ManageServices = ({navigation}) => {
               Your Current Services
             </Typography>
           )}
-          <FlatList
-            data={tab === 'services' ? services : subServices}
-            renderItem={({item}) => {
-              return tab === 'services' ? (
-                <Services item={item} />
-              ) : (
-                <SubServices item={item} />
-              );
-            }}
-            ListEmptyComponent={() => {
-              return (
-                <EmptyView
-                  title={
-                    tab === 'services'
-                      ? 'No Services Found'
-                      : 'No Sub Services Found'
-                  }
-                />
-              );
-            }}
-          />
+         
+            <FlatList
+              data={tab === 'services' ? services : subServices}
+              renderItem={({item}) => {
+                return tab === 'services' ? (
+                  <Services item={item} />
+                ) : (
+                  <SubServices item={item} />
+                );
+              }}
+              ListEmptyComponent={() => {
+                return (
+                  <EmptyView
+                    title={
+                      tab === 'services'
+                        ? 'No Services Found'
+                        : 'No Sub Services Found'
+                    }
+                  />
+                );
+              }}
+            />
+            <View style={{height: 70}}></View>
+         
         </View>
       )}
       <TouchableOpacity
@@ -620,5 +534,26 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 50,
     width: windowWidth * 0.45,
+  },
+  serviceImage: {
+    height: 40,
+    width: 40,
+    borderRadius: 8,
+    backgroundColor: '#f0f0f0',
+  },
+
+  metaInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+
+  pill: {
+    backgroundColor: '#e6f0ff',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+    overflow: 'hidden',
   },
 });

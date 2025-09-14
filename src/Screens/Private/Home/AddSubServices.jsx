@@ -19,7 +19,11 @@ import {ErrorBox} from '../../../Components/UI/ErrorBox';
 import useKeyboard from '../../../Constants/Utility';
 import Button from '../../../Components/UI/Button';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {ADD_BANK, ADD_SUB_SERVICES, UPDATE_BANK} from '../../../Constants/ApiRoute';
+import {
+  ADD_BANK,
+  ADD_SUB_SERVICES,
+  UPDATE_BANK,
+} from '../../../Constants/ApiRoute';
 import {POST_FORM_DATA, POST_WITH_TOKEN} from '../../../Backend/Api';
 import {useIsFocused} from '@react-navigation/native';
 import {Typography} from '../../../Components/UI/Typography';
@@ -32,19 +36,21 @@ const AddSubServices = ({navigation, route}) => {
   const {isKeyboardVisible} = useKeyboard();
   const [loading, setLoading] = useState(false);
   const data = route?.params?.data;
-  console.log(data);
+  console.log(data, 'dsadsawqewqewqefsdcbgfhyjuuy');
   const isEditing = route?.params?.isEditing;
   const [error, setError] = useState({});
   const isFocus = useIsFocused();
   const [image, setImage] = useState(null);
+  console.log(image?.path, 'dasdasdkdsjasodhuyoeuqiwdjaed');
+
   const [showModal, setShowModal] = useState(false);
-  
-    useEffect(() => {
-      if (isFocus) {
-        setSubServices(data?.name);
-        setImage(data?.image_url);
-      }
-    }, [isFocus]);
+
+  useEffect(() => {
+    if (isFocus) {
+      setSubServices(data?.name);
+      setImage({path: data?.image_url});
+    }
+  }, [isFocus]);
 
   // validation error state
 
@@ -69,7 +75,7 @@ const AddSubServices = ({navigation, route}) => {
       setLoading(true);
       const formData = new FormData();
       formData.append('name', subServices);
-      if (image) {
+      if (image?.mime) {
         formData.append('image', {
           uri: image.path || image.uri,
           type: image.mime || 'image/jpeg',
@@ -77,7 +83,7 @@ const AddSubServices = ({navigation, route}) => {
         });
       }
 
-      console.log('FormData ====>', formData);
+      console.log(ADD_SUB_SERVICES + data?.id, 'FormData ====>', formData);
       if (isEditing) {
         POST_FORM_DATA(
           ADD_SUB_SERVICES + data?.id,
@@ -155,7 +161,7 @@ const AddSubServices = ({navigation, route}) => {
           style={[styles.label, {marginTop: 20}]}>
           Sub Service Image
         </Typography>
-        {image ? (
+        {image?.path ? (
           <View style={styles.imgWrapper}>
             <Image
               source={{uri: image.path || image.uri || image}}
@@ -241,5 +247,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     fontWeight: '600',
+  },
+  previewImg: {
+    height: 200,
+    width: '100%',
+    borderRadius: 20,
+  },
+  deleteBtn: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 12,
+    padding: 6,
   },
 });
