@@ -11,4 +11,5 @@ export const images = {
   close: require('../../assets/Images/multiply.png'),
   arrowup: require('../../assets/Images/arrowup.png'),
   arrowdown: require('../../assets/Images/arrowdown.png'),
+  file: require('../../assets/Images/file.png'),
 };

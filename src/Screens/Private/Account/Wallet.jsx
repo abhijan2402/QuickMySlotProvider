@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, FlatList} from 'react-native';
+import {StyleSheet, View, FlatList, ActivityIndicator} from 'react-native';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import CustomButton from '../../../Components/CustomButton';
@@ -7,7 +7,7 @@ import {Typography} from '../../../Components/UI/Typography'; // ✅ Import Typo
 import {useIsFocused} from '@react-navigation/native';
 import {GET_WITH_TOKEN} from '../../../Backend/Api';
 import {ADD_WALLET} from '../../../Constants/ApiRoute';
-import { windowWidth } from '../../../Constants/Dimensions';
+import {windowWidth} from '../../../Constants/Dimensions';
 
 const Wallet = ({navigation}) => {
   const [balance, setBalance] = useState();
@@ -17,13 +17,14 @@ const Wallet = ({navigation}) => {
 
   useEffect(() => {
     if (isFocus) {
+      setLoading(true)
       GET_WITH_TOKEN(
         ADD_WALLET,
         success => {
           console.log(success, 'successsuccesssuccess-->>>');
           setLoading(false);
-          setTransaction(success?.data?.transactions)
-          setBalance(success?.data?.total_amount)
+          setTransaction(success?.data?.transactions);
+          setBalance(success?.data?.total_amount);
         },
         error => {
           console.log(error, 'errorerrorerror>>');
@@ -52,7 +53,10 @@ const Wallet = ({navigation}) => {
   const renderTransaction = ({item}) => (
     <View style={styles.transactionItem}>
       <View>
-        <Typography size={14} color={COLOR.black} style={{ width: windowWidth * 0.6}}>
+        <Typography
+          size={14}
+          color={COLOR.black}
+          style={{width: windowWidth * 0.6}}>
           Transaction ID: {item.transaction_id}
         </Typography>
         <Typography size={12} color="#999" style={{marginTop: 5}}>
@@ -76,43 +80,47 @@ const Wallet = ({navigation}) => {
         leftTint={COLOR.black}
       />
 
-      <View style={{paddingHorizontal: 10}}>
-        {/* Balance Card */}
-        <View style={styles.balanceCard}>
-          <Typography size={14} color="#555">
-            Current Balance
-          </Typography>
+      {loading ? (
+        <ActivityIndicator size="large" color="#007bff" />
+      ) : (
+        <View style={{paddingHorizontal: 10}}>
+          {/* Balance Card */}
+          <View style={styles.balanceCard}>
+            <Typography size={14} color="#555">
+              Current Balance
+            </Typography>
+            <Typography
+              size={28}
+              fontWeight="700"
+              color={COLOR.black}
+              style={{marginTop: 5}}>
+              ₹{Number(balance).toFixed(2)}
+            </Typography>
+          </View>
+
+          {/* Add Amount Button */}
+          <CustomButton
+            title="Add Amount"
+            onPress={() => navigation.navigate('AddAmount')}
+            style={{marginVertical: 15}}
+          />
+
+          {/* Transaction History */}
           <Typography
-            size={28}
+            size={16}
             fontWeight="700"
             color={COLOR.black}
-            style={{marginTop: 5}}>
-            ₹{Number(balance).toFixed(2)}
+            style={{marginTop: 10, marginBottom: 8}}>
+            Transaction History
           </Typography>
+          <FlatList
+            data={transaction}
+            keyExtractor={item => item.id}
+            renderItem={renderTransaction}
+            contentContainerStyle={{paddingBottom: 20}}
+          />
         </View>
-
-        {/* Add Amount Button */}
-        <CustomButton
-          title="Add Amount"
-          onPress={() => navigation.navigate('AddAmount')}
-          style={{marginVertical: 15}}
-        />
-
-        {/* Transaction History */}
-        <Typography
-          size={16}
-          fontWeight="700"
-          color={COLOR.black}
-          style={{marginTop: 10, marginBottom: 8}}>
-          Transaction History
-        </Typography>
-        <FlatList
-          data={transaction}
-          keyExtractor={item => item.id}
-          renderItem={renderTransaction}
-          contentContainerStyle={{paddingBottom: 20}}
-        />
-      </View>
+      )}
     </View>
   );
 };

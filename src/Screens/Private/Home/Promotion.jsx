@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import HomeHeader from '../../../Components/HomeHeader';
 import {COLOR} from '../../../Constants/Colors';
@@ -32,6 +33,7 @@ const Promotion = ({navigation}) => {
   }, [isFocus]);
 
   const getPromotions = () => {
+    setLoading(true);
     GET_WITH_TOKEN(
       ADD_PROMOTION,
       success => {
@@ -52,7 +54,7 @@ const Promotion = ({navigation}) => {
   };
 
   const handleDelete = () => {
-    setLoading(true)
+    setLoading(true);
     POST_WITH_TOKEN(
       DELETE_PROMOTION + PromoId,
       success => {
@@ -95,7 +97,7 @@ const Promotion = ({navigation}) => {
               onPress={() => {
                 navigation.navigate('AddPromotion', {
                   data: item,
-                  isEditing: true
+                  isEditing: true,
                 });
               }}>
               <Image
@@ -108,7 +110,6 @@ const Promotion = ({navigation}) => {
               onPress={() => {
                 setDelete(true);
                 setPromoId(item?.id);
-                
               }}>
               <Image
                 source={images.delete}
@@ -136,17 +137,32 @@ const Promotion = ({navigation}) => {
       />
 
       <View style={{flex: 1, backgroundColor: '#fff', paddingHorizontal: 5}}>
-        <FlatList
-          data={promotions}
-          renderItem={renderOffer}
-          style={{flex: 1}}
-          keyExtractor={(item, index) => index.toString()}
-          contentContainerStyle={styles.container}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={<EmptyView title="No promotions available." />}
-        />
+        {loading ? (
+          <ActivityIndicator
+            size="large"
+            color="#007bff"
+            style={{marginTop: 20}}
+          />
+        ) : (
+          <FlatList
+            data={promotions}
+            renderItem={renderOffer}
+            style={{flex: 1}}
+            keyExtractor={(item, index) => index.toString()}
+            contentContainerStyle={styles.container}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={<EmptyView title="No promotions available." />}
+          />
+        )}
 
-        <View style={{marginTop: 10}}>
+        <View
+          style={{
+            marginTop: 10,
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: 10,
+          }}>
           <Button
             onPress={() => navigation.navigate('AddPromotion')}
             title={'+ Add Promotion'}

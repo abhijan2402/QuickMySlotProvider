@@ -17,11 +17,12 @@ const EmptyView = ({style = {}, title = 'No record found!'}) => {
         style,
       ]}>
       <Image
-        source={images.camera}
+        source={images.file}
         style={{
           height: 50,
           width: 50,
           alignSelf: 'center',
+          marginBottom:10
         }}
       />
       <Typography textAlign="center">{title}</Typography>
