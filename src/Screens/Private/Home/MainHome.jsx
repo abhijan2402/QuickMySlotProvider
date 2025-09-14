@@ -26,7 +26,6 @@ const MainHome = ({navigation}) => {
   const isFocus = useIsFocused();
   const dispatch = useDispatch();
   const userdata = useSelector(store => store.userDetails);
-  console.log(userdata, 'userdatauserdatauserdatauserdata===>');
 
   useEffect(() => {
     if (isFocus) {

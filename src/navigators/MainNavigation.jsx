@@ -28,7 +28,7 @@ const MainNavigation = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <ToastProvider>
-        {isAuth ? <RootNavigation /> : <AuthStack />}
+        {!isAuth ? <RootNavigation /> : <AuthStack />}
       </ToastProvider>
     </SafeAreaView>
   );
