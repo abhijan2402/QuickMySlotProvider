@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  Text,
 } from 'react-native';
 import HomeHeader from '../../Components/HomeHeader';
 import {COLOR} from '../../Constants/Colors';
@@ -21,10 +22,12 @@ import {Typography} from '../../Components/UI/Typography';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import useKeyboard from '../../Constants/Utility';
 import {useDispatch, useSelector} from 'react-redux';
-import {BUSINESS_PROFILE} from '../../Constants/ApiRoute';
-import {POST_FORM_DATA} from '../../Backend/Api';
+import {BUSINESS_PROFILE, CATEGORY} from '../../Constants/ApiRoute';
+import {GET_WITH_TOKEN, POST_FORM_DATA} from '../../Backend/Api';
 import {ToastMsg} from '../../Backend/Utility';
-import { userDetails } from '../../Redux/action';
+import {userDetails} from '../../Redux/action';
+import {useIsFocused} from '@react-navigation/native';
+import {Dropdown} from 'react-native-element-dropdown';
 
 const CompleteProfile = ({navigation}) => {
   const [showModal, setShowModal] = useState(false);
@@ -48,10 +51,39 @@ const CompleteProfile = ({navigation}) => {
   const {isKeyboardVisible} = useKeyboard();
   const userdata = useSelector(store => store.userDetails);
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const isFocus = useIsFocused();
+  const [categoryList, setCategoryList] = useState([]);
+  const [category, setCategory] = useState();
 
   // Error state
   const [errors, setErrors] = useState({});
+  useEffect(() => {
+    if (isFocus) {
+      GET_WITH_TOKEN(
+        CATEGORY,
+        success => {
+          setLoading(false);
+          console.log(success);
+          const formattedData = success?.data?.map(item => ({
+            label: item.name,
+            value: item.id,
+          }));
+
+          setCategoryList(formattedData || []);
+        },
+        error => {
+          setLoading(false);
+          console.log(error);
+
+          ToastMsg(error?.message);
+        },
+        fail => {
+          setLoading(false);
+        },
+      );
+    }
+  }, [isFocus]);
 
   const handleSelect = response => {
     if (currentField) {
@@ -95,6 +127,7 @@ const CompleteProfile = ({navigation}) => {
     if (!experience.trim()) newErrors.experience = 'Experience is required';
     if (!location.trim()) newErrors.location = 'Location is required';
     if (!gst.trim()) newErrors.gst = 'GST Number is required';
+    if (!category) newErrors.category = 'Service Category is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -110,6 +143,8 @@ const CompleteProfile = ({navigation}) => {
       formData.append('years_of_experience', experience);
       formData.append('gstin_number', gst);
       formData.append('business_website', website);
+      formData.append('service_category', category);
+
       if (image?.PhotoVerifi) {
         formData.append('photo_verification', image?.PhotoVerifi);
       }
@@ -337,6 +372,23 @@ const CompleteProfile = ({navigation}) => {
         )}
         {errors.pan && <ErrorBox error={errors.pan} />}
 
+        <Text style={[styles.label, {marginTop: 18}]}>Service Category</Text>
+        <Dropdown
+          style={styles.dropdown}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          data={categoryList}
+          maxHeight={150}
+          labelField="label"
+          valueField="value"
+          placeholder="Select Service Category Type"
+          value={category}
+          onChange={item => setCategory(item.value)}
+        />
+        {errors.category && (
+          <ErrorBox error={errors.category} style={{marginBottom: 20}} />
+        )}
+
         {/* About Business */}
         <Input
           label="About Your Business"
@@ -426,5 +478,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     borderRadius: 12,
     padding: 6,
+  },
+  dropdown: {
+    height: 50,
+    borderColor: COLOR.primary,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginTop: 5,
+  },
+  placeholderStyle: {
+    fontSize: 14,
+    color: 'gray',
+  },
+  selectedTextStyle: {
+    fontSize: 14,
+    color: COLOR.black,
   },
 });

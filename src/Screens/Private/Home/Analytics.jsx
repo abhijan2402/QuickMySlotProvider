@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {View, TouchableOpacity, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import LinearGradient from 'react-native-linear-gradient';
@@ -15,12 +21,13 @@ const MyAnalytics = ({navigation}) => {
 
   useEffect(() => {
     if (isFocus) {
+      setLoading(true);
       GET_WITH_TOKEN(
         ANALYTICS,
         success => {
           console.log(success, 'successsuccesssuccess-->>>');
           setLoading(false);
-          setData(success?.data)
+          setData(success?.data);
         },
         error => {
           console.log(error, 'errorerrorerror>>');
@@ -43,70 +50,86 @@ const MyAnalytics = ({navigation}) => {
         leftTint={COLOR.black}
       />
 
-      <ScrollView
-        contentContainerStyle={{paddingHorizontal: 5, paddingVertical: 15}}>
-        {/* Performance Overview */}
-        <View style={styles.card}>
-          <Typography style={styles.sectionTitle}>
-            Performance Overview
-          </Typography>
-
-          <LinearGradient
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 1}}
-            colors={['#FFEEF0', '#E6E6FA']}
-            style={styles.statBox}>
-            <Typography style={styles.amount}>{data?.revenue_this_month}</Typography>
-            <Typography style={styles.label}>Revenue This Month</Typography>
-          </LinearGradient>
-
-          <LinearGradient
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 1}}
-            colors={['#FFEEF0', '#E6E6FA']}
-            style={styles.statBox}>
-              <Typography style={styles.amount}>{data?.total_customers}</Typography>
-            <Typography style={styles.label}>Total Customers</Typography>
-          </LinearGradient>
-
-          <LinearGradient
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 1}}
-            colors={['#FFEEF0', '#E6E6FA']}
-            style={styles.statBox}>
-            <Typography style={styles.amount}>{data?.reach}↑</Typography>
-            <Typography style={styles.label}>Reach (vs. Last Month)</Typography>
-          </LinearGradient>
-
-          <LinearGradient
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 1}}
-            colors={['#FFEEF0', '#E6E6FA']}
-            style={styles.statBox}>
-            <Typography style={styles.amount}>{data?.estimated_footfall}</Typography>
-            <Typography style={styles.label}>Estimated Footfall</Typography>
-          </LinearGradient>
-        </View>
-
-        {/* Promotion Card */}
-        <View style={styles.card}>
-          <Typography style={styles.sectionTitle}>
-            Promote Your Business
-          </Typography>
-          <View style={styles.promoBox}>
-            <Typography style={styles.promoText}>
-              Increase Profile Visibility{'\n'}Get noticed by more customers.
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#007bff"
+          style={{marginTop: 20}}
+        />
+      ) : (
+        <ScrollView
+          contentContainerStyle={{paddingHorizontal: 5, paddingVertical: 15}}>
+          {/* Performance Overview */}
+          <View style={styles.card}>
+            <Typography style={styles.sectionTitle}>
+              Performance Overview
             </Typography>
-            <TouchableOpacity
-              style={styles.boostBtn}
-              onPress={() => {
-                navigation.navigate('BoostProfile');
-              }}>
-              <Typography style={styles.boostText}>Boost Profile</Typography>
-            </TouchableOpacity>
+
+            <LinearGradient
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1}}
+              colors={['#FFEEF0', '#E6E6FA']}
+              style={styles.statBox}>
+              <Typography style={styles.amount}>
+                {data?.revenue_this_month}
+              </Typography>
+              <Typography style={styles.label}>Revenue This Month</Typography>
+            </LinearGradient>
+
+            <LinearGradient
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1}}
+              colors={['#FFEEF0', '#E6E6FA']}
+              style={styles.statBox}>
+              <Typography style={styles.amount}>
+                {data?.total_customers}
+              </Typography>
+              <Typography style={styles.label}>Total Customers</Typography>
+            </LinearGradient>
+
+            <LinearGradient
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1}}
+              colors={['#FFEEF0', '#E6E6FA']}
+              style={styles.statBox}>
+              <Typography style={styles.amount}>{data?.reach}↑</Typography>
+              <Typography style={styles.label}>
+                Reach (vs. Last Month)
+              </Typography>
+            </LinearGradient>
+
+            <LinearGradient
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1}}
+              colors={['#FFEEF0', '#E6E6FA']}
+              style={styles.statBox}>
+              <Typography style={styles.amount}>
+                {data?.estimated_footfall}
+              </Typography>
+              <Typography style={styles.label}>Estimated Footfall</Typography>
+            </LinearGradient>
           </View>
-        </View>
-      </ScrollView>
+
+          {/* Promotion Card */}
+          <View style={styles.card}>
+            <Typography style={styles.sectionTitle}>
+              Promote Your Business
+            </Typography>
+            <View style={styles.promoBox}>
+              <Typography style={styles.promoText}>
+                Increase Profile Visibility{'\n'}Get noticed by more customers.
+              </Typography>
+              <TouchableOpacity
+                style={styles.boostBtn}
+                onPress={() => {
+                  navigation.navigate('BoostProfile');
+                }}>
+                <Typography style={styles.boostText}>Boost Profile</Typography>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      )}
     </View>
   );
 };

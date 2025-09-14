@@ -7,6 +7,7 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  Text,
 } from 'react-native';
 import Input from '../../../Components/Input';
 import {COLOR} from '../../../Constants/Colors';
@@ -19,9 +20,15 @@ import Button from '../../../Components/UI/Button';
 import {Typography} from '../../../Components/UI/Typography';
 import {useDispatch, useSelector} from 'react-redux';
 import {useIsFocused} from '@react-navigation/native';
-import {POST_FORM_DATA, POST_WITH_TOKEN} from '../../../Backend/Api';
-import {UPDATE_PROFILE} from '../../../Constants/ApiRoute';
-import { userDetails } from '../../../Redux/action';
+import {
+  GET_WITH_TOKEN,
+  POST_FORM_DATA,
+  POST_WITH_TOKEN,
+} from '../../../Backend/Api';
+import {CATEGORY, UPDATE_PROFILE} from '../../../Constants/ApiRoute';
+import {userDetails} from '../../../Redux/action';
+import {Dropdown} from 'react-native-element-dropdown';
+import {ErrorBox} from '../../../Components/UI/ErrorBox';
 
 const EditProfile = ({navigation}) => {
   const [firstName, setFirstName] = useState('');
@@ -32,7 +39,8 @@ const EditProfile = ({navigation}) => {
   const [website, setWebsite] = useState('');
   const [buisness, setBuisness] = useState('');
   const [served, setServed] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState();
+
   const [isEditing, setIsEditing] = useState(false);
   const {isKeyboardVisible} = useKeyboard();
   const userdata = useSelector(store => store.userDetails);
@@ -41,18 +49,46 @@ const EditProfile = ({navigation}) => {
     'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
   );
   console.log(profileImage);
-  
+
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState({});
   const isFocus = useIsFocused();
-  const [loading , setLoading] = useState(false)
-  const dispatch = useDispatch()
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const [categoryList, setCategoryList] = useState([]);
 
   useEffect(() => {
     if (isFocus) {
       setPhone(userdata?.phone_number);
       setWebsite(userdata?.website);
       setProfileImage({path: userdata?.photo_verification});
+    }
+  }, [isFocus]);
+
+  useEffect(() => {
+    if (isFocus) {
+      GET_WITH_TOKEN(
+        CATEGORY,
+        success => {
+          setLoading(false);
+          console.log(success);
+          const formattedData = success?.data?.map(item => ({
+            label: item.name,
+            value: item.id,
+          }));
+
+          setCategoryList(formattedData || []);
+        },
+        error => {
+          setLoading(false);
+          console.log(error);
+
+          ToastMsg(error?.message);
+        },
+        fail => {
+          setLoading(false);
+        },
+      );
     }
   }, [isFocus]);
 
@@ -92,8 +128,10 @@ const EditProfile = ({navigation}) => {
       formData.append('website', website);
       formData.append('business_name', buisness);
       formData.append('location_area_served', served);
+      formData.append('service_category', category);
+
       if (profileImage) {
-        formData.append('pan_card', profileImage);
+        formData.append('profile_picture', profileImage);
       }
 
       console.log('FormData ====>', formData);
@@ -104,7 +142,7 @@ const EditProfile = ({navigation}) => {
           console.log(success, 'successsuccesssuccess-->>>');
           setLoading(false);
           setIsEditing(false);
-          fetchUserProfile()
+          fetchUserProfile();
         },
         error => {
           console.log(error, 'errorerrorerror>>');
@@ -272,22 +310,28 @@ const EditProfile = ({navigation}) => {
             error={error.location_served}
           />
 
-          <Input
-            label="service category"
-            placeholder="Enter Your service category"
-            value={category}
-            style={{borderColor: COLOR.primary}}
-            onChangeText={setCategory}
-            editable={isEditing}
-            error={error.category}
-            mainStyle={{marginBottom: 15}}
+          <Text style={[styles.label, {marginTop: 18}]}>Service Category</Text>
+          <Dropdown
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            data={categoryList}
+            maxHeight={150}
+            labelField="label"
+            valueField="value"
+            placeholder="Select Service Category Type"
+            value={category} // category will hold the selected id
+            onChange={item => setCategory(item.value)} // store id when selected
           />
+          {error.category && (
+            <ErrorBox error={error.category} style={{marginBottom: 20}} />
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
 
       {/* Edit / Update Button */}
       <Button
-      loading={loading}
+        loading={loading}
         title={isEditing ? 'Update' : 'Edit'}
         onPress={() => {
           if (isEditing) {
@@ -372,5 +416,21 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
+  },
+  dropdown: {
+    height: 50,
+    borderColor: COLOR.primary,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginTop: 5,
+  },
+  placeholderStyle: {
+    fontSize: 14,
+    color: 'gray',
+  },
+  selectedTextStyle: {
+    fontSize: 14,
+    color: COLOR.black,
   },
 });

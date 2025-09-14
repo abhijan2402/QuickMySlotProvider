@@ -46,10 +46,12 @@ const AddPromotion = ({navigation, route}) => {
   useEffect(() => {
     if (isFocus) {
       setPromoCode(data?.promo_code);
-      setDiscount((data?.amount));
+      setDiscount(data?.amount);
       setDescription(data?.description);
       setIsActive(data?.isActive);
       setDiscountType(data?.type);
+      setStartDate(data?.start_on ? new Date(data.start_on) : '');
+      setEndDate(data?.expired_on ? new Date(data.expired_on) : '');
     }
   }, [isFocus]);
 
@@ -57,6 +59,14 @@ const AddPromotion = ({navigation, route}) => {
     {label: 'Flat', value: 'flat'},
     // {label: 'Amount (₹)', value: 'amount'},
   ];
+
+  const formatDate = (date) => {
+  if (!date) return '';
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // ensure 2 digits
+  const day = String(date.getDate()).padStart(2, '0');       // ensure 2 digits
+  return `${year}-${month}-${day}`;
+};
 
   const handleAddPromotion = () => {
     let validationErrors = {
@@ -86,49 +96,49 @@ const AddPromotion = ({navigation, route}) => {
       formData.append('promo_code', promoCode);
       formData.append('type', discountType);
       formData.append('amount', discount);
-      formData.append('start_on', '2023-1-31');
-      formData.append('expired_on', '2023-12-31');
+      formData.append('start_on', formatDate(startDate));
+      formData.append('expired_on', formatDate(endDate));
       formData.append('description', description);
       formData.append('isActive', isActive ? 1 : 0);
       console.log('FormData ====>', formData);
-      if(isEditing){
+      if (isEditing) {
         POST_FORM_DATA(
-        UPDATE_PROMOTION + data?.id,
-        formData,
-        success => {
-          console.log(success, 'successsuccesssuccess-->>>');
-          setLoading(false);
-          navigation.goBack();
-        },
-        error => {
-          console.log(error, 'errorerrorerror>>');
-          setLoading(false);
-        },
-        fail => {
-          console.log(fail, 'errorerrorerror>>');
+          UPDATE_PROMOTION + data?.id,
+          formData,
+          success => {
+            console.log(success, 'successsuccesssuccess-->>>');
+            setLoading(false);
+            navigation.goBack();
+          },
+          error => {
+            console.log(error, 'errorerrorerror>>');
+            setLoading(false);
+          },
+          fail => {
+            console.log(fail, 'errorerrorerror>>');
 
-          setLoading(false);
-        },
-      );
-      }else {
+            setLoading(false);
+          },
+        );
+      } else {
         POST_FORM_DATA(
-        ADD_PROMOTION,
-        formData,
-        success => {
-          console.log(success, 'successsuccesssuccess-->>>');
-          setLoading(false);
-          navigation.goBack();
-        },
-        error => {
-          console.log(error, 'errorerrorerror>>');
-          setLoading(false);
-        },
-        fail => {
-          console.log(fail, 'errorerrorerror>>');
+          ADD_PROMOTION,
+          formData,
+          success => {
+            console.log(success, 'successsuccesssuccess-->>>');
+            setLoading(false);
+            navigation.goBack();
+          },
+          error => {
+            console.log(error, 'errorerrorerror>>');
+            setLoading(false);
+          },
+          fail => {
+            console.log(fail, 'errorerrorerror>>');
 
-          setLoading(false);
-        },
-      );
+            setLoading(false);
+          },
+        );
       }
     }
   };
@@ -137,7 +147,7 @@ const AddPromotion = ({navigation, route}) => {
     <View
       style={{flex: 1, backgroundColor: COLOR.white, paddingHorizontal: 15}}>
       <HomeHeader
-        title={isEditing ?  "Edit Promotion" : "Add Promotion"}
+        title={isEditing ? 'Edit Promotion' : 'Add Promotion'}
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
@@ -204,7 +214,7 @@ const AddPromotion = ({navigation, route}) => {
                   color: startDate ? COLOR.black : COLOR.grey,
                   fontSize: 14,
                 }}>
-                {!!startDate ? startDate : ''}
+                {!!startDate ? startDate.toLocaleDateString() : ''}
               </Text>
             </TouchableOpacity>
           </View>
@@ -222,7 +232,7 @@ const AddPromotion = ({navigation, route}) => {
                   color: endDate ? COLOR.black : COLOR.grey,
                   fontSize: 14,
                 }}>
-                {!!endDate ? endDate : ''}
+                {!!endDate ? endDate.toLocaleDateString() : ''}
               </Text>
             </TouchableOpacity>
           </View>
@@ -258,7 +268,7 @@ const AddPromotion = ({navigation, route}) => {
         modal
         open={openStartPicker || openEndPicker}
         date={startDate || new Date()}
-        minimumDate={openStartPicker ? openStartPicker : new Date()}
+        minimumDate={openStartPicker ? startDate : new Date()}
         mode="date"
         onConfirm={date => {
           if (openStartPicker) {
