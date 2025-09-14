@@ -9,7 +9,8 @@ const errorHandling = {
   },
 };
 
-export const API = 'https://lemonchiffon-walrus-503913.hostingersite.com/public/api/';
+export const API =
+  'https://lemonchiffon-walrus-503913.hostingersite.com/public/api/';
 export const token = store.getState().Token;
 export const statusMessage = {
   400: 'Invalid request format.',
@@ -80,14 +81,14 @@ export const GET_WITH_TOKEN = async (
   status = () => {},
 ) => {
   const tokenVal = store.getState().Token;
-  console.log(tokenVal,"TOKENNNN");
-  
+  console.log(tokenVal, 'TOKENNNN');
+
   try {
     await axios({
       method: 'get',
       url: `${API}${route}`,
       headers: {
-        authorization: `Bearer ${tokenVal}`,
+        authorization: `Bearer ${'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiZTI3OTZkZWZiNDdiMGY5ZWQ4MDBlZDJlOTViYTlkOWFiNDE3MjNlZWNlYmU1OTkzMjZhZDQyN2JlZjdiZDBkMTM0MDQ1ZTRiNzAxNzQyMTEiLCJpYXQiOjE3NTc3ODk3MDIuNjg4NzUsIm5iZiI6MTc1Nzc4OTcwMi42ODg3NTIsImV4cCI6MTc4OTMyNTcwMi42ODc5NTcsInN1YiI6IjY2Iiwic2NvcGVzIjpbXX0.HsiAqx9PoBUps6W2FuAhXnCSl6Lp542qluBrK-TPpBM2UwAj5lrF8mtd0GwUjQHuJDnJXGm7ypu3HAdY391VObdEIZnza0FVjs6Ev4kC4Tbzi1eRdpBM8LPJJgwWOVGeIKs5bcowQFShTCKG8uqv9Rw0jhbV_kTc1JvjaSeS8RJ-V-ryRQzgrx7O8GjtWpwMssnA9lYyqZ5uwMzPS6W8v8JXSas8sPE49NFnsYg3K1RlSRYMCD6yjcBySbDz4PLpJFTsSh1rph8b-rE1YnnZ6dReKD6feT065QfoX4155VVZPwaI-H0vsX9SOzY6vlcw1P9YiTnbXxB7Gf0Pztrj9lBS_yrJGveE4QsZhBkB6KLLvrw88ApBTYmJ6kSC9gnm0wKLPYZ_F3cA8xzNHn6M-X6NGui5GJ6HFqei6mqHjVjOsuULFQDDgAFHJtFg8g-laC00dbSMnc7BWlR5s3pIWiymqKT1Lx9o0Ww0jP2aNpDFXTIXBCNbyUeqki91hN1RnTRqF0LQzeopmM2piVl30gotFNI8FNK6mu8JjIgsXHA6DripnwNgvPBJMoA7TcmX3H0Enxp-vkrb7qp7V0dngbmD2aMo2HFmmyj33B3i8UYRQDYN95JzlGc39QEZOQmMJbw7XxeLS5RhW0TLXAWTVErosMQdWLCI_gsrQUD3FuQ'}`,
         ...headers,
       },
       ...errorHandling,
@@ -171,7 +172,7 @@ export const POST_FORM_DATA = async (
       url: `${API}${route}`,
       data: body,
       headers: {
-        authorization: `Bearer ${tokenVal}`,
+        authorization: `Bearer ${'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiZTI3OTZkZWZiNDdiMGY5ZWQ4MDBlZDJlOTViYTlkOWFiNDE3MjNlZWNlYmU1OTkzMjZhZDQyN2JlZjdiZDBkMTM0MDQ1ZTRiNzAxNzQyMTEiLCJpYXQiOjE3NTc3ODk3MDIuNjg4NzUsIm5iZiI6MTc1Nzc4OTcwMi42ODg3NTIsImV4cCI6MTc4OTMyNTcwMi42ODc5NTcsInN1YiI6IjY2Iiwic2NvcGVzIjpbXX0.HsiAqx9PoBUps6W2FuAhXnCSl6Lp542qluBrK-TPpBM2UwAj5lrF8mtd0GwUjQHuJDnJXGm7ypu3HAdY391VObdEIZnza0FVjs6Ev4kC4Tbzi1eRdpBM8LPJJgwWOVGeIKs5bcowQFShTCKG8uqv9Rw0jhbV_kTc1JvjaSeS8RJ-V-ryRQzgrx7O8GjtWpwMssnA9lYyqZ5uwMzPS6W8v8JXSas8sPE49NFnsYg3K1RlSRYMCD6yjcBySbDz4PLpJFTsSh1rph8b-rE1YnnZ6dReKD6feT065QfoX4155VVZPwaI-H0vsX9SOzY6vlcw1P9YiTnbXxB7Gf0Pztrj9lBS_yrJGveE4QsZhBkB6KLLvrw88ApBTYmJ6kSC9gnm0wKLPYZ_F3cA8xzNHn6M-X6NGui5GJ6HFqei6mqHjVjOsuULFQDDgAFHJtFg8g-laC00dbSMnc7BWlR5s3pIWiymqKT1Lx9o0Ww0jP2aNpDFXTIXBCNbyUeqki91hN1RnTRqF0LQzeopmM2piVl30gotFNI8FNK6mu8JjIgsXHA6DripnwNgvPBJMoA7TcmX3H0Enxp-vkrb7qp7V0dngbmD2aMo2HFmmyj33B3i8UYRQDYN95JzlGc39QEZOQmMJbw7XxeLS5RhW0TLXAWTVErosMQdWLCI_gsrQUD3FuQ'}`,
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
       },
@@ -207,14 +208,14 @@ export const POST_WITH_TOKEN = async (
     SimpleToast.show('Check Network, Try Again.', SimpleToast.SHORT);
   },
 ) => {
-  const tokenVal = store.getState().Token;  
+  const tokenVal = store.getState().Token;
   try {
     await axios({
       method: 'post',
       url: `${API}${route}`,
       data: body,
       headers: {
-        Authorization: `Bearer ${tokenVal}`,
+        Authorization: `Bearer ${'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiZTI3OTZkZWZiNDdiMGY5ZWQ4MDBlZDJlOTViYTlkOWFiNDE3MjNlZWNlYmU1OTkzMjZhZDQyN2JlZjdiZDBkMTM0MDQ1ZTRiNzAxNzQyMTEiLCJpYXQiOjE3NTc3ODk3MDIuNjg4NzUsIm5iZiI6MTc1Nzc4OTcwMi42ODg3NTIsImV4cCI6MTc4OTMyNTcwMi42ODc5NTcsInN1YiI6IjY2Iiwic2NvcGVzIjpbXX0.HsiAqx9PoBUps6W2FuAhXnCSl6Lp542qluBrK-TPpBM2UwAj5lrF8mtd0GwUjQHuJDnJXGm7ypu3HAdY391VObdEIZnza0FVjs6Ev4kC4Tbzi1eRdpBM8LPJJgwWOVGeIKs5bcowQFShTCKG8uqv9Rw0jhbV_kTc1JvjaSeS8RJ-V-ryRQzgrx7O8GjtWpwMssnA9lYyqZ5uwMzPS6W8v8JXSas8sPE49NFnsYg3K1RlSRYMCD6yjcBySbDz4PLpJFTsSh1rph8b-rE1YnnZ6dReKD6feT065QfoX4155VVZPwaI-H0vsX9SOzY6vlcw1P9YiTnbXxB7Gf0Pztrj9lBS_yrJGveE4QsZhBkB6KLLvrw88ApBTYmJ6kSC9gnm0wKLPYZ_F3cA8xzNHn6M-X6NGui5GJ6HFqei6mqHjVjOsuULFQDDgAFHJtFg8g-laC00dbSMnc7BWlR5s3pIWiymqKT1Lx9o0Ww0jP2aNpDFXTIXBCNbyUeqki91hN1RnTRqF0LQzeopmM2piVl30gotFNI8FNK6mu8JjIgsXHA6DripnwNgvPBJMoA7TcmX3H0Enxp-vkrb7qp7V0dngbmD2aMo2HFmmyj33B3i8UYRQDYN95JzlGc39QEZOQmMJbw7XxeLS5RhW0TLXAWTVErosMQdWLCI_gsrQUD3FuQ'}`,
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
@@ -231,7 +232,6 @@ export const POST_WITH_TOKEN = async (
         }
       })
       .catch(err => {
-        
         onError(err);
       });
   } catch (error) {
@@ -287,19 +287,19 @@ export const DELETE_WITH_TOKEN = async (
   headers = {},
 ) => {
   const tokenVal = store.getState().Token;
-  
+
   try {
     axios({
       method: 'delete',
       url: `${API}${route}`,
       data: body,
       headers: {
-        authorization: `Bearer ${tokenVal}`,
+        authorization: `Bearer ${'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiZTI3OTZkZWZiNDdiMGY5ZWQ4MDBlZDJlOTViYTlkOWFiNDE3MjNlZWNlYmU1OTkzMjZhZDQyN2JlZjdiZDBkMTM0MDQ1ZTRiNzAxNzQyMTEiLCJpYXQiOjE3NTc3ODk3MDIuNjg4NzUsIm5iZiI6MTc1Nzc4OTcwMi42ODg3NTIsImV4cCI6MTc4OTMyNTcwMi42ODc5NTcsInN1YiI6IjY2Iiwic2NvcGVzIjpbXX0.HsiAqx9PoBUps6W2FuAhXnCSl6Lp542qluBrK-TPpBM2UwAj5lrF8mtd0GwUjQHuJDnJXGm7ypu3HAdY391VObdEIZnza0FVjs6Ev4kC4Tbzi1eRdpBM8LPJJgwWOVGeIKs5bcowQFShTCKG8uqv9Rw0jhbV_kTc1JvjaSeS8RJ-V-ryRQzgrx7O8GjtWpwMssnA9lYyqZ5uwMzPS6W8v8JXSas8sPE49NFnsYg3K1RlSRYMCD6yjcBySbDz4PLpJFTsSh1rph8b-rE1YnnZ6dReKD6feT065QfoX4155VVZPwaI-H0vsX9SOzY6vlcw1P9YiTnbXxB7Gf0Pztrj9lBS_yrJGveE4QsZhBkB6KLLvrw88ApBTYmJ6kSC9gnm0wKLPYZ_F3cA8xzNHn6M-X6NGui5GJ6HFqei6mqHjVjOsuULFQDDgAFHJtFg8g-laC00dbSMnc7BWlR5s3pIWiymqKT1Lx9o0Ww0jP2aNpDFXTIXBCNbyUeqki91hN1RnTRqF0LQzeopmM2piVl30gotFNI8FNK6mu8JjIgsXHA6DripnwNgvPBJMoA7TcmX3H0Enxp-vkrb7qp7V0dngbmD2aMo2HFmmyj33B3i8UYRQDYN95JzlGc39QEZOQmMJbw7XxeLS5RhW0TLXAWTVErosMQdWLCI_gsrQUD3FuQ'}`,
         ...headers,
       },
       ...errorHandling,
     })
-      .then(res => {        
+      .then(res => {
         if (res?.status == 200) {
           onSuccess(res?.data);
         } else {
@@ -335,7 +335,7 @@ export const PUT_FORM_DATA = async (
       data: body,
       headers: {
         'Content-Type': 'multipart/form-data',
-        authorization: `Bearer ${tokenVal}`,
+        authorization: `Bearer ${'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiZTI3OTZkZWZiNDdiMGY5ZWQ4MDBlZDJlOTViYTlkOWFiNDE3MjNlZWNlYmU1OTkzMjZhZDQyN2JlZjdiZDBkMTM0MDQ1ZTRiNzAxNzQyMTEiLCJpYXQiOjE3NTc3ODk3MDIuNjg4NzUsIm5iZiI6MTc1Nzc4OTcwMi42ODg3NTIsImV4cCI6MTc4OTMyNTcwMi42ODc5NTcsInN1YiI6IjY2Iiwic2NvcGVzIjpbXX0.HsiAqx9PoBUps6W2FuAhXnCSl6Lp542qluBrK-TPpBM2UwAj5lrF8mtd0GwUjQHuJDnJXGm7ypu3HAdY391VObdEIZnza0FVjs6Ev4kC4Tbzi1eRdpBM8LPJJgwWOVGeIKs5bcowQFShTCKG8uqv9Rw0jhbV_kTc1JvjaSeS8RJ-V-ryRQzgrx7O8GjtWpwMssnA9lYyqZ5uwMzPS6W8v8JXSas8sPE49NFnsYg3K1RlSRYMCD6yjcBySbDz4PLpJFTsSh1rph8b-rE1YnnZ6dReKD6feT065QfoX4155VVZPwaI-H0vsX9SOzY6vlcw1P9YiTnbXxB7Gf0Pztrj9lBS_yrJGveE4QsZhBkB6KLLvrw88ApBTYmJ6kSC9gnm0wKLPYZ_F3cA8xzNHn6M-X6NGui5GJ6HFqei6mqHjVjOsuULFQDDgAFHJtFg8g-laC00dbSMnc7BWlR5s3pIWiymqKT1Lx9o0Ww0jP2aNpDFXTIXBCNbyUeqki91hN1RnTRqF0LQzeopmM2piVl30gotFNI8FNK6mu8JjIgsXHA6DripnwNgvPBJMoA7TcmX3H0Enxp-vkrb7qp7V0dngbmD2aMo2HFmmyj33B3i8UYRQDYN95JzlGc39QEZOQmMJbw7XxeLS5RhW0TLXAWTVErosMQdWLCI_gsrQUD3FuQ'}`,
       },
       ...errorHandling,
     })
@@ -373,7 +373,7 @@ export const PUT_WITH_TOKEN = async (
       url: `${API}${route}`,
       data: body,
       headers: {
-        Authorization: `Bearer ${tokenVal}`,
+        Authorization: `Bearer ${'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiZTI3OTZkZWZiNDdiMGY5ZWQ4MDBlZDJlOTViYTlkOWFiNDE3MjNlZWNlYmU1OTkzMjZhZDQyN2JlZjdiZDBkMTM0MDQ1ZTRiNzAxNzQyMTEiLCJpYXQiOjE3NTc3ODk3MDIuNjg4NzUsIm5iZiI6MTc1Nzc4OTcwMi42ODg3NTIsImV4cCI6MTc4OTMyNTcwMi42ODc5NTcsInN1YiI6IjY2Iiwic2NvcGVzIjpbXX0.HsiAqx9PoBUps6W2FuAhXnCSl6Lp542qluBrK-TPpBM2UwAj5lrF8mtd0GwUjQHuJDnJXGm7ypu3HAdY391VObdEIZnza0FVjs6Ev4kC4Tbzi1eRdpBM8LPJJgwWOVGeIKs5bcowQFShTCKG8uqv9Rw0jhbV_kTc1JvjaSeS8RJ-V-ryRQzgrx7O8GjtWpwMssnA9lYyqZ5uwMzPS6W8v8JXSas8sPE49NFnsYg3K1RlSRYMCD6yjcBySbDz4PLpJFTsSh1rph8b-rE1YnnZ6dReKD6feT065QfoX4155VVZPwaI-H0vsX9SOzY6vlcw1P9YiTnbXxB7Gf0Pztrj9lBS_yrJGveE4QsZhBkB6KLLvrw88ApBTYmJ6kSC9gnm0wKLPYZ_F3cA8xzNHn6M-X6NGui5GJ6HFqei6mqHjVjOsuULFQDDgAFHJtFg8g-laC00dbSMnc7BWlR5s3pIWiymqKT1Lx9o0Ww0jP2aNpDFXTIXBCNbyUeqki91hN1RnTRqF0LQzeopmM2piVl30gotFNI8FNK6mu8JjIgsXHA6DripnwNgvPBJMoA7TcmX3H0Enxp-vkrb7qp7V0dngbmD2aMo2HFmmyj33B3i8UYRQDYN95JzlGc39QEZOQmMJbw7XxeLS5RhW0TLXAWTVErosMQdWLCI_gsrQUD3FuQ'}`,
         'Content-Type': 'application/json',
       },
       ...errorHandling,

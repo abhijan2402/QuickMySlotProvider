@@ -9,4 +9,6 @@ export const images = {
   delete: require('../../assets/Images/delete.png'),
   add: require('../../assets/Images/add.png'),
   close: require('../../assets/Images/multiply.png'),
+  arrowup: require('../../assets/Images/arrowup.png'),
+  arrowdown: require('../../assets/Images/arrowdown.png'),
 };

@@ -1,16 +1,39 @@
-import React from 'react';
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, TouchableOpacity, StyleSheet, ScrollView} from 'react-native';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import LinearGradient from 'react-native-linear-gradient';
 import {Typography} from '../../../Components/UI/Typography';
+import {useIsFocused} from '@react-navigation/native';
+import {GET_WITH_TOKEN} from '../../../Backend/Api';
+import {ANALYTICS} from '../../../Constants/ApiRoute';
 
 const MyAnalytics = ({navigation}) => {
+  const isFocus = useIsFocused();
+  const [data, setData] = useState();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isFocus) {
+      GET_WITH_TOKEN(
+        ANALYTICS,
+        success => {
+          console.log(success, 'successsuccesssuccess-->>>');
+          setLoading(false);
+          setData(success?.data)
+        },
+        error => {
+          console.log(error, 'errorerrorerror>>');
+          setLoading(false);
+        },
+        fail => {
+          console.log(fail, 'errorerrorerror>>');
+
+          setLoading(false);
+        },
+      );
+    }
+  }, [isFocus]);
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -20,17 +43,20 @@ const MyAnalytics = ({navigation}) => {
         leftTint={COLOR.black}
       />
 
-      <ScrollView contentContainerStyle={{paddingHorizontal: 5, paddingVertical: 15}}>
+      <ScrollView
+        contentContainerStyle={{paddingHorizontal: 5, paddingVertical: 15}}>
         {/* Performance Overview */}
         <View style={styles.card}>
-          <Typography style={styles.sectionTitle}>Performance Overview</Typography>
+          <Typography style={styles.sectionTitle}>
+            Performance Overview
+          </Typography>
 
           <LinearGradient
             start={{x: 0, y: 0}}
             end={{x: 1, y: 1}}
             colors={['#FFEEF0', '#E6E6FA']}
             style={styles.statBox}>
-            <Typography style={styles.amount}>$1200.00</Typography>
+            <Typography style={styles.amount}>{data?.revenue_this_month}</Typography>
             <Typography style={styles.label}>Revenue This Month</Typography>
           </LinearGradient>
 
@@ -39,7 +65,7 @@ const MyAnalytics = ({navigation}) => {
             end={{x: 1, y: 1}}
             colors={['#FFEEF0', '#E6E6FA']}
             style={styles.statBox}>
-            <Typography style={styles.amount}>150</Typography>
+              <Typography style={styles.amount}>{data.total_customers}</Typography>
             <Typography style={styles.label}>Total Customers</Typography>
           </LinearGradient>
 
@@ -48,7 +74,7 @@ const MyAnalytics = ({navigation}) => {
             end={{x: 1, y: 1}}
             colors={['#FFEEF0', '#E6E6FA']}
             style={styles.statBox}>
-            <Typography style={styles.amount}>5% ↑</Typography>
+            <Typography style={styles.amount}>{data?.reach}↑</Typography>
             <Typography style={styles.label}>Reach (vs. Last Month)</Typography>
           </LinearGradient>
 
@@ -57,14 +83,16 @@ const MyAnalytics = ({navigation}) => {
             end={{x: 1, y: 1}}
             colors={['#FFEEF0', '#E6E6FA']}
             style={styles.statBox}>
-            <Typography style={styles.amount}>50 / Day</Typography>
+            <Typography style={styles.amount}>{data?.estimated_footfall}</Typography>
             <Typography style={styles.label}>Estimated Footfall</Typography>
           </LinearGradient>
         </View>
 
         {/* Promotion Card */}
         <View style={styles.card}>
-          <Typography style={styles.sectionTitle}>Promote Your Business</Typography>
+          <Typography style={styles.sectionTitle}>
+            Promote Your Business
+          </Typography>
           <View style={styles.promoBox}>
             <Typography style={styles.promoText}>
               Increase Profile Visibility{'\n'}Get noticed by more customers.

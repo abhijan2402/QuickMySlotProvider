@@ -1,16 +1,39 @@
-import React, {useState} from 'react';
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, TouchableOpacity, StyleSheet, ScrollView} from 'react-native';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import Button from '../../../Components/UI/Button';
 import {Typography} from '../../../Components/UI/Typography'; // ✅ import Typography
+import {useIsFocused} from '@react-navigation/native';
+import {SUBSCRIPTION} from '../../../Constants/ApiRoute';
+import {GET_WITH_TOKEN} from '../../../Backend/Api';
 
 const BoostProfile = ({navigation}) => {
+  const isFocus = useIsFocused();
+  const [loading, setLoading] = useState(false);
+  const [subscription, setSubscription] = useState([]);
+
+  useEffect(() => {
+    if (isFocus) {
+      GET_WITH_TOKEN(
+        SUBSCRIPTION,
+        success => {
+          console.log(success, 'successsuccesssuccess-->>>');
+          setLoading(false);
+          setSubscription(success.data);
+        },
+        error => {
+          console.log(error, 'errorerrorerror>>');
+          setLoading(false);
+        },
+        fail => {
+          console.log(fail, 'errorerrorerror>>');
+
+          setLoading(false);
+        },
+      );
+    }
+  }, [isFocus]);
   const boosts = [
     {
       id: 1,
@@ -49,13 +72,14 @@ const BoostProfile = ({navigation}) => {
         leftTint={COLOR.black}
       />
 
-      <ScrollView contentContainerStyle={{paddingVertical: 15, paddingHorizontal: 5}}>
+      <ScrollView
+        contentContainerStyle={{paddingVertical: 15, paddingHorizontal: 5}}>
         {/* Boost Options */}
         <Typography size={15} fontWeight="600" style={styles.sectionTitle}>
           Choose Plan
         </Typography>
 
-        {boosts.map(item => (
+        {subscription.map(item => (
           <TouchableOpacity
             key={item.id}
             style={[
@@ -69,15 +93,28 @@ const BoostProfile = ({navigation}) => {
 
             <View style={{flex: 1}}>
               <Typography size={14} fontWeight="600" style={styles.boostTitle}>
-                {item.title}
+                {item.subscription_name}
               </Typography>
-              <Typography size={12} color={COLOR.darkGrey} style={styles.boostDesc}>
-                {item.desc}
+              <Typography
+                size={12}
+                color={COLOR.darkGrey}
+                style={styles.boostDesc}>
+                {item.description}
+              </Typography>
+              <Typography
+                size={12}
+                color={COLOR.darkGrey}
+                style={styles.boostDesc}>
+                Validity: {item.validity} days
               </Typography>
             </View>
 
-            <Typography size={14} fontWeight="600" color={COLOR.primary} style={styles.boostPrice}>
-              ${item.price.toFixed(2)}
+            <Typography
+              size={14}
+              fontWeight="600"
+              color={COLOR.primary}
+              style={styles.boostPrice}>
+              ${Number(item.price).toFixed(2)}
             </Typography>
           </TouchableOpacity>
         ))}
@@ -93,7 +130,7 @@ const BoostProfile = ({navigation}) => {
               {selected?.title}
             </Typography>
             <Typography size={13} style={styles.summaryText}>
-              ${selected?.price.toFixed(2)}
+              ${Number(selected?.price).toFixed(2)}
             </Typography>
           </View>
 

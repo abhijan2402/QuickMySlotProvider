@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -14,39 +14,65 @@ import EmptyView from '../../../Components/UI/EmptyView';
 import LinearGradient from 'react-native-linear-gradient';
 import ConfirmModal from '../../../Components/UI/ConfirmModel';
 import {Typography} from '../../../Components/UI/Typography';
+import {useIsFocused} from '@react-navigation/native';
+import {GET_WITH_TOKEN, POST_WITH_TOKEN} from '../../../Backend/Api';
+import {ADD_PROMOTION, DELETE_PROMOTION} from '../../../Constants/ApiRoute';
 
 const Promotion = ({navigation}) => {
   const [deletes, setDelete] = useState(false);
+  const [promotions, setPromotions] = useState([]);
+  const isFocus = useIsFocused();
+  const [loading, setLoading] = useState(false);
+  const [PromoId, setPromoId] = useState();
 
-  const offers = [
-    {
-      code: 'FIRST40',
-      title: 'Get 40% OFF',
-      discount: '20%',
-      cashback: '20%',
-      validity: 'Valid on All Days',
-      description:
-        'After availing your services, pay at the salon using app via any mode of online payment and get 20% Discount & 20% Cashback as Cash on the net payable amount.',
-    },
-    {
-      code: 'WEEKEND10',
-      title: 'Get 10% OFF',
-      discount: '5%',
-      cashback: '5%',
-      validity: 'Valid on Friday, Saturday, and Sunday',
-      description:
-        'After availing your services, pay at the salon using app via any mode of online payment and get 5% Discount & 5% Cashback as Cash on the net payable amount.',
-    },
-    {
-      code: 'GLAMUP40',
-      title: 'Get $20 OFF',
-      discount: '25%',
-      cashback: '15%',
-      validity: 'Valid on Tuesday',
-      description:
-        'After availing your services, pay at the salon using app via any mode of online payment and get 25% Discount & 15% Cashback as Cash on the net payable amount.',
-    },
-  ];
+  useEffect(() => {
+    if (isFocus) {
+      getPromotions();
+    }
+  }, [isFocus]);
+
+  const getPromotions = () => {
+    GET_WITH_TOKEN(
+      ADD_PROMOTION,
+      success => {
+        console.log(success, 'successsuccesssuccess-->>>');
+        setLoading(false);
+        setPromotions(success?.data);
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+      },
+      fail => {
+        console.log(fail, 'errorerrorerror>>');
+
+        setLoading(false);
+      },
+    );
+  };
+
+  const handleDelete = () => {
+    setLoading(true)
+    POST_WITH_TOKEN(
+      DELETE_PROMOTION + PromoId,
+      success => {
+        console.log(success, 'successsuccesssuccess-->>>');
+        setLoading(false);
+        getPromotions();
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+        setDelete(false);
+        getPromotions();
+      },
+      fail => {
+        console.log(fail, 'errorerrorerror>>');
+
+        setLoading(false);
+      },
+    );
+  };
 
   const renderOffer = ({item}) => (
     <View style={styles.card}>
@@ -56,18 +82,21 @@ const Promotion = ({navigation}) => {
         start={{x: 0, y: 0}}
         end={{x: 0, y: 1}}
         style={styles.strip}>
-        <Typography style={styles.stripText}>{item.code}</Typography>
+        <Typography style={styles.stripText}>{item.promo_code}</Typography>
       </LinearGradient>
 
       {/* Content */}
       <View style={styles.content}>
         <View style={styles.headerRow}>
-          <Typography style={styles.title}>{item.title}</Typography>
+          <Typography style={styles.title}>{item.amount}</Typography>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <TouchableOpacity
               style={[styles.addButton, {marginRight: 10}]}
               onPress={() => {
-                // Handle edit
+                navigation.navigate('AddPromotion', {
+                  data: item,
+                  isEditing: true
+                });
               }}>
               <Image
                 source={images.edit}
@@ -78,6 +107,8 @@ const Promotion = ({navigation}) => {
               style={styles.addButton}
               onPress={() => {
                 setDelete(true);
+                setPromoId(item?.id);
+                
               }}>
               <Image
                 source={images.delete}
@@ -87,10 +118,10 @@ const Promotion = ({navigation}) => {
           </View>
         </View>
 
-        <Typography style={styles.offerText}>
+        {/* <Typography style={styles.offerText}>
           {item.discount} Discount + {item.cashback} Cashback
-        </Typography>
-        <Typography style={styles.validity}>{item.validity}</Typography>
+        </Typography> */}
+        {/* <Typography style={styles.validity}>{item.validity}</Typography> */}
         <Typography style={styles.description}>{item.description}</Typography>
       </View>
     </View>
@@ -106,7 +137,7 @@ const Promotion = ({navigation}) => {
 
       <View style={{flex: 1, backgroundColor: '#fff', paddingHorizontal: 5}}>
         <FlatList
-          data={offers}
+          data={promotions}
           renderItem={renderOffer}
           style={{flex: 1}}
           keyExtractor={(item, index) => index.toString()}
@@ -115,7 +146,7 @@ const Promotion = ({navigation}) => {
           ListEmptyComponent={<EmptyView title="No promotions available." />}
         />
 
-        <View style={{ marginTop: 10}}>
+        <View style={{marginTop: 10}}>
           <Button
             onPress={() => navigation.navigate('AddPromotion')}
             title={'+ Add Promotion'}
@@ -129,7 +160,8 @@ const Promotion = ({navigation}) => {
           description="Are you sure you want to delete this Promotion?"
           yesTitle="Yes"
           noTitle="No"
-          onPressYes={() => {}}
+          loading={loading}
+          onPressYes={() => handleDelete()}
           onPressNo={() => setDelete(false)}
         />
       </View>

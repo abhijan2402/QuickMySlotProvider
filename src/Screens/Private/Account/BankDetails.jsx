@@ -5,24 +5,32 @@ import {windowWidth} from '../../../Constants/Dimensions';
 import HomeHeader from '../../../Components/HomeHeader';
 import ConfirmModal from '../../../Components/UI/ConfirmModel';
 import {Typography} from '../../../Components/UI/Typography'; // ✅ Import Typography
-import {GET_WITH_TOKEN} from '../../../Backend/Api';
-import { ADD_BANK } from '../../../Constants/ApiRoute';
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
+import {GET_WITH_TOKEN, POST_WITH_TOKEN} from '../../../Backend/Api';
+import {ADD_BANK, DELETE_BANK} from '../../../Constants/ApiRoute';
 
 const BankDetails = ({navigation}) => {
   const [selectedBankId, setSelectedBankId] = useState(null);
   const [deletes, setDelete] = useState(false);
   const [bankList, setBankList] = useState([]);
-  const isFocus = useIsFocused()
-  const [loading, setLoading] = useState(false)
+  const isFocus = useIsFocused();
+  const [loading, setLoading] = useState(false);
+  const [deleteId, setDeleteId] = useState();
 
   useEffect(() => {
-    if(isFocus){
-      GET_WITH_TOKEN(
-      'bank-accounts',
+    if (isFocus) {
+      getBankList();
+    }
+  }, [isFocus]);
+
+  const getBankList = () => {
+    GET_WITH_TOKEN(
+      ADD_BANK,
       success => {
         console.log(success, 'successsuccesssuccess-->>>');
         setLoading(false);
+        setDelete(false)
+        setBankList(success?.data);
       },
       error => {
         console.log(error, 'errorerrorerror>>');
@@ -30,14 +38,36 @@ const BankDetails = ({navigation}) => {
       },
       fail => {
         console.log(fail, 'errorerrorerror>>');
+
         setLoading(false);
       },
     );
-    }
-  }, [isFocus]);
+  };
 
   const toggleSelect = id => {
     setSelectedBankId(selectedBankId === id ? null : id);
+  };
+
+  const handleDelete = () => {
+    POST_WITH_TOKEN(
+      DELETE_BANK + deleteId,
+      success => {
+        console.log(success, 'successsuccesssuccess-->>>');
+        setLoading(false);
+        getBankList();
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+         setLoading(false);
+        getBankList();
+      },
+      fail => {
+        console.log(fail, 'errorerrorerror>>');
+
+        setLoading(false);
+      },
+    );
   };
 
   const renderBankCard = ({item}) => (
@@ -47,7 +77,7 @@ const BankDetails = ({navigation}) => {
       onPress={() => toggleSelect(item.id)}>
       <View style={styles.headerRow}>
         <Typography size={18} fontWeight="700" color={COLOR.primary || '#333'}>
-          {item.name}
+          {item.bank_name}
         </Typography>
         <TouchableOpacity
           style={[
@@ -68,7 +98,7 @@ const BankDetails = ({navigation}) => {
           Account No:
         </Typography>
         <Typography size={15} color="#666">
-          {item.accountNumber}
+          {item.account_number}
         </Typography>
       </View>
 
@@ -77,7 +107,7 @@ const BankDetails = ({navigation}) => {
           IFSC Code:
         </Typography>
         <Typography size={15} color="#666">
-          {item.ifsc}
+          {item.ifsc_code}
         </Typography>
       </View>
 
@@ -86,21 +116,29 @@ const BankDetails = ({navigation}) => {
           Account Type:
         </Typography>
         <Typography size={15} color="#666">
-          {item.type}
+          {item.bank_type}
         </Typography>
       </View>
 
       <View style={styles.buttonRow}>
         <TouchableOpacity
           style={styles.editBtn}
-          onPress={() => navigation.navigate('AddBank')}>
+          onPress={() =>
+            navigation.navigate('AddBank', {
+              data: item,
+              isEditing: true,
+            })
+          }>
           <Typography size={14} fontWeight="600" color="#fff">
             Edit
           </Typography>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.deleteBtn}
-          onPress={() => setDelete(true)}>
+          onPress={() => {
+            setDelete(true);
+            setDeleteId(item?.id);
+          }}>
           <Typography size={14} fontWeight="600" color="#fff">
             Delete
           </Typography>
@@ -130,6 +168,13 @@ const BankDetails = ({navigation}) => {
         keyExtractor={item => item.id}
         renderItem={renderBankCard}
         contentContainerStyle={{paddingBottom: 20, marginTop: 20}}
+        ListEmptyComponent={() => {
+          return (
+            <View style={{alignItems:'center',marginTop: 20}}>
+              <Typography size={18} fontWeight={'700'} color={COLOR.black}>No Bank Added Yet</Typography>
+            </View>
+          )
+        }}
       />
 
       <ConfirmModal
@@ -139,7 +184,8 @@ const BankDetails = ({navigation}) => {
         description="Are you sure you want to delete this Bank?"
         yesTitle="Yes"
         noTitle="No"
-        onPressYes={() => {}}
+        loading={loading}
+        onPressYes={() => handleDelete()}
         onPressNo={() => setDelete(false)}
       />
     </View>

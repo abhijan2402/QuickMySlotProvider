@@ -1,40 +1,42 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, FlatList} from 'react-native';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import CustomButton from '../../../Components/CustomButton';
 import {Typography} from '../../../Components/UI/Typography'; // ✅ Import Typography
+import {useIsFocused} from '@react-navigation/native';
+import {GET_WITH_TOKEN} from '../../../Backend/Api';
+import {ADD_WALLET} from '../../../Constants/ApiRoute';
+import { windowWidth } from '../../../Constants/Dimensions';
 
-const Wallet = () => {
-  const [balance, setBalance] = useState(1250.75); // Example balance
+const Wallet = ({navigation}) => {
+  const [balance, setBalance] = useState();
+  const [transaction, setTransaction] = useState([]);
+  const isFocus = useIsFocused();
+  const [loading, setLoading] = useState(false);
 
-  const transactions = [
-    {
-      id: 'TXN12345',
-      amount: 500,
-      type: 'Credit',
-      date: '2025-08-12T10:30:00',
-    },
-    {
-      id: 'TXN12346',
-      amount: 200,
-      type: 'Debit',
-      date: '2025-08-11T14:15:00',
-    },
-    {
-      id: 'TXN12347',
-      amount: 150,
-      type: 'Debit',
-      date: '2025-08-10T09:05:00',
-    },
-    {
-      id: 'TXN12348',
-      amount: 1000,
-      type: 'Credit',
-      date: '2025-08-09T18:45:00',
-    },
-  ];
+  useEffect(() => {
+    if (isFocus) {
+      GET_WITH_TOKEN(
+        ADD_WALLET,
+        success => {
+          console.log(success, 'successsuccesssuccess-->>>');
+          setLoading(false);
+          setTransaction(success?.data?.transactions)
+          setBalance(success?.data?.total_amount)
+        },
+        error => {
+          console.log(error, 'errorerrorerror>>');
+          setLoading(false);
+        },
+        fail => {
+          console.log(fail, 'errorerrorerror>>');
 
+          setLoading(false);
+        },
+      );
+    }
+  }, [isFocus]);
   const formatDate = dateString => {
     const dateObj = new Date(dateString);
     const options = {day: '2-digit', month: 'short', year: 'numeric'};
@@ -50,19 +52,18 @@ const Wallet = () => {
   const renderTransaction = ({item}) => (
     <View style={styles.transactionItem}>
       <View>
-        <Typography size={14} color={COLOR.black}>
-          Transaction ID: {item.id}
+        <Typography size={14} color={COLOR.black} style={{ width: windowWidth * 0.6}}>
+          Transaction ID: {item.transaction_id}
         </Typography>
-        {/* <Typography size={13} color="#777">{item.type}</Typography> */}
-        <Typography size={12} color="#999" style={{marginTop: 1}}>
-          {formatDate(item.date)}
+        <Typography size={12} color="#999" style={{marginTop: 5}}>
+          {formatDate(item.created_at)}
         </Typography>
       </View>
       <Typography
         size={16}
         fontWeight="600"
-        color={item.type === 'Credit' ? 'green' : 'red'}>
-        {item.type === 'Credit' ? '+' : '-'}₹{item.amount}
+        color={item.type === 'credit' ? 'green' : 'red'}>
+        {item.type === 'credit' ? '+ ' : '- '}₹{item.amount}
       </Typography>
     </View>
   );
@@ -81,24 +82,32 @@ const Wallet = () => {
           <Typography size={14} color="#555">
             Current Balance
           </Typography>
-          <Typography size={28} fontWeight="700" color={COLOR.black} style={{marginTop: 5}}>
-            ₹{balance.toFixed(2)}
+          <Typography
+            size={28}
+            fontWeight="700"
+            color={COLOR.black}
+            style={{marginTop: 5}}>
+            ₹{Number(balance).toFixed(2)}
           </Typography>
         </View>
 
         {/* Add Amount Button */}
         <CustomButton
           title="Add Amount"
-          onPress={() => console.log('Add Amount Pressed')}
+          onPress={() => navigation.navigate('AddAmount')}
           style={{marginVertical: 15}}
         />
 
         {/* Transaction History */}
-        <Typography size={16} fontWeight="700" color={COLOR.black} style={{marginTop: 10, marginBottom: 8}}>
+        <Typography
+          size={16}
+          fontWeight="700"
+          color={COLOR.black}
+          style={{marginTop: 10, marginBottom: 8}}>
           Transaction History
         </Typography>
         <FlatList
-          data={transactions}
+          data={transaction}
           keyExtractor={item => item.id}
           renderItem={renderTransaction}
           contentContainerStyle={{paddingBottom: 20}}

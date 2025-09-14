@@ -68,7 +68,7 @@ const EditProfile = ({navigation}) => {
       name: validators.checkRequire('Name', firstName),
       email: validators.checkEmail('Email', email),
       phone: validators.checkNumber('Phone Number', phone),
-      website: validators.checkRequire('Website', website),
+      // website: validators.checkRequire('Website', website),
       address: validators.checkRequire('Address', address),
       company: validators.checkRequire('Company Name', company),
       buisness: validators.checkRequire('Buisness Name', buisness),
@@ -105,7 +105,6 @@ const EditProfile = ({navigation}) => {
           setLoading(false);
           setIsEditing(false);
           fetchUserProfile()
-          // dispatch(userDetails())
         },
         error => {
           console.log(error, 'errorerrorerror>>');
