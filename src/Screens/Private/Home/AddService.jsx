@@ -6,8 +6,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Text,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import HomeHeader from '../../../Components/HomeHeader';
 import {COLOR} from '../../../Constants/Colors';
 import {Typography} from '../../../Components/UI/Typography';
@@ -22,15 +23,20 @@ import {validators} from '../../../Backend/Validator';
 import useKeyboard from '../../../Constants/Utility';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ToastMsg} from '../../../Backend/Utility';
-import {POST_FORM_DATA} from '../../../Backend/Api';
 import DropdownCommon from '../../../Components/UI/DropdownCommon';
 import {Font} from '../../../Constants/Font';
 import DatePickerModal from '../../../Components/UI/DatePicker';
+import {CATEGORY, SERVICE, UPDATE_SERVICE} from '../../../Constants/ApiRoute';
+import {GET_WITH_TOKEN, POST_FORM_DATA} from '../../../Backend/Api';
+import {useIsFocused} from '@react-navigation/native';
+import {Dropdown} from 'react-native-element-dropdown';
 
-const AddService = () => {
+const AddService = ({route, navigation}) => {
   const [serviceName, setServiceName] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState();
+  console.log(category);
+  
   const [price, setPrice] = useState('');
   const [duration, setDuration] = useState('');
   const [discount, setDiscount] = useState(false);
@@ -53,13 +59,53 @@ const AddService = () => {
   const [gender, setGender] = useState('');
   const [loading, setLoading] = useState(false);
   const {isKeyboardVisible} = useKeyboard();
-
-  // image upload states
+  const data = route?.params?.data;
+  console.log(data);
+  const isEditing = route?.params?.isEditing;
   const [image, setImage] = useState(null);
   const [showModal, setShowModal] = useState(false);
-
-  // validation error state
   const [errors, setErrors] = useState({});
+  console.log(errors);
+  const isFocus = useIsFocused();
+  const [categoryList, setCategoryList] = useState([]);
+
+  useEffect(() => {
+    if (isFocus) {
+      setServiceName(data?.name)
+      setDescription(data?.description)
+      setPrice(data?.price)
+      setDuration(data?.duration)
+      setImage(data?.image)
+      setGender(data?.gender)
+    }
+  }, [isFocus]);
+
+  useEffect(() => {
+    if (isFocus) {
+      GET_WITH_TOKEN(
+        CATEGORY,
+        success => {
+          setLoading(false);
+          console.log(success);
+          const formattedData = success?.data?.map(item => ({
+          label: item.name,
+          value: item.id,
+        }));
+
+        setCategoryList(formattedData || []);
+        },
+        error => {
+          setLoading(false);
+          console.log(error);
+
+          ToastMsg(error?.message);
+        },
+        fail => {
+          setLoading(false);
+        },
+      );
+    }
+  }, [isFocus]);
 
   const handleImageSelected = (response, type) => {
     if (Array.isArray(response)) {
@@ -104,7 +150,7 @@ const AddService = () => {
     });
 
     setErrors(validationErrors);
-    return Object.values(validationErrors).every(error => error === '');
+    return Object.values(validationErrors).every(error => !error);
   };
 
   const handleSubmit = () => {
@@ -134,8 +180,8 @@ const AddService = () => {
     // Add addons to formData
     addons.forEach((addon, index) => {
       if (addon.name && addon.price) {
-        formData.append(`addons[${index}][name]`, addon.name);
-        formData.append(`addons[${index}][price]`, addon.price);
+        formData.append(`addons[${index}][${addon.name}]`, addon.price);
+        // formData.append(`addons[${index}][price]`, addon.price);
       }
     });
 
@@ -143,30 +189,57 @@ const AddService = () => {
     peakHours.forEach((peakHour, index) => {
       if (peakHour.startTime && peakHour.endTime && peakHour.price) {
         formData.append(
-          `peak_hours[${index}][time_range]`,
-          `${peakHour.startTime}-${peakHour.endTime}`,
+          `peak_hours[${index}][${moment(peakHour.startTime).format(
+            'HH:mm',
+          )}-${moment(peakHour.endTime).format('HH:mm')}]`,
+          `${peakHour.price}`,
         );
-        formData.append(`peak_hours[${index}][price]`, peakHour.price);
+        // formData.append(`peak_hours[${index}][price]`, peakHour.price);
       }
     });
+    console.log(formData);
 
-    // Replace 'SERVICE' with your actual API endpoint
-    POST_FORM_DATA(
-      'SERVICE', // Your API endpoint
+    if(isEditing){
+      POST_FORM_DATA(
+      UPDATE_SERVICE + data?.id,
       formData,
       success => {
         setLoading(false);
+        console.log(success);
+        navigation.goBack();
         ToastMsg(success?.message);
-        // Reset form on success if needed
       },
       error => {
         setLoading(false);
+        console.log(error);
+
         ToastMsg(error?.message);
       },
       fail => {
         setLoading(false);
       },
     );
+    }else{
+      POST_FORM_DATA(
+      SERVICE,
+      formData,
+      success => {
+        setLoading(false);
+        console.log(success);
+        navigation.goBack();
+        ToastMsg(success?.message);
+      },
+      error => {
+        setLoading(false);
+        console.log(error);
+
+        ToastMsg(error?.message);
+      },
+      fail => {
+        setLoading(false);
+      },
+    );
+    }
   };
 
   const addAddon = () => {
@@ -247,13 +320,20 @@ const AddService = () => {
         />
 
         {/* Category */}
-        <Input
-          label="Service Category"
-          placeholder="Select a Service"
-          value={category}
-          onChangeText={setCategory}
-          error={errors.category}
+        <Text style={[styles.label, {marginTop: 18}]}>Category</Text>
+        <Dropdown
+          style={styles.dropdown}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          data={categoryList}
+          maxHeight={150}
+          labelField="label"
+          valueField="value"
+          placeholder="Select Category Type"
+          value={category} // category will hold the selected id
+          onChange={item => setCategory(item.value)} // store id when selected
         />
+        {errors.category && <ErrorBox error={errors.category} />}
 
         {/* Price */}
         <Input
@@ -340,7 +420,7 @@ const AddService = () => {
                 placeholder="Addon name"
                 value={addon.name}
                 onChangeText={text => updateAddon(addon.id, 'name', text)}
-                mainStyle={{width: '40%'}}
+                mainStyle={{width: '40%', marginTop: 0}}
                 error={errors[`addonName_${index}`]}
               />
               <Input
@@ -348,7 +428,7 @@ const AddService = () => {
                 value={addon.price}
                 onChangeText={text => updateAddon(addon.id, 'price', text)}
                 keyboardType="decimal-pad"
-                mainStyle={{width: '40%'}}
+                mainStyle={{width: '40%', marginTop: 0}}
                 error={errors[`addonPrice_${index}`]}
               />
               <TouchableOpacity
@@ -435,7 +515,7 @@ const AddService = () => {
         disabled={loading}
         containerStyle={{
           width: '90%',
-          paddingTop: 15,
+          // paddingTop: 15,
         }}
       />
 
@@ -481,8 +561,7 @@ const styles = StyleSheet.create({
     padding: 6,
   },
   section: {
-    marginTop: 20,
-    marginBottom: 10,
+    marginTop: 10,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -537,5 +616,20 @@ const styles = StyleSheet.create({
   },
   subNote: {
     marginTop: 5,
+  },
+  dropdown: {
+    height: 50,
+    borderColor: COLOR.primary,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+  },
+  placeholderStyle: {
+    fontSize: 14,
+    color: 'gray',
+  },
+  selectedTextStyle: {
+    fontSize: 14,
+    color: COLOR.black,
   },
 });

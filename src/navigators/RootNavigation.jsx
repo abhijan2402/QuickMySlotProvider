@@ -25,6 +25,7 @@ import BoostProfile from '../Screens/Private/Home/BoostProfile';
 import AvailabilityManagement from '../Screens/Private/Home/AvailabilityManagement';
 import BookingConfirmation from '../Screens/Private/Home/BookingConfirmation';
 import AddAmount from '../Screens/Private/Account/AddAmount';
+import AddSubServices from '../Screens/Private/Home/AddSubServices';
 const Stack = createNativeStackNavigator();
 
 const RootNavigation = () => {
@@ -66,6 +67,7 @@ const RootNavigation = () => {
           component={BookingConfirmation}
         />
         <Stack.Screen name="AddAmount" component={AddAmount} />
+        <Stack.Screen name="AddSubServices" component={AddSubServices} />
       </Stack.Navigator>
       {/* <View style={{marginBottom: 50}}></View> */}
     </>
