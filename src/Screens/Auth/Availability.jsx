@@ -90,9 +90,10 @@ const Availability = ({navigation}) => {
         formData,
         success => {
           console.log(success, 'successsuccesssuccess-->>>');
-          setLoading(false);
-          dispatch(userDetails(success?.data));
           dispatch(isAuth(true));
+          dispatch(userDetails(success?.data));
+          // navigation.navigate('BottomNavigation')
+          setLoading(false);
         },
         error => {
           console.log(error, 'errorerrorerror>>');
@@ -206,7 +207,7 @@ const Availability = ({navigation}) => {
 
           {/* End Time */}
           <DatePickerModal
-            containerStyle={{marginTop: 50}}
+            containerStyle={{marginTop: 30}}
             label="Daily End Time (e.g., 5:00 PM)"
             value={endTime}
             mode="time"

@@ -25,6 +25,7 @@ export const DELETE_SUB_SERVICE = 'sub-services/delete/';
 export const GET_NOTIFICATION = 'notifications/list';
 export const NOTIFICATION_READ = 'read-all?type=is_all_read&id=1';
 export const DELETE_ACCOUNT = 'delete/user';
+export const GET_CATEGORY = 'category';
 
 
 

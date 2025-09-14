@@ -19,9 +19,11 @@ import Button from '../../../Components/UI/Button';
 import {Typography} from '../../../Components/UI/Typography';
 import {useDispatch, useSelector} from 'react-redux';
 import {useIsFocused} from '@react-navigation/native';
-import {POST_FORM_DATA, POST_WITH_TOKEN} from '../../../Backend/Api';
-import {UPDATE_PROFILE} from '../../../Constants/ApiRoute';
-import { userDetails } from '../../../Redux/action';
+import {GET, POST_FORM_DATA, POST_WITH_TOKEN} from '../../../Backend/Api';
+import {GET_CATEGORY, UPDATE_PROFILE} from '../../../Constants/ApiRoute';
+import {userDetails} from '../../../Redux/action';
+import DropdownCommon from '../../../Components/UI/DropdownCommon';
+import {ErrorBox} from '../../../Components/UI/ErrorBox';
 
 const EditProfile = ({navigation}) => {
   const [firstName, setFirstName] = useState('');
@@ -36,23 +38,31 @@ const EditProfile = ({navigation}) => {
   const [isEditing, setIsEditing] = useState(false);
   const {isKeyboardVisible} = useKeyboard();
   const userdata = useSelector(store => store.userDetails);
-  console.log(userdata);
+  console.log(userdata, 'userdatauserdatauserdatauserdata===>');
   const [profileImage, setProfileImage] = useState(
     'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
   );
   console.log(profileImage);
-  
+
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState({});
   const isFocus = useIsFocused();
-  const [loading , setLoading] = useState(false)
-  const dispatch = useDispatch()
+  const [loading, setLoading] = useState(false);
+  const [categoryList, setCategoryList] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (isFocus) {
+      getCategory();
       setPhone(userdata?.phone_number);
       setWebsite(userdata?.website || userdata?.business_website);
       setProfileImage({path: userdata?.photo_verification});
+      setFirstName(userdata?.name);
+      setEmail(userdata?.email);
+      setAddress(userdata?.exact_location);
+      setBuisness(userdata?.business_name);
+      setServed(userdata?.location_area_served);
+      setCompany('');
     }
   }, [isFocus]);
 
@@ -63,6 +73,32 @@ const EditProfile = ({navigation}) => {
     }
   };
 
+  const getCategory = () => {
+    GET(
+      GET_CATEGORY,
+      success => {
+        console.log(success, 'GET_CATEGORY-->>>');
+        const d = success?.data.map(v => {
+          return {
+            label: v?.name,
+            value: v?.id,
+          };
+        });
+        setCategoryList(d);
+        if (userdata?.service_category) {
+          const selected = d.find(v => v?.id == userdata?.service_category);
+          setCategory(selected);
+        }
+      },
+      error => {
+        console.log(error, 'GET_CATEGORY>>');
+      },
+      fail => {
+        console.log(fail, 'GET_CATEGORYfail>>');
+      },
+    );
+  };
+
   const handleUpdate = () => {
     let validationErrors = {
       name: validators.checkRequire('Name', firstName),
@@ -70,15 +106,14 @@ const EditProfile = ({navigation}) => {
       phone: validators.checkNumber('Phone Number', phone),
       // website: validators.checkRequire('Website', website),
       address: validators.checkRequire('Address', address),
-      company: validators.checkRequire('Company Name', company),
+      // company: validators.checkRequire('Company Name', company),
       buisness: validators.checkRequire('Buisness Name', buisness),
       location_served: validators.checkRequire('Location Area Served', served),
       category: validators.checkRequire('Service Category', category),
     };
-
     setError(validationErrors);
-
     if (isValidForm(validationErrors)) {
+      setLoading(true);
       const formData = new FormData();
       formData.append('name', firstName);
       formData.append('email', email);
@@ -95,16 +130,17 @@ const EditProfile = ({navigation}) => {
       if (profileImage) {
         formData.append('pan_card', profileImage);
       }
-
       console.log('FormData ====>', formData);
       POST_WITH_TOKEN(
         UPDATE_PROFILE,
         formData,
         success => {
-          console.log(success, 'successsuccesssuccess-->>>');
           setLoading(false);
+          console.log(success, 'dsdsdsdeeeeeeeeeeeeweewew-->>>');
+          dispatch(userDetails(success?.data));
+          navigation.pop();
           setIsEditing(false);
-          fetchUserProfile()
+          fetchUserProfile();
         },
         error => {
           console.log(error, 'errorerrorerror>>');
@@ -272,22 +308,22 @@ const EditProfile = ({navigation}) => {
             error={error.location_served}
           />
 
-          <Input
-            label="service category"
-            placeholder="Enter Your service category"
+          <DropdownCommon
+            label={'service category'}
+            data={categoryList}
+            disable={!isEditing}
             value={category}
-            style={{borderColor: COLOR.primary}}
-            onChangeText={setCategory}
-            editable={isEditing}
-            error={error.category}
-            mainStyle={{marginBottom: 15}}
+            onChange={v => {
+              setCategory(v);
+            }}
           />
+          {error.category && <ErrorBox error={error.category} />}
         </ScrollView>
       </KeyboardAvoidingView>
 
       {/* Edit / Update Button */}
       <Button
-      loading={loading}
+        loading={loading}
         title={isEditing ? 'Update' : 'Edit'}
         onPress={() => {
           if (isEditing) {

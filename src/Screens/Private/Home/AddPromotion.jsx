@@ -23,6 +23,7 @@ import {ADD_PROMOTION, UPDATE_PROMOTION} from '../../../Constants/ApiRoute';
 import SwitchButton from '../../../Components/UI/SwitchButton';
 import {Typography} from '../../../Components/UI/Typography';
 import {useIsFocused} from '@react-navigation/native';
+import DatePickerModal from '../../../Components/UI/DatePicker';
 
 const AddPromotion = ({navigation, route}) => {
   const [error, setError] = useState({});
@@ -38,7 +39,7 @@ const AddPromotion = ({navigation, route}) => {
   const [loading, setLoading] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const data = route?.params?.data;
-  console.log(data);
+  console.log(startDate ,'startDatestartDatestartDatestartDate');
   const isEditing = route?.params?.isEditing;
 
   const isFocus = useIsFocused();
@@ -46,7 +47,7 @@ const AddPromotion = ({navigation, route}) => {
   useEffect(() => {
     if (isFocus) {
       setPromoCode(data?.promo_code);
-      setDiscount((data?.amount));
+      setDiscount(data?.amount);
       setDescription(data?.description);
       setIsActive(data?.isActive);
       setDiscountType(data?.type);
@@ -91,44 +92,44 @@ const AddPromotion = ({navigation, route}) => {
       formData.append('description', description);
       formData.append('isActive', isActive ? 1 : 0);
       console.log('FormData ====>', formData);
-      if(isEditing){
+      if (isEditing) {
         POST_FORM_DATA(
-        UPDATE_PROMOTION + data?.id,
-        formData,
-        success => {
-          console.log(success, 'successsuccesssuccess-->>>');
-          setLoading(false);
-          navigation.goBack();
-        },
-        error => {
-          console.log(error, 'errorerrorerror>>');
-          setLoading(false);
-        },
-        fail => {
-          console.log(fail, 'errorerrorerror>>');
+          UPDATE_PROMOTION + data?.id,
+          formData,
+          success => {
+            console.log(success, 'successsuccesssuccess-->>>');
+            setLoading(false);
+            navigation.goBack();
+          },
+          error => {
+            console.log(error, 'errorerrorerror>>');
+            setLoading(false);
+          },
+          fail => {
+            console.log(fail, 'errorerrorerror>>');
 
-          setLoading(false);
-        },
-      );
-      }else {
+            setLoading(false);
+          },
+        );
+      } else {
         POST_FORM_DATA(
-        ADD_PROMOTION,
-        formData,
-        success => {
-          console.log(success, 'successsuccesssuccess-->>>');
-          setLoading(false);
-          navigation.goBack();
-        },
-        error => {
-          console.log(error, 'errorerrorerror>>');
-          setLoading(false);
-        },
-        fail => {
-          console.log(fail, 'errorerrorerror>>');
+          ADD_PROMOTION,
+          formData,
+          success => {
+            console.log(success, 'successsuccesssuccess-->>>');
+            setLoading(false);
+            navigation.goBack();
+          },
+          error => {
+            console.log(error, 'errorerrorerror>>');
+            setLoading(false);
+          },
+          fail => {
+            console.log(fail, 'errorerrorerror>>');
 
-          setLoading(false);
-        },
-      );
+            setLoading(false);
+          },
+        );
       }
     }
   };
@@ -137,7 +138,7 @@ const AddPromotion = ({navigation, route}) => {
     <View
       style={{flex: 1, backgroundColor: COLOR.white, paddingHorizontal: 15}}>
       <HomeHeader
-        title={isEditing ?  "Edit Promotion" : "Add Promotion"}
+        title={isEditing ? 'Edit Promotion' : 'Add Promotion'}
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
@@ -193,10 +194,20 @@ const AddPromotion = ({navigation, route}) => {
               marginBottom: 8,
               marginTop: 20,
             }}>
-            <Text style={{marginBottom: 5, fontSize: 14, fontWeight: '500'}}>
+            {/* <Text style={{marginBottom: 5, fontSize: 14, fontWeight: '500'}}>
               Start Date
-            </Text>
-            <TouchableOpacity
+            </Text> */}
+            <DatePickerModal
+              label={'Start Date'}
+              mode="date"
+              value={startDate}
+              minimumDate={new Date()}
+              onChange={date => {
+                console.log('v----->>>', date);
+                setStartDate(date);
+              }}
+            />
+            {/* <TouchableOpacity
               onPress={() => setOpenStartPicker(true)}
               style={styles.dateInput}>
               <Text
@@ -206,25 +217,21 @@ const AddPromotion = ({navigation, route}) => {
                 }}>
                 {!!startDate ? startDate : ''}
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
           {error.startDate && <ErrorBox error={error.startDate} />}
           {/* End Date */}
           <View style={{width: '100%', alignSelf: 'center', marginTop: 8}}>
-            <Text style={{marginBottom: 5, fontSize: 14, fontWeight: '500'}}>
-              End Date
-            </Text>
-            <TouchableOpacity
-              onPress={() => setOpenEndPicker(true)}
-              style={styles.dateInput}>
-              <Text
-                style={{
-                  color: endDate ? COLOR.black : COLOR.grey,
-                  fontSize: 14,
-                }}>
-                {!!endDate ? endDate : ''}
-              </Text>
-            </TouchableOpacity>
+            <DatePickerModal
+              label={'End Date'}
+              mode="date"
+              value={endDate}
+              minimumDate={startDate || new Date()}
+              onChange={date => {
+                console.log('v----->>>', date);
+                setEndDate(date);
+              }}
+            />
           </View>
           {error.endDate && <ErrorBox error={error.endDate} />}
           <Input
@@ -257,8 +264,8 @@ const AddPromotion = ({navigation, route}) => {
       <DatePicker
         modal
         open={openStartPicker || openEndPicker}
-        date={startDate || new Date()}
-        minimumDate={openStartPicker ? openStartPicker : new Date()}
+        date={new Date()}
+        minimumDate={new Date()}
         mode="date"
         onConfirm={date => {
           if (openStartPicker) {
