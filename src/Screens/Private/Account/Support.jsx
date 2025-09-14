@@ -11,8 +11,12 @@ import {
 import HomeHeader from '../../../Components/HomeHeader';
 import {COLOR} from '../../../Constants/Colors';
 import CustomButton from '../../../Components/CustomButton';
-import { Typography } from '../../../Components/UI/Typography';
+import {Typography} from '../../../Components/UI/Typography';
 import Button from '../../../Components/UI/Button';
+import Input from '../../../Components/Input';
+import {windowWidth} from '../../../Constants/Dimensions';
+import { validators } from '../../../Backend/Validator';
+import { isValidForm } from '../../../Backend/Utility';
 
 const Support = () => {
   const [tickets, setTickets] = useState([
@@ -37,6 +41,7 @@ const Support = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newDesc, setNewDesc] = useState('');
+  const [error, setError] = useState('');
 
   const handleAddTicket = () => {
     if (!newTitle.trim() || !newDesc.trim()) return;
@@ -78,6 +83,45 @@ const Support = () => {
     </View>
   );
 
+  const handleUpdate = () => {
+    let validationErrors = {
+      title: validators.checkRequire('Title', firstName),
+      description: validators.checkEmail('Description', email),
+    };
+    setError(validationErrors);
+    if (isValidForm(validationErrors)) {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append('title', firstName);
+      formData.append('description', email);
+      // if (profileImage) {
+      //   formData.append('image', profileImage);
+      // }
+      console.log('FormData ====>', formData);
+      POST_WITH_TOKEN(
+        UPDATE_PROFILE,
+        formData,
+        success => {
+          setLoading(false);
+          console.log(success, 'dsdsdsdeeeeeeeeeeeeweewew-->>>');
+          dispatch(userDetails(success?.data));
+          navigation.pop();
+          setIsEditing(false);
+          fetchUserProfile();
+        },
+        error => {
+          console.log(error, 'errorerrorerror>>');
+          setLoading(false);
+        },
+        fail => {
+          console.log(fail, 'errorerrorerror>>');
+
+          setLoading(false);
+        },
+      );
+    }
+  };
+
   return (
     <View style={styles.container}>
       <HomeHeader
@@ -90,13 +134,10 @@ const Support = () => {
         data={tickets}
         renderItem={renderTicket}
         keyExtractor={item => item.id}
-        contentContainerStyle={{paddingVertical: 10,paddingHorizontal:10}}
+        contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 10}}
       />
 
-      <Button
-        title="Raise Ticket"
-        onPress={() => setModalVisible(true)}
-      />
+      <Button title="Raise Ticket" onPress={() => setModalVisible(true)} />
 
       {/* Raise Ticket Modal */}
       <Modal
@@ -110,31 +151,56 @@ const Support = () => {
               <Typography style={styles.modalTitle}>
                 Raise a Support Ticket
               </Typography>
-              <TextInput
+              {/* <Text
                 style={styles.input}
                 placeholder="Enter Ticket Title"
                 value={newTitle}
+                placeholderTextColor={'gray'}
                 onChangeText={setNewTitle}
+              /> */}
+              <Input
+                label="Title"
+                placeholder=""
+                value={newTitle}
+                style={{borderColor: COLOR.primary}}
+                onChangeText={setNewTitle}
+                error={error.name}
               />
-              <TextInput
-                style={[styles.input, {height: 100}]}
-                placeholder="Enter Description"
+
+              <Input
+                label="Description"
+                placeholder=""
                 value={newDesc}
+                style={{borderColor: COLOR.primary}}
                 onChangeText={setNewDesc}
-                multiline
+                error={error.name}
+                multiline={true}
               />
-              <CustomButton
-                title="Submit Ticket"
-                onPress={handleAddTicket}
-                style={{marginTop: 10}}
-              />
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={styles.cancelBtn}>
-                <Typography style={{color: COLOR.primary}}>
-                  Cancel
-                </Typography>
-              </TouchableOpacity>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginTop: 15,
+                }}>
+                <Button
+                  title="Submit Ticket"
+                  onPress={handleAddTicket}
+                  containerStyle={{marginTop: 10, width: windowWidth * 0.4}}
+                />
+                <Button
+                  title="Cancel"
+                  onPress={() => setModalVisible(false)}
+                  titleColor={COLOR.primary}
+                  containerStyle={{
+                    marginTop: 10,
+                    width: windowWidth * 0.4,
+                    backgroundColor: 'white',
+                    borderWidth: 1,
+                    borderColor: COLOR.primary,
+                  }}
+                />
+              </View>
             </ScrollView>
           </View>
         </View>
