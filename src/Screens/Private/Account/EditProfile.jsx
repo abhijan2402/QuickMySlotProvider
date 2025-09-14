@@ -51,7 +51,7 @@ const EditProfile = ({navigation}) => {
   useEffect(() => {
     if (isFocus) {
       setPhone(userdata?.phone_number);
-      setWebsite(userdata?.website);
+      setWebsite(userdata?.website || userdata?.business_website);
       setProfileImage({path: userdata?.photo_verification});
     }
   }, [isFocus]);

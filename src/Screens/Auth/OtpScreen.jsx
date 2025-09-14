@@ -19,6 +19,7 @@ import {useDispatch} from 'react-redux';
 import {Token, userDetails} from '../../Redux/action';
 import {isValidForm, ToastMsg} from '../../Backend/Utility';
 import {validators} from '../../Backend/Validator';
+import Button from '../../Components/UI/Button';
 
 const OtpScreen = ({navigation, route}) => {
   const {setUser, setToken} = useContext(AuthContext);
@@ -69,7 +70,7 @@ const OtpScreen = ({navigation, route}) => {
   const verifyOtp = () => {
     const otpCode = otp.join('');
     console.log('Entered OTP:', otpCode);
-
+        setLoading(true);
     const body = {
       user_id: id,
       otp: otpCode,
@@ -87,6 +88,7 @@ const OtpScreen = ({navigation, route}) => {
       error => {
         console.log(error, 'errorerrorerror>>');
         setLoading(false);
+        setError(error?.error)
       },
       fail => {
         setLoading(false);
@@ -183,7 +185,7 @@ const OtpScreen = ({navigation, route}) => {
         </Typography>
       ) : null}
 
-      <CustomButton
+      <Button
         loading={loading}
         title={'Verify'}
         onPress={() => {

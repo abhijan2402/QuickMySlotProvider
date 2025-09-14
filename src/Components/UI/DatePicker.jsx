@@ -17,9 +17,8 @@ const DatePickerModal = ({
   const [open, setOpen] = useState(false);
 
   return (
-    <View style={[{marginBottom: 12, containerStyle, height: 52}]}>
+    <View style={[{marginBottom: 12, height: 52}, containerStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
-
       <TouchableOpacity
         style={styles.input}
         onPress={() => setOpen(true)}

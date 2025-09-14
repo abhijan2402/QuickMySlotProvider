@@ -3,7 +3,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
-  ScrollView,
   KeyboardAvoidingView,
   Platform,
   Image,
@@ -23,8 +22,7 @@ import useKeyboard from '../../Constants/Utility';
 import {useDispatch, useSelector} from 'react-redux';
 import {BUSINESS_PROFILE} from '../../Constants/ApiRoute';
 import {POST_FORM_DATA} from '../../Backend/Api';
-import {ToastMsg} from '../../Backend/Utility';
-import { userDetails } from '../../Redux/action';
+import {userDetails} from '../../Redux/action';
 
 const CompleteProfile = ({navigation}) => {
   const [showModal, setShowModal] = useState(false);
@@ -48,7 +46,7 @@ const CompleteProfile = ({navigation}) => {
   const {isKeyboardVisible} = useKeyboard();
   const userdata = useSelector(store => store.userDetails);
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   // Error state
   const [errors, setErrors] = useState({});
@@ -81,21 +79,18 @@ const CompleteProfile = ({navigation}) => {
 
   const validateForm = () => {
     let newErrors = {};
-
     if (!image.PhotoVerifi)
-      newErrors.PhotoVerifi = 'Photo Verification is required';
+      newErrors.PhotoVerifi = 'Photo verification is required';
     if (!image.businessProof)
-      newErrors.businessProof = 'Business Proof is required';
+      newErrors.businessProof = 'Business proof is required';
     if (!image.aadhaarFront)
-      newErrors.aadhaarFront = 'Aadhaar Front is required';
-    if (!image.pan) newErrors.pan = 'PAN Card is required';
-
+      newErrors.aadhaarFront = 'Aadhaar card is required';
+    if (!image.pan) newErrors.pan = 'PAN card is required';
     if (!about.trim())
       newErrors.about = 'Please enter details about your business';
     if (!experience.trim()) newErrors.experience = 'Experience is required';
     if (!location.trim()) newErrors.location = 'Location is required';
     if (!gst.trim()) newErrors.gst = 'GST Number is required';
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -113,31 +108,24 @@ const CompleteProfile = ({navigation}) => {
       if (image?.PhotoVerifi) {
         formData.append('photo_verification', image?.PhotoVerifi);
       }
-
       if (image?.businessProof) {
         formData.append('business_proof', image?.businessProof);
       }
-
       if (image?.aadhaarFront) {
         formData.append('adhaar_card_verification', image?.aadhaarFront);
       }
-
       if (image?.pan) {
         formData.append('pan_card', image?.pan);
       }
-
-      console.log('FormData ====>', formData);
       POST_FORM_DATA(
         BUSINESS_PROFILE,
         formData,
         success => {
-          console.log(success, 'successsuccesssuccess-->>>');
           setLoading(false);
           dispatch(userDetails(success?.data));
           navigation.navigate('Availability');
         },
         error => {
-          console.log(error, 'errorerrorerror>>');
           setLoading(false);
           if (error?.data?.errors) {
             const errorKeyMap = {
@@ -154,8 +142,6 @@ const CompleteProfile = ({navigation}) => {
           }
         },
         fail => {
-          console.log(fail, 'errorerrorerror>>');
-
           setLoading(false);
         },
       );
@@ -181,6 +167,7 @@ const CompleteProfile = ({navigation}) => {
       />
 
       <KeyboardAwareScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 20}}
         style={{flex: 1, paddingHorizontal: 5}}>
         <View
