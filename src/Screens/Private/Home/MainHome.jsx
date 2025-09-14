@@ -11,12 +11,12 @@ import React, {useEffect, useRef, useState} from 'react';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import {FlatList} from 'react-native';
-import { Typography } from '../../../Components/UI/Typography';
-import { useIsFocused } from '@react-navigation/native';
-import { GET_WITH_TOKEN } from '../../../Backend/Api';
-import { GET_PROFILE } from '../../../Constants/ApiRoute';
-import { useDispatch } from 'react-redux';
-import { userDetails } from '../../../Redux/action';
+import {Typography} from '../../../Components/UI/Typography';
+import {useIsFocused} from '@react-navigation/native';
+import {GET_WITH_TOKEN} from '../../../Backend/Api';
+import {GET_PROFILE} from '../../../Constants/ApiRoute';
+import {useDispatch, useSelector} from 'react-redux';
+import {userDetails} from '../../../Redux/action';
 
 const MainHome = ({navigation}) => {
   const {width} = Dimensions.get('window');
@@ -24,28 +24,28 @@ const MainHome = ({navigation}) => {
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const isFocus = useIsFocused();
-  const dispatch = useDispatch()
-  
-    useEffect(() => {
-      if (isFocus) {
-        fetchUserProfile();
-      }
-    }, [isFocus]);
-  
-    global.fetchUserProfile = () => {
-      GET_WITH_TOKEN(
-        GET_PROFILE,
-        success => {
-          console.log(success, 'successsuccesssuccess-->>>');
-          dispatch(userDetails(success?.data))
-        },
-        error => {
-          console.log(error, 'errorerrorerror>>');
-        },
-        fail => {
-        },
-      );
-    };
+  const dispatch = useDispatch();
+  const userdata = useSelector(store => store.userDetails);
+
+  useEffect(() => {
+    if (isFocus) {
+      fetchUserProfile();
+    }
+  }, [isFocus]);
+
+  global.fetchUserProfile = () => {
+    GET_WITH_TOKEN(
+      GET_PROFILE,
+      success => {
+        console.log(success, 'successsuccesssuccess-->>>');
+        dispatch(userDetails(success?.data));
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+      },
+      fail => {},
+    );
+  };
 
   const banners = [
     {
@@ -103,19 +103,19 @@ const MainHome = ({navigation}) => {
         <View style={styles.card}>
           <Image
             source={{
-              uri: 'https://explorerresearch.com/wp-content/uploads/2022/07/luxury-brand-retail-store-design-1.jpg',
+              uri: userdata?.photo_verification,
             }}
             style={styles.cardIcon}
           />
           <View style={{marginLeft: 10, flex: 1}}>
             <Typography style={styles.cardTitle}>
-              Glamour Touch Salon
+              {userdata?.business_name}
             </Typography>
             <Typography style={styles.cardSub}>
-              John Doe | +1 (555) 123-4567
+              {userdata?.name} | +91-{userdata?.phone_number}
             </Typography>
             <Typography style={styles.cardSub}>
-              123 main Street., Anytown, CA 90210
+              {userdata?.location_area_served}
             </Typography>
           </View>
         </View>
@@ -221,9 +221,7 @@ const MainHome = ({navigation}) => {
                 style={styles.customerImg}
               />
               <View style={{flex: 1, marginLeft: 12}}>
-                <Typography style={styles.customerName}>
-                  Jane Smith
-                </Typography>
+                <Typography style={styles.customerName}>Jane Smith</Typography>
                 <Typography style={styles.bookingDetail}>
                   Service: Hair Styling
                 </Typography>
@@ -246,7 +244,6 @@ const MainHome = ({navigation}) => {
 };
 
 export default MainHome;
-
 
 const styles = StyleSheet.create({
   container: {

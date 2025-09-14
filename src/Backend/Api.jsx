@@ -81,14 +81,12 @@ export const GET_WITH_TOKEN = async (
   status = () => {},
 ) => {
   const tokenVal = store.getState().Token;
-  console.log(tokenVal, 'TOKENNNN');
-
   try {
     await axios({
       method: 'get',
       url: `${API}${route}`,
       headers: {
-        authorization: `Bearer ${'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiMzdiZjBkNjUyZGE3NzQ2YzIxYzIwN2Y3MTNiYzgzNGJjYTBmNDNjOGQwMDUyNDYwMzZkZGM4MDdkZjlhMWVlZDczZDI2NDU4YmM2YzFmNGQiLCJpYXQiOjE3NTc4MzU0NzQuNzEyMzUzLCJuYmYiOjE3NTc4MzU0NzQuNzEyMzU0LCJleHAiOjE3ODkzNzE0NzQuNzA4MDQ2LCJzdWIiOiI2OSIsInNjb3BlcyI6W119.Xr7LvL6yPsBxOaUS-GLwcxFpJ-Y5r3l8snx26WX9qyhtqWPf03h2IIwO58gi2kWSf4Y3dTfolyGD4nGjnxQwNhBk6K9mlNcFf2vdCJDvi-K9JSz5ZcrLr5EA_MwJjiIBOnv-9uBe2EbNpN1Wa0duTXbrwaePTpt6IThiBa6I3u6hAX3mPrB9DN75Wjmag9ZiD5s3IySEdttP3t3uQOSPDypUgR9Stl_t1ySCby1CedJBVh8DgG_chRspZHkAGHmk8tfF-NlQPexPlT-0OTDmDxUNMgnuWFw8cVOxLInTG2COMhr9NKyKKEL-rwG3TlZLMZNPMmPg7xlyWmHM_cGEi66MktrBRDJ5R79g6JWZ7Eysg-vPrTuZWeJ_oI1b_uTq2gWxYubqzOCOjCByxmTmCGIMtwTJ3WdtIWCKnRq0BqgOI8luHtZYzv49eeaMDK0vTo-7duhliTpfWJv7_GqjCFcR1dMDr6EpsAtqxsgLd45tDTRPHI1O7WTR6OuZ_rR-NXnWWqn6V2pRhe4NcSow_8Tx50x0D-WVtmomVT30c2CwXvPtgrDp4chGuUy10ppOpjFy8GGk-YcLb9fUSNikC1uqZcRrakIfbXMH9G0um5JMR1tgBX9gE_wgdFSXFllV7-dYKm99Q4Lo4BPU9BI-j1AiB8lZUosOwtU3GteTrX4'}`,
+        Authorization: `Bearer ${tokenVal}`,
         ...headers,
       },
       ...errorHandling,
@@ -172,7 +170,7 @@ export const POST_FORM_DATA = async (
       url: `${API}${route}`,
       data: body,
       headers: {
-        authorization: `Bearer ${'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiMzdiZjBkNjUyZGE3NzQ2YzIxYzIwN2Y3MTNiYzgzNGJjYTBmNDNjOGQwMDUyNDYwMzZkZGM4MDdkZjlhMWVlZDczZDI2NDU4YmM2YzFmNGQiLCJpYXQiOjE3NTc4MzU0NzQuNzEyMzUzLCJuYmYiOjE3NTc4MzU0NzQuNzEyMzU0LCJleHAiOjE3ODkzNzE0NzQuNzA4MDQ2LCJzdWIiOiI2OSIsInNjb3BlcyI6W119.Xr7LvL6yPsBxOaUS-GLwcxFpJ-Y5r3l8snx26WX9qyhtqWPf03h2IIwO58gi2kWSf4Y3dTfolyGD4nGjnxQwNhBk6K9mlNcFf2vdCJDvi-K9JSz5ZcrLr5EA_MwJjiIBOnv-9uBe2EbNpN1Wa0duTXbrwaePTpt6IThiBa6I3u6hAX3mPrB9DN75Wjmag9ZiD5s3IySEdttP3t3uQOSPDypUgR9Stl_t1ySCby1CedJBVh8DgG_chRspZHkAGHmk8tfF-NlQPexPlT-0OTDmDxUNMgnuWFw8cVOxLInTG2COMhr9NKyKKEL-rwG3TlZLMZNPMmPg7xlyWmHM_cGEi66MktrBRDJ5R79g6JWZ7Eysg-vPrTuZWeJ_oI1b_uTq2gWxYubqzOCOjCByxmTmCGIMtwTJ3WdtIWCKnRq0BqgOI8luHtZYzv49eeaMDK0vTo-7duhliTpfWJv7_GqjCFcR1dMDr6EpsAtqxsgLd45tDTRPHI1O7WTR6OuZ_rR-NXnWWqn6V2pRhe4NcSow_8Tx50x0D-WVtmomVT30c2CwXvPtgrDp4chGuUy10ppOpjFy8GGk-YcLb9fUSNikC1uqZcRrakIfbXMH9G0um5JMR1tgBX9gE_wgdFSXFllV7-dYKm99Q4Lo4BPU9BI-j1AiB8lZUosOwtU3GteTrX4'}`,
+        Authorization: `Bearer ${tokenVal}`,
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
       },
@@ -215,7 +213,7 @@ export const POST_WITH_TOKEN = async (
       url: `${API}${route}`,
       data: body,
       headers: {
-        Authorization: `Bearer ${'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiMzdiZjBkNjUyZGE3NzQ2YzIxYzIwN2Y3MTNiYzgzNGJjYTBmNDNjOGQwMDUyNDYwMzZkZGM4MDdkZjlhMWVlZDczZDI2NDU4YmM2YzFmNGQiLCJpYXQiOjE3NTc4MzU0NzQuNzEyMzUzLCJuYmYiOjE3NTc4MzU0NzQuNzEyMzU0LCJleHAiOjE3ODkzNzE0NzQuNzA4MDQ2LCJzdWIiOiI2OSIsInNjb3BlcyI6W119.Xr7LvL6yPsBxOaUS-GLwcxFpJ-Y5r3l8snx26WX9qyhtqWPf03h2IIwO58gi2kWSf4Y3dTfolyGD4nGjnxQwNhBk6K9mlNcFf2vdCJDvi-K9JSz5ZcrLr5EA_MwJjiIBOnv-9uBe2EbNpN1Wa0duTXbrwaePTpt6IThiBa6I3u6hAX3mPrB9DN75Wjmag9ZiD5s3IySEdttP3t3uQOSPDypUgR9Stl_t1ySCby1CedJBVh8DgG_chRspZHkAGHmk8tfF-NlQPexPlT-0OTDmDxUNMgnuWFw8cVOxLInTG2COMhr9NKyKKEL-rwG3TlZLMZNPMmPg7xlyWmHM_cGEi66MktrBRDJ5R79g6JWZ7Eysg-vPrTuZWeJ_oI1b_uTq2gWxYubqzOCOjCByxmTmCGIMtwTJ3WdtIWCKnRq0BqgOI8luHtZYzv49eeaMDK0vTo-7duhliTpfWJv7_GqjCFcR1dMDr6EpsAtqxsgLd45tDTRPHI1O7WTR6OuZ_rR-NXnWWqn6V2pRhe4NcSow_8Tx50x0D-WVtmomVT30c2CwXvPtgrDp4chGuUy10ppOpjFy8GGk-YcLb9fUSNikC1uqZcRrakIfbXMH9G0um5JMR1tgBX9gE_wgdFSXFllV7-dYKm99Q4Lo4BPU9BI-j1AiB8lZUosOwtU3GteTrX4'}`,
+        Authorization: `Bearer ${tokenVal}`,
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
@@ -294,7 +292,7 @@ export const DELETE_WITH_TOKEN = async (
       url: `${API}${route}`,
       data: body,
       headers: {
-        authorization: `Bearer ${'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiMzdiZjBkNjUyZGE3NzQ2YzIxYzIwN2Y3MTNiYzgzNGJjYTBmNDNjOGQwMDUyNDYwMzZkZGM4MDdkZjlhMWVlZDczZDI2NDU4YmM2YzFmNGQiLCJpYXQiOjE3NTc4MzU0NzQuNzEyMzUzLCJuYmYiOjE3NTc4MzU0NzQuNzEyMzU0LCJleHAiOjE3ODkzNzE0NzQuNzA4MDQ2LCJzdWIiOiI2OSIsInNjb3BlcyI6W119.Xr7LvL6yPsBxOaUS-GLwcxFpJ-Y5r3l8snx26WX9qyhtqWPf03h2IIwO58gi2kWSf4Y3dTfolyGD4nGjnxQwNhBk6K9mlNcFf2vdCJDvi-K9JSz5ZcrLr5EA_MwJjiIBOnv-9uBe2EbNpN1Wa0duTXbrwaePTpt6IThiBa6I3u6hAX3mPrB9DN75Wjmag9ZiD5s3IySEdttP3t3uQOSPDypUgR9Stl_t1ySCby1CedJBVh8DgG_chRspZHkAGHmk8tfF-NlQPexPlT-0OTDmDxUNMgnuWFw8cVOxLInTG2COMhr9NKyKKEL-rwG3TlZLMZNPMmPg7xlyWmHM_cGEi66MktrBRDJ5R79g6JWZ7Eysg-vPrTuZWeJ_oI1b_uTq2gWxYubqzOCOjCByxmTmCGIMtwTJ3WdtIWCKnRq0BqgOI8luHtZYzv49eeaMDK0vTo-7duhliTpfWJv7_GqjCFcR1dMDr6EpsAtqxsgLd45tDTRPHI1O7WTR6OuZ_rR-NXnWWqn6V2pRhe4NcSow_8Tx50x0D-WVtmomVT30c2CwXvPtgrDp4chGuUy10ppOpjFy8GGk-YcLb9fUSNikC1uqZcRrakIfbXMH9G0um5JMR1tgBX9gE_wgdFSXFllV7-dYKm99Q4Lo4BPU9BI-j1AiB8lZUosOwtU3GteTrX4'}`,
+        Authorization: `Bearer ${tokenVal}`,
         ...headers,
       },
       ...errorHandling,
@@ -335,7 +333,7 @@ export const PUT_FORM_DATA = async (
       data: body,
       headers: {
         'Content-Type': 'multipart/form-data',
-        authorization: `Bearer ${'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiMzdiZjBkNjUyZGE3NzQ2YzIxYzIwN2Y3MTNiYzgzNGJjYTBmNDNjOGQwMDUyNDYwMzZkZGM4MDdkZjlhMWVlZDczZDI2NDU4YmM2YzFmNGQiLCJpYXQiOjE3NTc4MzU0NzQuNzEyMzUzLCJuYmYiOjE3NTc4MzU0NzQuNzEyMzU0LCJleHAiOjE3ODkzNzE0NzQuNzA4MDQ2LCJzdWIiOiI2OSIsInNjb3BlcyI6W119.Xr7LvL6yPsBxOaUS-GLwcxFpJ-Y5r3l8snx26WX9qyhtqWPf03h2IIwO58gi2kWSf4Y3dTfolyGD4nGjnxQwNhBk6K9mlNcFf2vdCJDvi-K9JSz5ZcrLr5EA_MwJjiIBOnv-9uBe2EbNpN1Wa0duTXbrwaePTpt6IThiBa6I3u6hAX3mPrB9DN75Wjmag9ZiD5s3IySEdttP3t3uQOSPDypUgR9Stl_t1ySCby1CedJBVh8DgG_chRspZHkAGHmk8tfF-NlQPexPlT-0OTDmDxUNMgnuWFw8cVOxLInTG2COMhr9NKyKKEL-rwG3TlZLMZNPMmPg7xlyWmHM_cGEi66MktrBRDJ5R79g6JWZ7Eysg-vPrTuZWeJ_oI1b_uTq2gWxYubqzOCOjCByxmTmCGIMtwTJ3WdtIWCKnRq0BqgOI8luHtZYzv49eeaMDK0vTo-7duhliTpfWJv7_GqjCFcR1dMDr6EpsAtqxsgLd45tDTRPHI1O7WTR6OuZ_rR-NXnWWqn6V2pRhe4NcSow_8Tx50x0D-WVtmomVT30c2CwXvPtgrDp4chGuUy10ppOpjFy8GGk-YcLb9fUSNikC1uqZcRrakIfbXMH9G0um5JMR1tgBX9gE_wgdFSXFllV7-dYKm99Q4Lo4BPU9BI-j1AiB8lZUosOwtU3GteTrX4'}`,
+        Authorization: `Bearer ${tokenVal}`,
       },
       ...errorHandling,
     })
@@ -373,7 +371,7 @@ export const PUT_WITH_TOKEN = async (
       url: `${API}${route}`,
       data: body,
       headers: {
-        Authorization: `Bearer ${'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiMzdiZjBkNjUyZGE3NzQ2YzIxYzIwN2Y3MTNiYzgzNGJjYTBmNDNjOGQwMDUyNDYwMzZkZGM4MDdkZjlhMWVlZDczZDI2NDU4YmM2YzFmNGQiLCJpYXQiOjE3NTc4MzU0NzQuNzEyMzUzLCJuYmYiOjE3NTc4MzU0NzQuNzEyMzU0LCJleHAiOjE3ODkzNzE0NzQuNzA4MDQ2LCJzdWIiOiI2OSIsInNjb3BlcyI6W119.Xr7LvL6yPsBxOaUS-GLwcxFpJ-Y5r3l8snx26WX9qyhtqWPf03h2IIwO58gi2kWSf4Y3dTfolyGD4nGjnxQwNhBk6K9mlNcFf2vdCJDvi-K9JSz5ZcrLr5EA_MwJjiIBOnv-9uBe2EbNpN1Wa0duTXbrwaePTpt6IThiBa6I3u6hAX3mPrB9DN75Wjmag9ZiD5s3IySEdttP3t3uQOSPDypUgR9Stl_t1ySCby1CedJBVh8DgG_chRspZHkAGHmk8tfF-NlQPexPlT-0OTDmDxUNMgnuWFw8cVOxLInTG2COMhr9NKyKKEL-rwG3TlZLMZNPMmPg7xlyWmHM_cGEi66MktrBRDJ5R79g6JWZ7Eysg-vPrTuZWeJ_oI1b_uTq2gWxYubqzOCOjCByxmTmCGIMtwTJ3WdtIWCKnRq0BqgOI8luHtZYzv49eeaMDK0vTo-7duhliTpfWJv7_GqjCFcR1dMDr6EpsAtqxsgLd45tDTRPHI1O7WTR6OuZ_rR-NXnWWqn6V2pRhe4NcSow_8Tx50x0D-WVtmomVT30c2CwXvPtgrDp4chGuUy10ppOpjFy8GGk-YcLb9fUSNikC1uqZcRrakIfbXMH9G0um5JMR1tgBX9gE_wgdFSXFllV7-dYKm99Q4Lo4BPU9BI-j1AiB8lZUosOwtU3GteTrX4'}`,
+        Authorization: `Bearer ${tokenVal}`,
         'Content-Type': 'application/json',
       },
       ...errorHandling,

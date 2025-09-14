@@ -1,5 +1,11 @@
-import React, { useState } from 'react';
-import {Image, KeyboardAvoidingView, Platform, StyleSheet, View} from 'react-native';
+import React, {useState} from 'react';
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {windowHeight, windowWidth} from '../../Constants/Dimensions';
 import {COLOR} from '../../Constants/Colors';
@@ -10,7 +16,7 @@ import Button from '../../Components/UI/Button';
 import GoogleAuthButton from '../../Components/UI/GoogleAuthButton';
 import {POST, useApi} from '../../Backend/Api';
 import {SIGN_UP} from '../../Constants/ApiRoute';
-import { isAuth, Token, userDetails } from '../../Redux/action';
+import {isAuth, Token, userDetails} from '../../Redux/action';
 import {ScrollView} from 'react-native';
 import Input from '../../Components/Input';
 import {Typography} from '../../Components/UI/Typography';
@@ -25,22 +31,22 @@ const Login = ({navigation}) => {
     };
     setError(error);
     if (isValidForm(error)) {
-      handleSignup()
+      handleSignup();
     }
   };
   const handleSignup = async () => {
     setLoading(true);
     const body = {
-      phone_number: number
+      phone_number: number,
     };
     POST(
       SIGN_UP,
       body,
       success => {
         setLoading(false);
-        navigation.navigate('OtpScreen',{
+        navigation.navigate('OtpScreen', {
           id: success?.user_id,
-          phoneNumber: number
+          phoneNumber: number,
         });
       },
       error => {
@@ -55,10 +61,10 @@ const Login = ({navigation}) => {
   const handleLoginSuccess = user => {};
   return (
     <KeyboardAvoidingView
-    behavior={Platform.OS === 'ios' ? 'padding' : 'height' }
-    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
       style={{flex: 1, paddingHorizontal: 20, backgroundColor: COLOR.white}}>
-      <ScrollView style={{flex:1}}>
+      <ScrollView style={{flex: 1}}>
         <LinearGradient
           colors={[COLOR.white, COLOR.white]}
           start={{x: 0, y: 0}}
@@ -90,12 +96,12 @@ const Login = ({navigation}) => {
             error={error.mobile}
             text={'+ 91'}
             leftIcon={true}
-            style={{marginLeft:5}}
+            style={{marginLeft: 5}}
           />
 
           {/* Continue Button */}
           <Button
-          loading={loading}
+            loading={loading}
             containerStyle={{marginTop: 30, width: '100%'}}
             title={'Continue'}
             onPress={onSubmit}

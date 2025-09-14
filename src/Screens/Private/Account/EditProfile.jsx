@@ -21,11 +21,16 @@ import {Typography} from '../../../Components/UI/Typography';
 import {useDispatch, useSelector} from 'react-redux';
 import {useIsFocused} from '@react-navigation/native';
 import {
+  GET,
   GET_WITH_TOKEN,
   POST_FORM_DATA,
   POST_WITH_TOKEN,
 } from '../../../Backend/Api';
-import {CATEGORY, UPDATE_PROFILE} from '../../../Constants/ApiRoute';
+import {
+  CATEGORY,
+  GET_CATEGORY,
+  UPDATE_PROFILE,
+} from '../../../Constants/ApiRoute';
 import {userDetails} from '../../../Redux/action';
 import {Dropdown} from 'react-native-element-dropdown';
 import {ErrorBox} from '../../../Components/UI/ErrorBox';
@@ -44,7 +49,7 @@ const EditProfile = ({navigation}) => {
   const [isEditing, setIsEditing] = useState(false);
   const {isKeyboardVisible} = useKeyboard();
   const userdata = useSelector(store => store.userDetails);
-  console.log(userdata);
+  console.log(userdata, 'userdatauserdatauserdatauserdata===>');
   const [profileImage, setProfileImage] = useState(
     'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
   );
@@ -59,44 +64,78 @@ const EditProfile = ({navigation}) => {
 
   useEffect(() => {
     if (isFocus) {
+      getCategory();
       setPhone(userdata?.phone_number);
-      setWebsite(userdata?.website);
+      setWebsite(userdata?.website || userdata?.business_website);
       setProfileImage({path: userdata?.photo_verification});
+      setFirstName(userdata?.name);
+      setEmail(userdata?.email);
+      setAddress(userdata?.exact_location);
+      setBuisness(userdata?.business_name);
+      setServed(userdata?.location_area_served);
+      setCompany('');
     }
   }, [isFocus]);
 
-  useEffect(() => {
-    if (isFocus) {
-      GET_WITH_TOKEN(
-        CATEGORY,
-        success => {
-          setLoading(false);
-          console.log(success);
-          const formattedData = success?.data?.map(item => ({
-            label: item.name,
-            value: item.id,
-          }));
+  // useEffect(() => {
+  //   if (isFocus) {
+  //     GET_WITH_TOKEN(
+  //       CATEGORY,
+  //       success => {
+  //         setLoading(false);
+  //         console.log(success);
+  //         const formattedData = success?.data?.map(item => ({
+  //           label: item.name,
+  //           value: item.id,
+  //         }));
+  //         setCategoryList(formattedData || []);
+  //       },
+  //       error => {
+  //         setLoading(false);
+  //         console.log(error);
 
-          setCategoryList(formattedData || []);
-        },
-        error => {
-          setLoading(false);
-          console.log(error);
-
-          ToastMsg(error?.message);
-        },
-        fail => {
-          setLoading(false);
-        },
-      );
-    }
-  }, [isFocus]);
+  //         ToastMsg(error?.message);
+  //       },
+  //       fail => {
+  //         setLoading(false);
+  //       },
+  //     );
+  //   }
+  // }, [isFocus]);
 
   const handleImageSelected = response => {
     console.log(response);
     if (response) {
       setProfileImage(response);
     }
+  };
+
+  const getCategory = () => {
+    GET(
+      GET_CATEGORY,
+      success => {
+        console.log(success, 'GET_CATEGORY-->>>');
+        const d = success?.data.map(v => {
+          return {
+            label: v?.name,
+            value: v?.id,
+          };
+        });
+        setCategoryList(d);
+        if (userdata?.service_category) {
+          const selected = d.find(v => v?.value == userdata?.service_category);
+          console.log(selected,'dsadasdsadsaddewqweweqeqwweq');
+          
+          setCategory(selected);
+        }
+      },
+      error => {
+        console.log(error, 'GET_CATEGORY>>');
+      },
+      fail => {
+        console.log(fail, 'GET_CATEGORYfail>>');
+      },
+    );
   };
 
   const handleUpdate = () => {
@@ -106,15 +145,14 @@ const EditProfile = ({navigation}) => {
       phone: validators.checkNumber('Phone Number', phone),
       // website: validators.checkRequire('Website', website),
       address: validators.checkRequire('Address', address),
-      company: validators.checkRequire('Company Name', company),
+      // company: validators.checkRequire('Company Name', company),
       buisness: validators.checkRequire('Buisness Name', buisness),
       location_served: validators.checkRequire('Location Area Served', served),
       category: validators.checkRequire('Service Category', category),
     };
-
     setError(validationErrors);
-
     if (isValidForm(validationErrors)) {
+      setLoading(true);
       const formData = new FormData();
       formData.append('name', firstName);
       formData.append('email', email);
@@ -129,18 +167,18 @@ const EditProfile = ({navigation}) => {
       formData.append('business_name', buisness);
       formData.append('location_area_served', served);
       formData.append('service_category', category);
-
       if (profileImage) {
         formData.append('profile_picture', profileImage);
       }
-
       console.log('FormData ====>', formData);
       POST_WITH_TOKEN(
         UPDATE_PROFILE,
         formData,
         success => {
-          console.log(success, 'successsuccesssuccess-->>>');
           setLoading(false);
+          console.log(success, 'dsdsdsdeeeeeeeeeeeeweewew-->>>');
+          dispatch(userDetails(success?.data));
+          navigation.pop();
           setIsEditing(false);
           fetchUserProfile();
         },
@@ -316,6 +354,7 @@ const EditProfile = ({navigation}) => {
             placeholderStyle={styles.placeholderStyle}
             selectedTextStyle={styles.selectedTextStyle}
             data={categoryList}
+            disable={!isEditing}
             maxHeight={150}
             labelField="label"
             valueField="value"

@@ -9,23 +9,27 @@ const DatePickerModal = ({
   value,
   onChange,
   label,
-  mode,
+  mode = 'date',
   error,
   containerStyle,
   placeholder,
+  minimumDate
 }) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <View style={[{marginBottom: 12, containerStyle, height: 52}]}>
+    <View style={[{marginBottom: 12, height: 52}, containerStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
-
       <TouchableOpacity
         style={styles.input}
         onPress={() => setOpen(true)}
         activeOpacity={0.8}>
         <Text style={[styles.timeText, !value && {color: COLOR.grey}]}>
-          {value ? moment(value).format('hh:mm A') : 'Select Time'}
+          {value
+            ? mode == 'date'
+              ? moment(value).format('DD-MM-YYYY')
+              : moment(value).format('hh:mm A')
+            : 'Select Time'}
         </Text>
       </TouchableOpacity>
 
@@ -34,10 +38,11 @@ const DatePickerModal = ({
         placeholder={placeholder}
         open={open}
         date={value || new Date()}
+        minimumDate={minimumDate}
         mode={mode || 'date'}
         onConfirm={date => {
-          setOpen(false);
           onChange(date);
+          setOpen(false);
         }}
         onCancel={() => setOpen(false)}
       />

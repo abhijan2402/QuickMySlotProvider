@@ -13,46 +13,49 @@ import ConfirmModal from '../../../Components/UI/ConfirmModel';
 import {AuthContext} from '../../../Backend/AuthContent';
 import {COLOR} from '../../../Constants/Colors';
 import {Typography} from '../../../Components/UI/Typography';
-import { useIsFocused } from '@react-navigation/native';
-import { POST_WITH_TOKEN } from '../../../Backend/Api';
-import { ANALYTICS, DELETE_ACCOUNT } from '../../../Constants/ApiRoute';
+import {useIsFocused} from '@react-navigation/native';
+import {POST_WITH_TOKEN} from '../../../Backend/Api';
+import {ANALYTICS, DELETE_ACCOUNT} from '../../../Constants/ApiRoute';
+import {useSelector} from 'react-redux';
 
 const Account = ({navigation}) => {
   const {setUser} = useContext(AuthContext);
   const [visible, setVisible] = useState(false);
   const [deleteAccount, setDeleteAccount] = useState(false);
-   const isFocus = useIsFocused();
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
-  
-    const handleDeleteAccount = () => {
-      setLoading(true)
-      POST_WITH_TOKEN(
-          DELETE_ACCOUNT,
-          success => {
-            console.log(success, 'successsuccesssuccess-->>>');
-            setLoading(false);
-          },
-          error => {
-            console.log(error, 'errorerrorerror>>');
-            setLoading(false);
-          },
-          fail => {
-            console.log(fail, 'errorerrorerror>>');
-  
-            setLoading(false);
-          },
-        );
-    }
-      
+  const isFocus = useIsFocused();
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const userdata = useSelector(store => store.userDetails);
+  console.log(userdata, 'PPPPPPPPPPPP---->>>');
+
+  const handleDeleteAccount = () => {
+    setLoading(true);
+    POST_WITH_TOKEN(
+      DELETE_ACCOUNT,
+      success => {
+        console.log(success, 'successsuccesssuccess-->>>');
+        setLoading(false);
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+      },
+      fail => {
+        console.log(fail, 'errorerrorerror>>');
+
+        setLoading(false);
+      },
+    );
+  };
 
   const handleLogout = () => {
     setVisible(false);
     console.log('User logged out');
   };
 
-  const profileImage =
-    'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+  const profileImage = userdata?.photo_verification
+    ? userdata?.photo_verification
+    : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
 
   const arrowIcon = 'https://cdn-icons-png.flaticon.com/512/271/271228.png';
 
@@ -79,7 +82,7 @@ const Account = ({navigation}) => {
         slug: 'terms-condition',
       },
     },
-     {
+    {
       id: 4,
       title: 'Privacy Policy',
       icon: 'https://cdn-icons-png.flaticon.com/128/1458/1458279.png',
@@ -137,10 +140,10 @@ const Account = ({navigation}) => {
       <View style={styles.profileSection}>
         <Image source={{uri: profileImage}} style={styles.profileImage} />
         <Typography variant="h2" color={COLOR.black}>
-          John Doe
+          {userdata?.name}
         </Typography>
         <Typography variant="body2" color={COLOR.GRAY}>
-          john@example.com
+          {userdata?.email || userdata?.phone_number}
         </Typography>
       </View>
 

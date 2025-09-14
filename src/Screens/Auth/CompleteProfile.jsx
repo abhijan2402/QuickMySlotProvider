@@ -3,7 +3,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
-  ScrollView,
   KeyboardAvoidingView,
   Platform,
   Image,
@@ -113,15 +112,13 @@ const CompleteProfile = ({navigation}) => {
 
   const validateForm = () => {
     let newErrors = {};
-
     if (!image.PhotoVerifi)
-      newErrors.PhotoVerifi = 'Photo Verification is required';
+      newErrors.PhotoVerifi = 'Photo verification is required';
     if (!image.businessProof)
-      newErrors.businessProof = 'Business Proof is required';
+      newErrors.businessProof = 'Business proof is required';
     if (!image.aadhaarFront)
-      newErrors.aadhaarFront = 'Aadhaar Front is required';
-    if (!image.pan) newErrors.pan = 'PAN Card is required';
-
+      newErrors.aadhaarFront = 'Aadhaar card is required';
+    if (!image.pan) newErrors.pan = 'PAN card is required';
     if (!about.trim())
       newErrors.about = 'Please enter details about your business';
     if (!experience.trim()) newErrors.experience = 'Experience is required';
@@ -148,31 +145,24 @@ const CompleteProfile = ({navigation}) => {
       if (image?.PhotoVerifi) {
         formData.append('photo_verification', image?.PhotoVerifi);
       }
-
       if (image?.businessProof) {
         formData.append('business_proof', image?.businessProof);
       }
-
       if (image?.aadhaarFront) {
         formData.append('adhaar_card_verification', image?.aadhaarFront);
       }
-
       if (image?.pan) {
         formData.append('pan_card', image?.pan);
       }
-
-      console.log('FormData ====>', formData);
       POST_FORM_DATA(
         BUSINESS_PROFILE,
         formData,
         success => {
-          console.log(success, 'successsuccesssuccess-->>>');
           setLoading(false);
           dispatch(userDetails(success?.data));
           navigation.navigate('Availability');
         },
         error => {
-          console.log(error, 'errorerrorerror>>');
           setLoading(false);
           if (error?.data?.errors) {
             const errorKeyMap = {
@@ -189,8 +179,6 @@ const CompleteProfile = ({navigation}) => {
           }
         },
         fail => {
-          console.log(fail, 'errorerrorerror>>');
-
           setLoading(false);
         },
       );
@@ -216,6 +204,7 @@ const CompleteProfile = ({navigation}) => {
       />
 
       <KeyboardAwareScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 20}}
         style={{flex: 1, paddingHorizontal: 5}}>
         <View

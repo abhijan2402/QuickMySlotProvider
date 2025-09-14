@@ -21,7 +21,7 @@ import {POST_FORM_DATA, POST_WITH_TOKEN} from '../../Backend/Api';
 import {BUSINESS_AVAILABILITY} from '../../Constants/ApiRoute';
 import moment from 'moment';
 import {ToastMsg} from '../../Backend/Utility';
-import { isAuth, userDetails } from '../../Redux/action';
+import {isAuth, userDetails} from '../../Redux/action';
 
 const days = [
   'Monday',
@@ -40,9 +40,8 @@ const Availability = ({navigation}) => {
   const [errors, setError] = useState('');
   const userdata = useSelector(store => store.userDetails);
   console.log(userdata);
-    const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  
   const [loading, setLoading] = useState(false);
 
   const toggleDay = day => {
@@ -91,9 +90,10 @@ const Availability = ({navigation}) => {
         formData,
         success => {
           console.log(success, 'successsuccesssuccess-->>>');
-          setLoading(false);
+          dispatch(isAuth(true));
           dispatch(userDetails(success?.data));
-          dispatch(isAuth(true))
+          // navigation.navigate('BottomNavigation')
+          setLoading(false);
         },
         error => {
           console.log(error, 'errorerrorerror>>');
@@ -207,6 +207,7 @@ const Availability = ({navigation}) => {
 
           {/* End Time */}
           <DatePickerModal
+            containerStyle={{marginTop: 30}}
             label="Daily End Time (e.g., 5:00 PM)"
             value={endTime}
             mode="time"

@@ -4,13 +4,14 @@ import {Dropdown} from 'react-native-element-dropdown';
 import {Typography} from './Typography';
 import {validators} from '../../Backend/Validator';
 import {COLOR} from '../../Constants/Colors';
-import { Font } from '../../Constants/Font';
+import {Font} from '../../Constants/Font';
 
-const DropdownCommon = ({onChange, data, value, label}) => {
+const DropdownCommon = ({onChange, data, value, label, disable}) => {
   return (
     <View>
       <Typography style={[styles.label, {marginTop: 18}]}>{label}</Typography>
       <Dropdown
+        disable={disable}
         style={styles.dropdown}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}

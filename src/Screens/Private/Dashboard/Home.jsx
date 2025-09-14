@@ -24,10 +24,13 @@ import {windowHeight, windowWidth} from '../../../Constants/Dimensions';
 import {useIsFocused} from '@react-navigation/native';
 import {GET_WITH_TOKEN} from '../../../Backend/Api';
 import {GET_PROFILE} from '../../../Constants/ApiRoute';
+import {userDetails} from '../../../Redux/action';
+import {useDispatch} from 'react-redux';
 
 const {width} = Dimensions.get('window');
 
 const Home = ({navigation}) => {
+  const dispatch = useDispatch();
   const banners = [
     'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=1200',
     'https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=1200',
@@ -291,11 +294,11 @@ const Home = ({navigation}) => {
       setloader(false);
     }, 3000);
   }, []);
-    const isFocus = useIsFocused();
+  const isFocus = useIsFocused();
 
   useEffect(() => {
+    alert ()
     if (isFocus) {
-      alert('kkkk')
       fetchUserProfile();
     }
   }, [isFocus]);
@@ -306,6 +309,8 @@ const Home = ({navigation}) => {
       success => {
         console.log(success, 'successsuccesssuccess-->>>');
         setLoading(false);
+        alert('treus');
+        dispatch(userDetails(success?.data));
       },
       error => {
         console.log(error, 'errorerrorerror>>');
