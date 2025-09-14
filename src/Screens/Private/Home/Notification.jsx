@@ -1,57 +1,54 @@
-import React from 'react';
-import {
-  View,
-  StyleSheet,
-  Image,
-  ScrollView,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, StyleSheet, Image, ScrollView} from 'react-native';
 import HomeHeader from '../../../Components/HomeHeader';
 import {COLOR} from '../../../Constants/Colors';
-import { Typography } from '../../../Components/UI/Typography';
-
-const notifications = [
-  {
-    id: 1,
-    icon: 'https://cdn-icons-png.flaticon.com/128/6834/6834351.png',
-    title: 'Booking Confirmed',
-    message:
-      'Your appointment with Dr. Emily Davis on Oct 26th at 2:00 PM is confirmed.',
-    time: '2 hours ago',
-    status: 'Read',
-    statusColor: 'green',
-  },
-  {
-    id: 2,
-    icon: 'https://cdn-icons-png.flaticon.com/128/2529/2529521.png',
-    title: 'Upcoming Appointment',
-    message:
-      'Reminder: Your appointment with John Doe is tomorrow at 10:00 AM.',
-    time: 'Yesterday',
-    status: 'Unread',
-    statusColor: 'gray',
-  },
-  {
-    id: 3,
-    icon: 'https://cdn-icons-png.flaticon.com/128/2529/2529521.png',
-    title: 'New Message Received',
-    message: 'You have a new message from Provider Jane Smith.',
-    time: '1 day ago',
-    status: 'New',
-    statusColor: 'blue',
-  },
-  {
-    id: 4,
-    icon: 'https://cdn-icons-png.flaticon.com/128/6834/6834351.png',
-    title: 'Booking Pending',
-    message:
-      'Your booking request for service "Haircut" with Stylist Mark is pending confirmation.',
-    time: '2 days ago',
-    status: 'Pending',
-    statusColor: 'orange',
-  },
-];
+import {Typography} from '../../../Components/UI/Typography';
+import {useIsFocused} from '@react-navigation/native';
+import {GET_WITH_TOKEN} from '../../../Backend/Api';
+import {GET_NOTIFICATION, NOTIFICATION_READ} from '../../../Constants/ApiRoute';
 
 const NotificationsScreen = () => {
+  const [notifications, setNotification] = useState([]);
+  const isFocus = useIsFocused();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isFocus) {
+      GET_WITH_TOKEN(
+        GET_NOTIFICATION,
+        success => {
+          console.log(success, 'successsuccesssuccess-->>>');
+          setLoading(false);
+        },
+        error => {
+          console.log(error, 'errorerrorerror>>');
+          setLoading(false);
+        },
+        fail => {
+          console.log(fail, 'errorerrorerror>>');
+
+          setLoading(false);
+        },
+      );
+      GET_WITH_TOKEN(
+        NOTIFICATION_READ,
+        success => {
+          console.log(success, 'successsuccesssuccess-->>>');
+          setLoading(false);
+        },
+        error => {
+          console.log(error, 'errorerrorerror>>');
+          setLoading(false);
+        },
+        fail => {
+          console.log(fail, 'errorerrorerror>>');
+
+          setLoading(false);
+        },
+      );
+    }
+  }, [isFocus]);
+
   return (
     <View style={styles.container}>
       <HomeHeader
@@ -61,7 +58,8 @@ const NotificationsScreen = () => {
       />
 
       {/* Notifications List */}
-      <ScrollView contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 10}}>
+      <ScrollView
+        contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 10}}>
         {notifications.map(item => (
           <View key={item.id} style={styles.card}>
             <View style={styles.cardLeft}>

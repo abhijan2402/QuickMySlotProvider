@@ -10,7 +10,7 @@ import {ANALYTICS} from '../../../Constants/ApiRoute';
 
 const MyAnalytics = ({navigation}) => {
   const isFocus = useIsFocused();
-  const [data, setData] = useState();
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const MyAnalytics = ({navigation}) => {
             end={{x: 1, y: 1}}
             colors={['#FFEEF0', '#E6E6FA']}
             style={styles.statBox}>
-              <Typography style={styles.amount}>{data.total_customers}</Typography>
+              <Typography style={styles.amount}>{data?.total_customers}</Typography>
             <Typography style={styles.label}>Total Customers</Typography>
           </LinearGradient>
 

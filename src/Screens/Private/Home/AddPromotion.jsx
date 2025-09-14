@@ -63,12 +63,12 @@ const AddPromotion = ({navigation, route}) => {
       promoCode: validators.checkRequire('Promotion code', promoCode),
       discountType: validators.checkRequire('Discount Type', discountType),
       discount: validators.checkNumber('Discount value', discount),
-      // startDate: validators.checkRequire('Start date', startDate),
-      // endDate: !endDate
-      //   ? 'End date is required.'
-      //   : endDate <= startDate
-      //   ? 'End date must be after start date.'
-      //   : '',
+      startDate: validators.checkRequire('Start date', startDate),
+      endDate: !endDate
+        ? 'End date is required.'
+        : endDate <= startDate
+        ? 'End date must be after start date.'
+        : '',
       description: validators.checkRequire('Description', description),
     };
 

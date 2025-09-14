@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -13,11 +13,38 @@ import ConfirmModal from '../../../Components/UI/ConfirmModel';
 import {AuthContext} from '../../../Backend/AuthContent';
 import {COLOR} from '../../../Constants/Colors';
 import {Typography} from '../../../Components/UI/Typography';
+import { useIsFocused } from '@react-navigation/native';
+import { POST_WITH_TOKEN } from '../../../Backend/Api';
+import { ANALYTICS, DELETE_ACCOUNT } from '../../../Constants/ApiRoute';
 
 const Account = ({navigation}) => {
   const {setUser} = useContext(AuthContext);
   const [visible, setVisible] = useState(false);
   const [deleteAccount, setDeleteAccount] = useState(false);
+   const isFocus = useIsFocused();
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(false);
+  
+    const handleDeleteAccount = () => {
+      setLoading(true)
+      POST_WITH_TOKEN(
+          DELETE_ACCOUNT,
+          success => {
+            console.log(success, 'successsuccesssuccess-->>>');
+            setLoading(false);
+          },
+          error => {
+            console.log(error, 'errorerrorerror>>');
+            setLoading(false);
+          },
+          fail => {
+            console.log(fail, 'errorerrorerror>>');
+  
+            setLoading(false);
+          },
+        );
+    }
+      
 
   const handleLogout = () => {
     setVisible(false);
@@ -190,7 +217,8 @@ const Account = ({navigation}) => {
         description="Are you sure you want to Delete Account?"
         yesTitle="Yes"
         noTitle="No"
-        onPressYes={handleLogout}
+        loading={loading}
+        onPressYes={() => handleDeleteAccount()}
         onPressNo={() => setDeleteAccount(false)}
       />
     </View>
