@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
@@ -19,11 +21,14 @@ import {
   DELETE_SUB_SERVICE,
   SERVICE,
 } from '../../../Constants/ApiRoute';
+import EmptyView from '../../../Components/UI/EmptyView';
 
 const ManageServices = ({navigation}) => {
   const [deleteService, setDeleteService] = useState(false);
   const [tab, setTab] = useState('services');
   const [subServices, setSubServices] = useState([]);
+  console.log(subServices);
+
   const [services, setServices] = useState([]);
   const isFocus = useIsFocused();
   const [loading, setLoading] = useState(false);
@@ -42,6 +47,7 @@ const ManageServices = ({navigation}) => {
   }, [isFocus, tab]);
 
   const GetServices = () => {
+    setLoading(true);
     GET_WITH_TOKEN(
       SERVICE,
       success => {
@@ -60,6 +66,7 @@ const ManageServices = ({navigation}) => {
     );
   };
   const GetSubServices = () => {
+    setLoading(true);
     GET_WITH_TOKEN(
       ADD_SUB_SERVICES,
       success => {
@@ -86,14 +93,12 @@ const ManageServices = ({navigation}) => {
         success => {
           console.log(success, 'successsuccesssuccess-->>>');
           setLoading(false);
-          
         },
         error => {
           console.log(error, 'errorerrorerror>>');
           setLoading(false);
-          setDeleteService(false)
+          setDeleteService(false);
           GetServices();
-
         },
         fail => {
           console.log(fail, 'errorerrorerror>>');
@@ -106,12 +111,11 @@ const ManageServices = ({navigation}) => {
         success => {
           console.log(success, 'successsuccesssuccess-->>>');
           setLoading(false);
-          
         },
         error => {
           console.log(error, 'errorerrorerror>>');
           setLoading(false);
-          setDeleteSubService(false)
+          setDeleteSubService(false);
           GetSubServices();
         },
         fail => {
@@ -122,6 +126,279 @@ const ManageServices = ({navigation}) => {
     }
   };
 
+  const Services = ({item}) => {
+    return (
+      <View key={item.id} style={styles.serviceCard}>
+        {/* Category Icon */}
+        {/* <View style={[styles.categoryBox, {backgroundColor: item.color}]}>
+                <Typography size={12} fontWeight="600" color={COLOR.white}>
+                  {item.category}
+                </Typography>
+              </View> */}
+        <Image
+          source={{uri: item?.image_url}}
+          style={{height: 30, width: 30}}
+          resizeMode="contain"
+        />
+
+        {/* Service Details */}
+        <View style={{flex: 1, marginLeft: 10}}>
+          {/* Title + Actions */}
+          <View style={styles.rowBetween}>
+            <Typography size={14} fontWeight="600" color={COLOR.black}>
+              {item.name}
+            </Typography>
+
+            <View style={styles.actionsRow}>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('AddService', {
+                    data: item,
+                    isEditing: true,
+                  });
+                }}
+                style={styles.actionBtn}>
+                <Image
+                  source={{
+                    uri: 'https://cdn-icons-png.flaticon.com/128/1159/1159633.png',
+                  }}
+                  style={styles.actionIcon}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.actionBtn}
+                onPress={() => {
+                  setDeleteService(true);
+                  setDeleteServiceID(item?.id);
+                }}>
+                <Image
+                  tintColor={'red'}
+                  source={{
+                    uri: 'https://cdn-icons-png.flaticon.com/128/6861/6861362.png',
+                  }}
+                  style={styles.actionIcon}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Description */}
+          <Typography
+            size={12}
+            color={COLOR.darkGrey}
+            style={{marginVertical: 2}}>
+            {item.description}
+          </Typography>
+          <Typography size={12} fontWeight="600" style={{marginTop: 4}}>
+            Category: {item.category.name}
+          </Typography>
+          <Typography size={12} fontWeight="600" style={{marginTop: 4}}>
+            Gender: {item.gender}
+          </Typography>
+
+          {/* Price + Time */}
+          <Typography
+            size={13}
+            fontWeight="600"
+            color={COLOR.black}
+            style={{marginTop: 4}}>
+            Price: ${Number(item.price).toFixed(2)}
+          </Typography>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 4,
+            }}>
+            <Typography
+              size={12}
+              fontWeight="600"
+              style={{
+                paddingRight: 8,
+                paddingVertical: 2,
+                borderRadius: 6,
+                overflow: 'hidden',
+                alignSelf: 'flex-start',
+              }}>
+              Duration:
+            </Typography>
+            <Typography
+              size={12}
+              fontWeight="600"
+              color="#004aad"
+              style={{
+                backgroundColor: '#e6f0ff',
+                paddingHorizontal: 8,
+                paddingVertical: 2,
+                borderRadius: 6,
+                overflow: 'hidden',
+                alignSelf: 'flex-start',
+              }}>
+              {item.duration}
+            </Typography>
+          </View>
+          <View style={styles.rowBetween}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: 4,
+              }}>
+              <Typography size={13} fontWeight="600" color={COLOR.black}>
+                {'Peak Hours:'}{' '}
+              </Typography>
+              {Object.entries(item.peak_hours).map(
+                ([timeRange, price], idx) => (
+                  <Typography
+                    key={idx}
+                    size={12}
+                    fontWeight="600"
+                    style={{
+                      overflow: 'hidden',
+                    }}>
+                    {`${timeRange}`}
+                  </Typography>
+                ),
+              )}
+            </View>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 4,
+            }}>
+            <Typography
+              size={12}
+              fontWeight="600"
+              style={{
+                paddingRight: 8,
+                paddingVertical: 2,
+                borderRadius: 6,
+                overflow: 'hidden',
+                alignSelf: 'flex-start',
+              }}>
+              Peak Hours Price:
+            </Typography>
+            {Object.entries(item.peak_hours).map(([timeRange, price], idx) => (
+              <Typography
+                key={idx}
+                size={12}
+                fontWeight="600"
+                color="#004aad"
+                style={{
+                  backgroundColor: '#e6f0ff',
+                  paddingHorizontal: 8,
+                  paddingVertical: 2,
+                  borderRadius: 6,
+                  overflow: 'hidden',
+                }}>
+                {`$${price}`}
+              </Typography>
+            ))}
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 4,
+            }}>
+            {Object.entries(item.addons).map(([timeRange, price], idx) => (
+              <Typography
+                key={idx}
+                size={12}
+                fontWeight="600"
+                style={{
+                  overflow: 'hidden',
+                }}>
+                {`${timeRange}`}
+              </Typography>
+            ))}
+            {Object.entries(item.addons).map(([timeRange, price], idx) => (
+              <Typography
+                key={idx}
+                size={12}
+                fontWeight="600"
+                color="#004aad"
+                style={{
+                  backgroundColor: '#e6f0ff',
+                  paddingHorizontal: 8,
+                  paddingVertical: 2,
+                  borderRadius: 6,
+                  overflow: 'hidden',
+                }}>
+                {`$${price}`}
+              </Typography>
+            ))}
+          </View>
+
+          {/* Labels */}
+          {/* <View style={styles.labelsRow}>
+                      <Typography size={11} style={styles.labelOrange}>
+                        Peak Eligible
+                      </Typography>
+                      <Typography size={11} style={styles.labelGreen}>
+                        Discount Eligible
+                      </Typography>
+                    </View> */}
+        </View>
+      </View>
+    );
+  };
+
+  const SubServices = ({item}) => {
+    return (
+      <View key={item.id} style={styles.serviceCard}>
+        <Image
+          source={{uri: item?.image_url}}
+          style={{height: 30, width: 30}}
+          resizeMode="contain"
+        />
+
+        {/* Service Details */}
+        <View style={{flex: 1, marginLeft: 10}}>
+          {/* Title + Actions */}
+          <View style={styles.rowBetween}>
+            <Typography size={14} fontWeight="600" color={COLOR.black}>
+              {item?.category?.name}
+            </Typography>
+
+            <View style={styles.actionsRow}>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('AddSubServices', {
+                    data: item,
+                    isEditing: true,
+                  });
+                }}
+                style={styles.actionBtn}>
+                <Image
+                  source={{
+                    uri: 'https://cdn-icons-png.flaticon.com/128/1159/1159633.png',
+                  }}
+                  style={styles.actionIcon}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.actionBtn}
+                onPress={() => {
+                  setDeleteSubService(true);
+                  setDeleteSubServiceID(item?.id);
+                }}>
+                <Image
+                  tintColor={'red'}
+                  source={{
+                    uri: 'https://cdn-icons-png.flaticon.com/128/6861/6861362.png',
+                  }}
+                  style={styles.actionIcon}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  };
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -161,294 +438,46 @@ const ManageServices = ({navigation}) => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView
-        contentContainerStyle={{paddingHorizontal: 5, paddingVertical: 15}}>
-        <Typography
-          size={15}
-          fontWeight="600"
-          color={COLOR.black}
-          style={{marginBottom: 10}}>
-          Your Current Services
-        </Typography>
-        {tab === 'services'
-          ? services.map(item => (
-              <View key={item.id} style={styles.serviceCard}>
-                {/* Category Icon */}
-                {/* <View style={[styles.categoryBox, {backgroundColor: item.color}]}>
-              <Typography size={12} fontWeight="600" color={COLOR.white}>
-                {item.category}
-              </Typography>
-            </View> */}
-                <Image
-                  source={{uri: item?.image_url}}
-                  style={{height: 30, width: 30}}
-                  resizeMode="contain"
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#007bff"
+          style={{marginTop: 20}}
+        />
+      ) : (
+        <View>
+          {services.length > 0 && (
+            <Typography
+              size={15}
+              fontWeight="600"
+              color={COLOR.black}
+              style={{marginBottom: 10}}>
+              Your Current Services
+            </Typography>
+          )}
+          <FlatList
+            data={tab === 'services' ? services : subServices}
+            renderItem={({item}) => {
+              return tab === 'services' ? (
+                <Services item={item} />
+              ) : (
+                <SubServices item={item} />
+              );
+            }}
+            ListEmptyComponent={() => {
+              return (
+                <EmptyView
+                  title={
+                    tab === 'services'
+                      ? 'No Services Found'
+                      : 'No Sub Services Found'
+                  }
                 />
-
-                {/* Service Details */}
-                <View style={{flex: 1, marginLeft: 10}}>
-                  {/* Title + Actions */}
-                  <View style={styles.rowBetween}>
-                    <Typography size={14} fontWeight="600" color={COLOR.black}>
-                      {item.name}
-                    </Typography>
-
-                    <View style={styles.actionsRow}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate('AddService', {
-                            data: item,
-                            isEditing: true,
-                          });
-                        }}
-                        style={styles.actionBtn}>
-                        <Image
-                          source={{
-                            uri: 'https://cdn-icons-png.flaticon.com/128/1159/1159633.png',
-                          }}
-                          style={styles.actionIcon}
-                        />
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.actionBtn}
-                        onPress={() => {
-                          setDeleteService(true);
-                          setDeleteServiceID(item?.id);
-                        }}>
-                        <Image
-                          tintColor={'red'}
-                          source={{
-                            uri: 'https://cdn-icons-png.flaticon.com/128/6861/6861362.png',
-                          }}
-                          style={styles.actionIcon}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-
-                  {/* Description */}
-                  <Typography
-                    size={12}
-                    color={COLOR.darkGrey}
-                    style={{marginVertical: 2}}>
-                    {item.description}
-                  </Typography>
-                  <Typography size={12} fontWeight="600" style={{marginTop: 4}}>
-                    Category: {item.category.name}
-                  </Typography>
-                  <Typography size={12} fontWeight="600" style={{marginTop: 4}}>
-                    Gender: {item.gender}
-                  </Typography>
-
-                  {/* Price + Time */}
-                  <Typography
-                    size={13}
-                    fontWeight="600"
-                    color={COLOR.black}
-                    style={{marginTop: 4}}>
-                    Price: ${Number(item.price).toFixed(2)}
-                  </Typography>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginTop: 4,
-                    }}>
-                    <Typography
-                      size={12}
-                      fontWeight="600"
-                      style={{
-                        paddingRight: 8,
-                        paddingVertical: 2,
-                        borderRadius: 6,
-                        overflow: 'hidden',
-                        alignSelf: 'flex-start',
-                      }}>
-                      Duration:
-                    </Typography>
-                    <Typography
-                      size={12}
-                      fontWeight="600"
-                      color="#004aad"
-                      style={{
-                        backgroundColor: '#e6f0ff',
-                        paddingHorizontal: 8,
-                        paddingVertical: 2,
-                        borderRadius: 6,
-                        overflow: 'hidden',
-                        alignSelf: 'flex-start',
-                      }}>
-                      {item.duration}
-                    </Typography>
-                  </View>
-                  <View style={styles.rowBetween}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        marginTop: 4,
-                      }}>
-                      <Typography
-                        size={13}
-                        fontWeight="600"
-                        color={COLOR.black}>
-                        {'Peak Hours:'}{' '}
-                      </Typography>
-                      {Object.entries(item.peak_hours).map(
-                        ([timeRange, price], idx) => (
-                          <Typography
-                            key={idx}
-                            size={12}
-                            fontWeight="600"
-                            style={{
-                              overflow: 'hidden',
-                            }}>
-                            {`${timeRange}`}
-                          </Typography>
-                        ),
-                      )}
-                    </View>
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginTop: 4,
-                    }}>
-                    <Typography
-                      size={12}
-                      fontWeight="600"
-                      style={{
-                        paddingRight: 8,
-                        paddingVertical: 2,
-                        borderRadius: 6,
-                        overflow: 'hidden',
-                        alignSelf: 'flex-start',
-                      }}>
-                      Peak Hours Price:
-                    </Typography>
-                    {Object.entries(item.peak_hours).map(
-                      ([timeRange, price], idx) => (
-                        <Typography
-                          key={idx}
-                          size={12}
-                          fontWeight="600"
-                          color="#004aad"
-                          style={{
-                            backgroundColor: '#e6f0ff',
-                            paddingHorizontal: 8,
-                            paddingVertical: 2,
-                            borderRadius: 6,
-                            overflow: 'hidden',
-                          }}>
-                          {`$${price}`}
-                        </Typography>
-                      ),
-                    )}
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginTop: 4,
-                    }}>
-                    {Object.entries(item.addons).map(
-                      ([timeRange, price], idx) => (
-                        <Typography
-                          key={idx}
-                          size={12}
-                          fontWeight="600"
-                          style={{
-                            overflow: 'hidden',
-                          }}>
-                          {`${timeRange}`}
-                        </Typography>
-                      ),
-                    )}
-                    {Object.entries(item.addons).map(
-                      ([timeRange, price], idx) => (
-                        <Typography
-                          key={idx}
-                          size={12}
-                          fontWeight="600"
-                          color="#004aad"
-                          style={{
-                            backgroundColor: '#e6f0ff',
-                            paddingHorizontal: 8,
-                            paddingVertical: 2,
-                            borderRadius: 6,
-                            overflow: 'hidden',
-                          }}>
-                          {`$${price}`}
-                        </Typography>
-                      ),
-                    )}
-                  </View>
-
-                  {/* Labels */}
-                  {/* <View style={styles.labelsRow}>
-                    <Typography size={11} style={styles.labelOrange}>
-                      Peak Eligible
-                    </Typography>
-                    <Typography size={11} style={styles.labelGreen}>
-                      Discount Eligible
-                    </Typography>
-                  </View> */}
-                </View>
-              </View>
-            ))
-          : subServices.map(item => (
-              <View key={item.id} style={styles.serviceCard}>
-                <Image
-                  source={{uri: item?.image_url}}
-                  style={{height: 30, width: 30}}
-                  resizeMode="contain"
-                />
-
-                {/* Service Details */}
-                <View style={{flex: 1, marginLeft: 10}}>
-                  {/* Title + Actions */}
-                  <View style={styles.rowBetween}>
-                    <Typography size={14} fontWeight="600" color={COLOR.black}>
-                      {item.category.name}
-                    </Typography>
-
-                    <View style={styles.actionsRow}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate('AddSubServices', {
-                            data: item,
-                            isEditing: true,
-                          });
-                        }}
-                        style={styles.actionBtn}>
-                        <Image
-                          source={{
-                            uri: 'https://cdn-icons-png.flaticon.com/128/1159/1159633.png',
-                          }}
-                          style={styles.actionIcon}
-                        />
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.actionBtn}
-                        onPress={() => {
-                          setDeleteSubService(true);
-                          setDeleteSubServiceID(item?.id);
-                        }}>
-                        <Image
-                          tintColor={'red'}
-                          source={{
-                            uri: 'https://cdn-icons-png.flaticon.com/128/6861/6861362.png',
-                          }}
-                          style={styles.actionIcon}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            ))}
-      </ScrollView>
+              );
+            }}
+          />
+        </View>
+      )}
       <TouchableOpacity
         onPress={() => {
           tab === 'services'
@@ -505,9 +534,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#8f7de8',
     borderRadius: 10,
-    paddingVertical: 12,
+    paddingVertical: 15,
     justifyContent: 'center',
-    marginBottom: 10,
+    position: 'absolute',
+    left: 20,
+    right: 20,
+    bottom: 10,
   },
   addIcon: {
     width: 18,

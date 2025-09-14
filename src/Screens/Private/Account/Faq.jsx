@@ -6,6 +6,7 @@ import {
   SectionList,
   FlatList,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import HomeHeader from '../../../Components/HomeHeader';
 import {COLOR} from '../../../Constants/Colors';
@@ -67,44 +68,50 @@ const Faq = ({navigation}) => {
         leftTint={COLOR.black}
       />
 
-      <SectionList
-        sections={faq}
-        keyExtractor={(item, index) => item.id.toString() + index}
-        renderSectionHeader={({section: {title}}) => (
-          <Typography style={styles.sectionTitle} size={16} fontWeight="700">
-            {title}
-          </Typography>
-        )}
-        renderItem={({item}) => (
-          <View style={styles.faqItem}>
-            <TouchableOpacity
-              style={styles.faqHeader}
-              onPress={() => toggleExpand(item.id)}>
-              <Typography style={styles.faqQuestion} fontWeight="600">
-                {item.question}
-              </Typography>
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#007bff"
+          style={{marginTop: 20}}
+        />
+      ) : (
+        <SectionList
+          sections={faq}
+          keyExtractor={(item, index) => item.id.toString() + index}
+          renderSectionHeader={({section: {title}}) => (
+            <Typography style={styles.sectionTitle} size={16} fontWeight="700">
+              {title}
+            </Typography>
+          )}
+          renderItem={({item}) => (
+            <View style={styles.faqItem}>
               <TouchableOpacity
-                onPress={() =>
-                  setExpandedId(expandedId === item.id ? null : item.id)
-                }>
-                <Image
-                  source={
-                    expandedId === item.id ? images.arrowdown : images.arrowup
-                  }
-                  style={{width: 16, height: 16, tintColor: '#555'}}
-                  resizeMode="contain"
-                />
+                style={styles.faqHeader}
+                onPress={() => toggleExpand(item.id)}>
+                <Typography style={styles.faqQuestion} fontWeight="600">
+                  {item.question}
+                </Typography>
+                <TouchableOpacity
+                  onPress={() =>
+                    setExpandedId(expandedId === item.id ? null : item.id)
+                  }>
+                  <Image
+                    source={
+                      expandedId === item.id ? images.arrowdown : images.arrowup
+                    }
+                    style={{width: 16, height: 16, tintColor: '#555'}}
+                    resizeMode="contain"
+                  />
+                </TouchableOpacity>
               </TouchableOpacity>
-            </TouchableOpacity>
 
-            {expandedId === item.id && (
-              <Typography style={styles.faqAnswer}>{item.answer}</Typography>
-            )}
-          </View>
-        )}
-      />
-
-     
+              {expandedId === item.id && (
+                <Typography style={styles.faqAnswer}>{item.answer}</Typography>
+              )}
+            </View>
+          )}
+        />
+      )}
     </View>
   );
 };

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, TouchableOpacity, FlatList} from 'react-native';
+import {StyleSheet, View, TouchableOpacity, FlatList, ActivityIndicator} from 'react-native';
 import {COLOR} from '../../../Constants/Colors';
 import {windowWidth} from '../../../Constants/Dimensions';
 import HomeHeader from '../../../Components/HomeHeader';
@@ -24,6 +24,7 @@ const BankDetails = ({navigation}) => {
   }, [isFocus]);
 
   const getBankList = () => {
+    setLoading(true)
     GET_WITH_TOKEN(
       ADD_BANK,
       success => {
@@ -97,7 +98,7 @@ const BankDetails = ({navigation}) => {
         <Typography size={15} fontWeight="600" color="#444">
           Account No:
         </Typography>
-        <Typography size={15} color="#666">
+        <Typography size={15} color="#666" textAlign={'right'} style={{width: windowWidth * 0.55}}>
           {item.account_number}
         </Typography>
       </View>
@@ -106,7 +107,7 @@ const BankDetails = ({navigation}) => {
         <Typography size={15} fontWeight="600" color="#444">
           IFSC Code:
         </Typography>
-        <Typography size={15} color="#666">
+        <Typography size={15} color="#666" textAlign={'right'} style={{width: windowWidth * 0.55}}>
           {item.ifsc_code}
         </Typography>
       </View>
@@ -162,6 +163,9 @@ const BankDetails = ({navigation}) => {
           + Add Bank
         </Typography>
       </TouchableOpacity>
+     { loading ? (
+             <ActivityIndicator size="large" color="#007bff" style={{marginTop:20}} />
+           ) : 
 
       <FlatList
         data={bankList}
@@ -175,7 +179,7 @@ const BankDetails = ({navigation}) => {
             </View>
           )
         }}
-      />
+      />}
 
       <ConfirmModal
         visible={deletes}

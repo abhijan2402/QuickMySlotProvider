@@ -1,11 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, Image, ScrollView} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Image,
+  ScrollView,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native';
 import HomeHeader from '../../../Components/HomeHeader';
 import {COLOR} from '../../../Constants/Colors';
 import {Typography} from '../../../Components/UI/Typography';
 import {useIsFocused} from '@react-navigation/native';
 import {GET_WITH_TOKEN} from '../../../Backend/Api';
 import {GET_NOTIFICATION, NOTIFICATION_READ} from '../../../Constants/ApiRoute';
+import EmptyView from '../../../Components/UI/EmptyView';
 
 const NotificationsScreen = () => {
   const [notifications, setNotification] = useState([]);
@@ -14,6 +22,7 @@ const NotificationsScreen = () => {
 
   useEffect(() => {
     if (isFocus) {
+      setLoading(true);
       GET_WITH_TOKEN(
         GET_NOTIFICATION,
         success => {
@@ -58,32 +67,57 @@ const NotificationsScreen = () => {
       />
 
       {/* Notifications List */}
-      <ScrollView
-        contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 10}}>
-        {notifications.map(item => (
-          <View key={item.id} style={styles.card}>
-            <View style={styles.cardLeft}>
-              <Image source={{uri: item.icon}} style={styles.icon} />
-            </View>
-            <View style={styles.cardRight}>
-              <View style={styles.cardHeader}>
-                <Typography size={14} fontWeight="600" color={COLOR.black}>
-                  {item.title}
-                </Typography>
-                <Typography size={12} fontWeight="600" color={item.statusColor}>
-                  {item.status}
-                </Typography>
-              </View>
-              <Typography size={12} color="#555" style={{marginVertical: 4}}>
-                {item.message}
-              </Typography>
-              <Typography size={11} color="#888">
-                {item.time}
-              </Typography>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#007bff"
+          style={{marginTop: 20}}
+        />
+      ) : (
+        <ScrollView
+          contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 10}}>
+          <FlatList
+            data={notifications}
+            renderItem={({item}) => {
+              return (
+                <View key={item.id} style={styles.card}>
+                  <View style={styles.cardLeft}>
+                    <Image source={{uri: item.icon}} style={styles.icon} />
+                  </View>
+                  <View style={styles.cardRight}>
+                    <View style={styles.cardHeader}>
+                      <Typography
+                        size={14}
+                        fontWeight="600"
+                        color={COLOR.black}>
+                        {item.title}
+                      </Typography>
+                      <Typography
+                        size={12}
+                        fontWeight="600"
+                        color={item.statusColor}>
+                        {item.status}
+                      </Typography>
+                    </View>
+                    <Typography
+                      size={12}
+                      color="#555"
+                      style={{marginVertical: 4}}>
+                      {item.message}
+                    </Typography>
+                    <Typography size={11} color="#888">
+                      {item.time}
+                    </Typography>
+                  </View>
+                </View>
+              );
+            }}
+            ListEmptyComponent={() => {
+              return <EmptyView title="No Notification Yet" />;
+            }}
+          />
+        </ScrollView>
+      )}
     </View>
   );
 };

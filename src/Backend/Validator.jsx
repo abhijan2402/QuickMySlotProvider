@@ -55,7 +55,7 @@ export const validators = {
 
   checkNumber: (name, value) => {
     if (value) {
-      if (!VALIDATE.MOBILE.test(value)) {
+      if (!VALIDATE.NUMBER.test(value)) {
         return `${name} field is invalid.`;
       }
       return null;

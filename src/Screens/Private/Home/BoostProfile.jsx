@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {View, TouchableOpacity, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import Button from '../../../Components/UI/Button';
@@ -14,6 +20,7 @@ const BoostProfile = ({navigation}) => {
   const [subscription, setSubscription] = useState([]);
 
   useEffect(() => {
+    setLoading(true);
     if (isFocus) {
       GET_WITH_TOKEN(
         SUBSCRIPTION,
@@ -21,6 +28,11 @@ const BoostProfile = ({navigation}) => {
           console.log(success, 'successsuccesssuccess-->>>');
           setLoading(false);
           setSubscription(success.data);
+
+          // 👉 Auto select the first plan
+          if (success.data?.length > 0) {
+            setSelected(success.data[0]);
+          }
         },
         error => {
           console.log(error, 'errorerrorerror>>');
@@ -28,40 +40,13 @@ const BoostProfile = ({navigation}) => {
         },
         fail => {
           console.log(fail, 'errorerrorerror>>');
-
           setLoading(false);
         },
       );
     }
   }, [isFocus]);
-  const boosts = [
-    {
-      id: 1,
-      title: 'Basic Visibility Boost',
-      desc: 'Appear higher in search results for 7 days.',
-      price: 25,
-    },
-    {
-      id: 2,
-      title: 'Featured Listing (Weekly)',
-      desc: 'Highlighted spot on category pages for 7 days.',
-      price: 75,
-    },
-    {
-      id: 3,
-      title: 'Homepage Banner Ad (Weekly)',
-      desc: 'Prominent banner on app homepage for 7 days.',
-      price: 120,
-    },
-    {
-      id: 4,
-      title: 'No Promotion',
-      desc: 'Continue with standard visibility.',
-      price: 0,
-    },
-  ];
 
-  const [selected, setSelected] = useState(boosts[0]);
+  const [selected, setSelected] = useState(subscription[0]);
 
   return (
     <View style={styles.container}>
@@ -72,83 +57,98 @@ const BoostProfile = ({navigation}) => {
         leftTint={COLOR.black}
       />
 
-      <ScrollView
-        contentContainerStyle={{paddingVertical: 15, paddingHorizontal: 5}}>
-        {/* Boost Options */}
-        <Typography size={15} fontWeight="600" style={styles.sectionTitle}>
-          Choose Plan
-        </Typography>
-
-        {subscription.map(item => (
-          <TouchableOpacity
-            key={item.id}
-            style={[
-              styles.boostCard,
-              selected?.id === item.id && styles.selectedBoost,
-            ]}
-            onPress={() => setSelected(item)}>
-            <View style={styles.radioCircle}>
-              {selected?.id === item.id && <View style={styles.radioDot} />}
-            </View>
-
-            <View style={{flex: 1}}>
-              <Typography size={14} fontWeight="600" style={styles.boostTitle}>
-                {item.subscription_name}
-              </Typography>
-              <Typography
-                size={12}
-                color={COLOR.darkGrey}
-                style={styles.boostDesc}>
-                {item.description}
-              </Typography>
-              <Typography
-                size={12}
-                color={COLOR.darkGrey}
-                style={styles.boostDesc}>
-                Validity: {item.validity} days
-              </Typography>
-            </View>
-
-            <Typography
-              size={14}
-              fontWeight="600"
-              color={COLOR.primary}
-              style={styles.boostPrice}>
-              ${Number(item.price).toFixed(2)}
-            </Typography>
-          </TouchableOpacity>
-        ))}
-
-        {/* Order Summary */}
-        <View style={styles.summaryBox}>
-          <Typography size={14} fontWeight="600" style={styles.summaryTitle}>
-            Order Summary
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#007bff"
+          style={{marginTop: 20}}
+        />
+      ) : (
+        <ScrollView
+          contentContainerStyle={{paddingVertical: 15, paddingHorizontal: 5}}>
+          {/* Boost Options */}
+          <Typography size={15} fontWeight="600" style={styles.sectionTitle}>
+            Choose Plan
           </Typography>
 
-          <View style={styles.summaryRow}>
-            <Typography size={13} style={styles.summaryText}>
-              {selected?.title}
-            </Typography>
-            <Typography size={13} style={styles.summaryText}>
-              ${Number(selected?.price).toFixed(2)}
-            </Typography>
-          </View>
+          {subscription.map(item => (
+            <TouchableOpacity
+              key={item.id}
+              style={[
+                styles.boostCard,
+                selected?.id === item.id && styles.selectedBoost,
+              ]}
+              onPress={() => setSelected(item)}>
+              <View style={styles.radioCircle}>
+                {selected?.id === item.id && <View style={styles.radioDot} />}
+              </View>
 
-          <View style={styles.divider} />
+              <View style={{flex: 1}}>
+                <Typography
+                  size={14}
+                  fontWeight="600"
+                  style={styles.boostTitle}>
+                  {item.subscription_name}
+                </Typography>
+                <Typography
+                  size={12}
+                  color={COLOR.darkGrey}
+                  style={styles.boostDesc}>
+                  {item.description}
+                </Typography>
+                <Typography
+                  size={12}
+                  color={COLOR.darkGrey}
+                  style={styles.boostDesc}>
+                  Validity: {item.validity} days
+                </Typography>
+              </View>
 
-          <View style={styles.summaryRow}>
-            <Typography size={13} fontWeight="bold" style={styles.summaryText}>
-              Total:
-            </Typography>
-            <Typography size={13} fontWeight="bold" style={styles.summaryText}>
-              ${selected?.price.toFixed(2)}
-            </Typography>
+              <Typography
+                size={14}
+                fontWeight="600"
+                color={COLOR.black}
+                style={styles.boostPrice}>
+                ${Number(item.price).toFixed(2)}
+              </Typography>
+            </TouchableOpacity>
+          ))}
+
+          {/* Order Summary */}
+          <View style={styles.summaryBox}>
+            <View style={styles.summaryRow}>
+              <Typography size={13} style={styles.summaryText}>
+                {selected?.subscription_name}
+              </Typography>
+              <Typography size={13} style={styles.summaryText}>
+                ${Number(selected?.price || 0).toFixed(2)}
+              </Typography>
+            </View>
+
+            <View style={styles.divider} />
+
+            <View style={styles.summaryRow}>
+              <Typography
+                size={13}
+                fontWeight="bold"
+                style={styles.summaryText}>
+                Total:
+              </Typography>
+              <Typography
+                size={13}
+                fontWeight="bold"
+                style={styles.summaryText}>
+                ${Number(selected?.price || 0).toFixed(2)}
+              </Typography>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      )}
 
       {/* Checkout Button */}
-      <Button title={'Checkout'} />
+      <View style={{position: 'absolute', left: 20, right: 20, bottom: 10}}>
+        <Button title={'Checkout'} />
+      </View>
     </View>
   );
 };
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     color: COLOR.black,
   },
   boostDesc: {
-    marginTop: 2,
+    marginTop: 4,
   },
   boostPrice: {
     marginLeft: 8,
@@ -219,7 +219,6 @@ const styles = StyleSheet.create({
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 6,
   },
   summaryText: {
     color: COLOR.black,
@@ -227,6 +226,6 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: COLOR.lightGrey,
-    marginVertical: 8,
+    marginVertical: 12,
   },
 });
