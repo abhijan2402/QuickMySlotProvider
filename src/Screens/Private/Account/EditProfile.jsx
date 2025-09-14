@@ -46,7 +46,7 @@ const EditProfile = ({navigation}) => {
   const [served, setServed] = useState('');
   const [category, setCategory] = useState();
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
   const {isKeyboardVisible} = useKeyboard();
   const userdata = useSelector(store => store.userDetails);
   console.log(userdata, 'userdatauserdatauserdatauserdata===>');
@@ -124,8 +124,6 @@ const EditProfile = ({navigation}) => {
         setCategoryList(d);
         if (userdata?.service_category) {
           const selected = d.find(v => v?.value == userdata?.service_category);
-          console.log(selected, 'dsadasdsadsaddewqweweqeqwweq');
-
           setCategory(selected);
         }
       },
@@ -161,10 +159,11 @@ const EditProfile = ({navigation}) => {
       formData.append('country', 'india');
       formData.append('zip_code', '123456');
       formData.append('company_name', company);
+      formData.append('category_id', userdata?.service_category);
       formData.append('website', website);
       formData.append('business_name', buisness);
       formData.append('location_area_served', served);
-      formData.append('service_category', category?.value);
+      // formData.append('service_category', category?.value);
       if (profileImage && profileImage?.mime) {
         formData.append('profile_picture', {
           uri: profileImage?.path,

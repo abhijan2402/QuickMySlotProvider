@@ -101,7 +101,12 @@ const MainHome = ({navigation}) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 30}}>
         {/* Salon Card */}
-        <View style={styles.card}>
+        <TouchableOpacity
+          activeOpacity={0.99}
+          onPress={() => {
+            navigation.navigate('EditProfile');
+          }}
+          style={styles.card}>
           <Image
             source={{
               uri: userdata?.photo_verification,
@@ -110,16 +115,17 @@ const MainHome = ({navigation}) => {
           />
           <View style={{marginLeft: 10, flex: 1}}>
             <Typography style={styles.cardTitle}>
-              {userdata?.business_name}
+              {userdata?.business_name ||
+                'Please provide you business Information'}
             </Typography>
             <Typography style={styles.cardSub}>
-              {userdata?.name} | +91-{userdata?.phone_number}
+              {userdata?.name || 'Welcome'} | +91-{userdata?.phone_number}
             </Typography>
             <Typography style={styles.cardSub}>
-              {userdata?.location_area_served}
+              {userdata?.location_area_served || ''}
             </Typography>
           </View>
-        </View>
+        </TouchableOpacity>
 
         {/* Banner */}
         <View

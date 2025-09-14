@@ -398,6 +398,7 @@ const CompleteProfile = ({navigation}) => {
           placeholder="Enter Your Experience"
           style={{borderColor: COLOR.primary}}
           value={experience}
+          keyboardType="decimal-pad"
           onChangeText={setExperience}
           error={errors.experience}
         />

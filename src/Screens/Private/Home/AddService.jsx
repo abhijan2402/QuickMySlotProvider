@@ -86,7 +86,7 @@ const AddService = ({route, navigation}) => {
       setDescription(data?.description);
       setPrice(data?.price);
       setDuration(data?.duration);
-      setImage({path: data?.image});
+      setImage(data?.image ? {path: data?.image} : null);
       setGender(data?.gender);
 
       // ✅ Convert `addons` object to array
