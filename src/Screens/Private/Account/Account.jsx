@@ -57,8 +57,8 @@ const Account = ({navigation}) => {
     console.log('User logged out');
   };
 
-  const profileImage = userdata?.photo_verification
-    ? userdata?.photo_verification
+  const profileImage = userdata?.image
+    ? userdata?.image
     : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
 
   const arrowIcon = 'https://cdn-icons-png.flaticon.com/512/271/271228.png';

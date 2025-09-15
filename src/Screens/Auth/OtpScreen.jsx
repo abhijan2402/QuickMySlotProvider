@@ -16,7 +16,7 @@ import {Typography} from '../../Components/UI/Typography'; // ✅ import Typogra
 import {POST} from '../../Backend/Api';
 import {RESEND_OTP, VERIFY_OTP} from '../../Constants/ApiRoute';
 import {useDispatch} from 'react-redux';
-import {Token, userDetails} from '../../Redux/action';
+import {isAuth, Token, userDetails} from '../../Redux/action';
 import {isValidForm, ToastMsg} from '../../Backend/Utility';
 import {validators} from '../../Backend/Validator';
 import Button from '../../Components/UI/Button';
@@ -70,7 +70,7 @@ const OtpScreen = ({navigation, route}) => {
   const verifyOtp = () => {
     const otpCode = otp.join('');
     console.log('Entered OTP:', otpCode);
-        setLoading(true);
+    setLoading(true);
     const body = {
       user_id: id,
       otp: otpCode,
@@ -81,14 +81,18 @@ const OtpScreen = ({navigation, route}) => {
       success => {
         console.log(success, 'successsuccesssuccess-->>>');
         setLoading(false);
-        navigation.navigate('CompleteProfile');
+        if (success?.user?.steps == 3) {
+          dispatch(isAuth(true));
+        } else {
+          navigation.navigate('CompleteProfile');
+        }
         dispatch(Token(success?.token));
         dispatch(userDetails(success?.user));
       },
       error => {
         console.log(error, 'errorerrorerror>>');
         setLoading(false);
-        setError(error?.error)
+        setError(error?.error);
       },
       fail => {
         setLoading(false);

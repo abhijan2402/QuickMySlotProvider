@@ -37,6 +37,7 @@ import {useIsFocused} from '@react-navigation/native';
 import {Dropdown} from 'react-native-element-dropdown';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
+import AvailabilityManagement from './AvailabilityManagement';
 
 const AddService = ({route, navigation}) => {
   const [serviceName, setServiceName] = useState('');
@@ -162,7 +163,6 @@ const AddService = ({route, navigation}) => {
         error => {
           setLoading(false);
           console.log(error);
-
           ToastMsg(error?.message);
         },
         fail => {
@@ -576,6 +576,8 @@ const AddService = ({route, navigation}) => {
             charges.
           </Typography>
         </View>
+
+        <AvailabilityManagement/>
       </KeyboardAwareScrollView>
 
       {/* Add Button */}

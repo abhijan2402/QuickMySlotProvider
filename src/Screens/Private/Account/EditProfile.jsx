@@ -14,7 +14,7 @@ import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import ImageModal from '../../../Components/UI/ImageModal';
 import useKeyboard from '../../../Constants/Utility';
-import {isValidForm} from '../../../Backend/Utility';
+import {isValidForm, ToastMsg} from '../../../Backend/Utility';
 import {validators} from '../../../Backend/Validator';
 import Button from '../../../Components/UI/Button';
 import {Typography} from '../../../Components/UI/Typography';
@@ -44,8 +44,11 @@ const EditProfile = ({navigation}) => {
   const [website, setWebsite] = useState('');
   const [buisness, setBuisness] = useState('');
   const [served, setServed] = useState('');
+  const [city, setCity] = useState();
+  const [country, setCountry] = useState();
+  const [state, setState] = useState();
+  const [pinCode, setPinCode] = useState();
   const [category, setCategory] = useState();
-
   const [isEditing, setIsEditing] = useState(true);
   const {isKeyboardVisible} = useKeyboard();
   const userdata = useSelector(store => store.userDetails);
@@ -67,13 +70,13 @@ const EditProfile = ({navigation}) => {
       getCategory();
       setPhone(userdata?.phone_number);
       setWebsite(userdata?.website || userdata?.business_website);
-      setProfileImage({path: userdata?.photo_verification});
-      setFirstName(userdata?.name);
-      setEmail(userdata?.email);
-      setAddress(userdata?.exact_location);
-      setBuisness(userdata?.business_name);
-      setServed(userdata?.location_area_served);
-      setCompany('');
+      setProfileImage({path: userdata?.image});
+      setFirstName(userdata?.name || '');
+      setEmail(userdata?.email || '');
+      setAddress(userdata?.exact_location ||'');
+      setBuisness(userdata?.business_name || '');
+      setServed(userdata?.location_area_served || '');
+      setCompany(userdata?.company_name || '');
     }
   }, [isFocus]);
 
@@ -138,13 +141,13 @@ const EditProfile = ({navigation}) => {
 
   const handleUpdate = () => {
     let validationErrors = {
-      name: validators.checkRequire('Name', firstName),
-      email: validators.checkEmail('Email', email),
-      phone: validators.checkNumber('Phone Number', phone),
-      address: validators.checkRequire('Address', address),
-      buisness: validators.checkRequire('Buisness Name', buisness),
-      location_served: validators.checkRequire('Location Area Served', served),
-      category: validators.checkRequire('Service Category', category),
+      // name: validators.checkRequire('Name', firstName),
+      // email: validators.checkEmail('Email', email),
+      // phone: validators.checkNumber('Phone Number', phone),
+      // address: validators.checkRequire('Address', address),
+      // buisness: validators.checkRequire('Buisness Name', buisness),
+      // location_served: validators.checkRequire('Location Area Served', served),
+      // category: validators.checkRequire('Service Category', category),
     };
     setError(validationErrors);
     if (isValidForm(validationErrors)) {
@@ -163,7 +166,6 @@ const EditProfile = ({navigation}) => {
       formData.append('website', website);
       formData.append('business_name', buisness);
       formData.append('location_area_served', served);
-      // formData.append('service_category', category?.value);
       if (profileImage && profileImage?.mime) {
         formData.append('profile_picture', {
           uri: profileImage?.path,
@@ -172,11 +174,12 @@ const EditProfile = ({navigation}) => {
         });
       }
       console.log('FormData ====>', formData);
-      POST_WITH_TOKEN(
+      POST_FORM_DATA(
         UPDATE_PROFILE,
         formData,
         success => {
           setLoading(false);
+          ToastMsg(success?.message);
           console.log(success, 'dsdsdsdeeeeeeeeeeeeweewew-->>>');
           dispatch(userDetails(success?.data));
           navigation.pop();
@@ -185,6 +188,7 @@ const EditProfile = ({navigation}) => {
         },
         error => {
           console.log(error, 'errorerrorerror>>');
+          setError(error?.data?.errors)
           setLoading(false);
         },
         fail => {
@@ -264,7 +268,6 @@ const EditProfile = ({navigation}) => {
               </TouchableOpacity>
             </View>
           </View>
-
           {/* Inputs with Error */}
           <Input
             label="Name"
@@ -275,7 +278,6 @@ const EditProfile = ({navigation}) => {
             editable={isEditing}
             error={error.name}
           />
-
           <Input
             label="Email"
             placeholder="Enter email"
@@ -286,7 +288,6 @@ const EditProfile = ({navigation}) => {
             editable={isEditing}
             error={error.email}
           />
-
           <Input
             label="Phone Number"
             placeholder="Enter phone number"
@@ -294,10 +295,9 @@ const EditProfile = ({navigation}) => {
             onChangeText={setPhone}
             style={{borderColor: COLOR.primary}}
             keyboardType="phone-pad"
-            editable={isEditing}
+            editable={false}
             error={error.phone}
           />
-
           <Input
             label="Address"
             placeholder="Enter Your Address"
@@ -307,7 +307,42 @@ const EditProfile = ({navigation}) => {
             editable={isEditing}
             error={error.address}
           />
-
+          <Input
+            label="City"
+            placeholder="Enter Your City"
+            value={city}
+            style={{borderColor: COLOR.primary}}
+            onChangeText={setCity}
+            editable={isEditing}
+            error={error.city}
+          />
+          <Input
+            label="State"
+            placeholder="Enter Your State"
+            value={state}
+            style={{borderColor: COLOR.primary}}
+            onChangeText={setState}
+            editable={isEditing}
+            error={error.state}
+          />
+          <Input
+            label="Country"
+            placeholder="Enter Your Country"
+            value={country}
+            style={{borderColor: COLOR.primary}}
+            onChangeText={setCountry}
+            editable={isEditing}
+            error={error.country}
+          />
+          <Input
+            label="Pin Code"
+            placeholder="Enter Your Pin Code"
+            value={pinCode}
+            style={{borderColor: COLOR.primary}}
+            onChangeText={setPinCode}
+            editable={isEditing}
+            error={error.pinCode}
+          />
           <Input
             label="company name"
             placeholder="Enter Your company name"
@@ -315,9 +350,8 @@ const EditProfile = ({navigation}) => {
             style={{borderColor: COLOR.primary}}
             onChangeText={setCompany}
             editable={isEditing}
-            error={error.company}
+            error={error.company_name}
           />
-
           <Input
             label="website"
             placeholder="Enter Your website"
@@ -327,7 +361,6 @@ const EditProfile = ({navigation}) => {
             editable={isEditing}
             error={error.website}
           />
-
           <Input
             label="business name"
             placeholder="Enter Your business name"
@@ -337,7 +370,6 @@ const EditProfile = ({navigation}) => {
             editable={isEditing}
             error={error.buisness}
           />
-
           <Input
             label="location area served"
             placeholder="Enter Your location area served"
@@ -347,7 +379,6 @@ const EditProfile = ({navigation}) => {
             editable={isEditing}
             error={error.location_served}
           />
-
           <Text style={[styles.label, {marginTop: 18}]}>Service Category</Text>
           <Dropdown
             style={styles.dropdown}
@@ -370,6 +401,7 @@ const EditProfile = ({navigation}) => {
 
       {/* Edit / Update Button */}
       <Button
+      containerStyle={{marginTop:10}}
         loading={loading}
         title={isEditing ? 'Update' : 'Edit'}
         onPress={() => {

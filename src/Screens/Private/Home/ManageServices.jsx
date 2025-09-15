@@ -261,17 +261,23 @@ const ManageServices = ({navigation}) => {
     );
   };
 
-  const SubServices = ({item}) => {
+  const SubServices = ({
+    item,
+    navigation,
+    setDeleteSubService,
+    setDeleteSubServiceID,
+  }) => {
     return (
-      <View key={item.id} style={styles.serviceCard}>
+      <View key={item.id} style={styles.card}>
+        {/* Left Icon */}
         <Image
           source={{uri: item?.image_url}}
-          style={{height: 30, width: 30}}
+          style={styles.serviceIcon}
           resizeMode="contain"
         />
 
-        {/* Service Details */}
-        <View style={{flex: 1, marginLeft: 10}}>
+        {/* Content */}
+        <View style={styles.detailsWrapper}>
           {/* Title + Actions */}
           <View style={styles.rowBetween}>
             <Typography size={14} fontWeight="600" color={COLOR.black}>
@@ -279,13 +285,14 @@ const ManageServices = ({navigation}) => {
             </Typography>
 
             <View style={styles.actionsRow}>
+              {/* Edit */}
               <TouchableOpacity
-                onPress={() => {
+                onPress={() =>
                   navigation.navigate('AddSubServices', {
                     data: item,
                     isEditing: true,
-                  });
-                }}
+                  })
+                }
                 style={styles.actionBtn}>
                 <Image
                   source={{
@@ -294,6 +301,8 @@ const ManageServices = ({navigation}) => {
                   style={styles.actionIcon}
                 />
               </TouchableOpacity>
+
+              {/* Delete */}
               <TouchableOpacity
                 style={styles.actionBtn}
                 onPress={() => {
@@ -543,14 +552,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#f0f0f0',
   },
-
   metaInfo: {
     flexDirection: 'row',
-    // justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 4,
   },
-
   pill: {
     backgroundColor: '#e6f0ff',
     paddingHorizontal: 8,
@@ -601,5 +607,48 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
+  },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 12,
+    marginVertical: 6,
+    marginHorizontal: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: {width: 0, height: 3},
+    elevation: 4,
+  },
+  serviceIcon: {
+    height: 40,
+    width: 40,
+    borderRadius: 8,
+    backgroundColor: '#f2f2f2',
+    padding: 5,
+  },
+  detailsWrapper: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  rowBetween: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  actionsRow: {
+    flexDirection: 'row',
+  },
+  actionBtn: {
+    padding: 6,
+    marginLeft: 8,
+    borderRadius: 8,
+    backgroundColor: '#f9f9f9',
+  },
+  actionIcon: {
+    height: 20,
+    width: 20,
   },
 });
