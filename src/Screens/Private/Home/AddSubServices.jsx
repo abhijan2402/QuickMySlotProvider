@@ -86,7 +86,7 @@ const AddSubServices = ({navigation, route}) => {
       console.log(ADD_SUB_SERVICES + data?.id, 'FormData ====>', formData);
       if (isEditing) {
         POST_FORM_DATA(
-          ADD_SUB_SERVICES + data?.id,
+          ADD_SUB_SERVICES ,
           formData,
           success => {
             console.log(success, 'successsuccesssuccess-->>>');

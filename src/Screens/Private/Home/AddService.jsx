@@ -117,16 +117,23 @@ const AddService = ({route, navigation}) => {
 
   const GetSubServices = () => {
     setLoading(true);
+
     GET_WITH_TOKEN(
       ADD_SUB_SERVICES,
       success => {
         console.log(success, 'successsuccesssuccess-->>>');
         setLoading(false);
-        const d = success?.data.map(v => {
-          return {value: v?.id, label: v?.name};
-        });
-        setServiceData(d),
-          setService(d.find(v => data?.service_id == v?.value));
+
+        const d =
+          success?.data?.map(v => ({
+            value: v?.id,
+            label: v?.name,
+          })) || [];
+
+        setServiceData(d);
+
+        const selectedService = d.find(v => data?.service_id === v.value);
+        setService(selectedService || null);
       },
       error => {
         console.log(error, 'errorerrorerror>>');
@@ -138,6 +145,7 @@ const AddService = ({route, navigation}) => {
       },
     );
   };
+
   useEffect(() => {
     if (isFocus) {
       GET_WITH_TOKEN(
@@ -149,7 +157,6 @@ const AddService = ({route, navigation}) => {
             label: item.name,
             value: item.id,
           }));
-
           setCategoryList(formattedData || []);
         },
         error => {

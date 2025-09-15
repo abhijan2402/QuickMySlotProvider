@@ -126,133 +126,137 @@ const ManageServices = ({navigation}) => {
   };
   const Services = ({item}) => {
     console.log(item, 'itemitemitemitemitem');
-
     return (
-      <View key={item.id} style={styles.serviceCard}>
-        {/* Left Icon */}
-        <Image
-          source={{uri: item?.image}}
-          style={styles.serviceImage}
-          resizeMode="contain"
-        />
+      <View style={styles.serviceCard}>
+        <View key={item.id} style={{flexDirection: 'row', marginBottom: 10}}>
+          {/* Left Icon / Image */}
+          <Image
+            source={{uri: item?.image}}
+            style={styles.serviceImage}
+            resizeMode="cover"
+          />
 
-        {/* Details */}
-        <View style={{flex: 1, marginLeft: 12}}>
-          {/* Header Row */}
-          <View style={styles.rowBetween}>
-            <Typography size={16} fontWeight="700" color={COLOR.black}>
-              {item.name}
+          {/* Right Content */}
+          <View style={{flex: 1, marginLeft: 12}}>
+            {/* Title + Actions */}
+            <View style={styles.rowBetween}>
+              <Typography size={16} fontWeight="700" color={COLOR.black}>
+                {item.name}
+              </Typography>
+
+              <View style={styles.actionsRow}>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('AddService', {
+                      data: item,
+                      isEditing: true,
+                    })
+                  }
+                  style={styles.actionBtn}>
+                  <Image
+                    source={{
+                      uri: 'https://cdn-icons-png.flaticon.com/128/1159/1159633.png',
+                    }}
+                    style={styles.actionIcon}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    setDeleteService(true);
+                    setDeleteServiceID(item?.id);
+                  }}
+                  style={styles.actionBtn}>
+                  <Image
+                    source={{
+                      uri: 'https://cdn-icons-png.flaticon.com/128/6861/6861362.png',
+                    }}
+                    style={[styles.actionIcon, {tintColor: 'red'}]}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Description */}
+            <Typography
+              size={12}
+              color={COLOR.darkGrey}
+              style={{marginVertical: 6}}>
+              {item.description}
             </Typography>
 
-            {/* Action Icons */}
-            <View style={styles.actionsRow}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('AddService', {
-                    data: item,
-                    isEditing: true,
-                  });
-                }}
-                style={styles.actionBtn}>
-                <Image
-                  source={{
-                    uri: 'https://cdn-icons-png.flaticon.com/128/1159/1159633.png',
-                  }}
-                  style={styles.actionIcon}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.actionBtn}
-                onPress={() => {
-                  setDeleteService(true);
-                  setDeleteServiceID(item?.id);
-                }}>
-                <Image
-                  source={{
-                    uri: 'https://cdn-icons-png.flaticon.com/128/6861/6861362.png',
-                  }}
-                  style={[styles.actionIcon, {tintColor: 'red'}]}
-                />
-              </TouchableOpacity>
+            {/* Meta Info */}
+            <View style={styles.metaInfo}>
+              <Typography size={12} fontWeight="600">
+                Category:{' '}
+                <Typography size={12}>{item.category?.name}</Typography>
+              </Typography>
+
+              <Typography size={12} fontWeight="600">
+                Gender: <Typography size={12}>{item.gender}</Typography>
+              </Typography>
+            </View>
+
+            {/* Price & Duration */}
+            <View style={[styles.metaInfo, {marginTop: 4}]}>
+              <Typography size={12} fontWeight="600">
+                Price:{' '}
+                <Typography color="#004aad">
+                  ${Number(item.price).toFixed(2)}
+                </Typography>
+              </Typography>
+
+              <Typography size={12} fontWeight="600">
+                Duration:{' '}
+                <Typography color="#004aad" style={styles.pill}>
+                  {item.duration}
+                </Typography>
+              </Typography>
             </View>
           </View>
-
-          {/* Description */}
-          <Typography
-            size={12}
-            color={COLOR.darkGrey}
-            style={{marginVertical: 4}}>
-            {item.description}
-          </Typography>
-
-          {/* Info */}
-          <View style={styles.metaInfo}>
-            <Typography size={12} fontWeight="600">
-              Category: <Typography size={12}>{item.category?.name}</Typography>
-            </Typography>
-            <Typography size={12} fontWeight="600">
-              Gender: <Typography size={12}>{item.gender}</Typography>
-            </Typography>
-          </View>
-
-          {/* Price & Duration */}
-          <View style={styles.metaInfo}>
-            <Typography size={12} fontWeight="600">
-              Price:{' '}
-              <Typography color="#004aad">
-                ${Number(item.price).toFixed(2)}
-              </Typography>
-            </Typography>
-            <Typography size={12} fontWeight="600">
-              Duration:{' '}
-              <Typography color="#004aad" style={styles.pill}>
-                {item.duration}
-              </Typography>
-            </Typography>
-          </View>
-
-          {/* Peak Hours */}
-          {item.peak_hours && Object.keys(item.peak_hours).length > 0 && (
-            <>
-              <Typography
-                size={13}
-                fontWeight="700"
-                color={COLOR.black}
-                style={{marginTop: 6}}>
-                Peak Hours
-              </Typography>
-              {Object.entries(item.peak_hours).map(([time, price], idx) => (
-                <View key={idx} style={styles.metaInfo}>
-                  <Typography size={12}>{time}</Typography>
-                  <Typography size={12} color="#004aad">
-                    ${price}
-                  </Typography>
-                </View>
-              ))}
-            </>
-          )}
-
-          {/* Addons */}
-          {item.addons && Object.keys(item.addons).length > 0 && (
-            <>
-              <Typography
-                size={13}
-                fontWeight="700"
-                color={COLOR.black}
-                style={{marginTop: 6}}>
-                Addons
-              </Typography>
-              {Object.entries(item.addons).map(([addon, price], idx) => (
-                <View key={idx} style={styles.metaInfo}>
-                  <Typography size={12}>{addon}</Typography>
-                  <Typography size={12} color="#004aad">
-                    ${price}
-                  </Typography>
-                </View>
-              ))}
-            </>
-          )}
         </View>
+
+        {/* Peak Hours */}
+        {item.peak_hours && Object.keys(item.peak_hours).length > 0 && (
+          <View style={{marginTop: 8}}>
+            <Typography
+              size={13}
+              fontWeight="700"
+              color={COLOR.black}
+              style={{marginBottom: 4}}>
+              Peak Hours
+            </Typography>
+            {Object.entries(item.peak_hours).map(([time, price], idx) => (
+              <View key={idx} style={styles.metaInfo}>
+                <Typography size={12}>{time}</Typography>
+                <Typography size={12} color="#004aad">
+                  ${price}
+                </Typography>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* Addons */}
+        {item.addons && Object.keys(item.addons).length > 0 && (
+          <View style={{marginTop: 8}}>
+            <Typography
+              size={13}
+              fontWeight="700"
+              color={COLOR.black}
+              style={{marginBottom: 4}}>
+              Addons
+            </Typography>
+            {Object.entries(item.addons).map(([addon, price], idx) => (
+              <View key={idx} style={styles.metaInfo}>
+                <Typography size={12}>{addon}</Typography>
+                <Typography size={12} color="#004aad">
+                  ${price}
+                </Typography>
+              </View>
+            ))}
+          </View>
+        )}
       </View>
     );
   };
@@ -366,30 +370,29 @@ const ManageServices = ({navigation}) => {
               Your Current Services
             </Typography>
           )}
-         
-            <FlatList
-              data={tab === 'services' ? services : subServices}
-              renderItem={({item}) => {
-                return tab === 'services' ? (
-                  <Services item={item} />
-                ) : (
-                  <SubServices item={item} />
-                );
-              }}
-              ListEmptyComponent={() => {
-                return (
-                  <EmptyView
-                    title={
-                      tab === 'services'
-                        ? 'No Services Found'
-                        : 'No Sub Services Found'
-                    }
-                  />
-                );
-              }}
-            />
-            <View style={{height: 70}}></View>
-         
+
+          <FlatList
+            data={tab === 'services' ? services : subServices}
+            renderItem={({item}) => {
+              return tab === 'services' ? (
+                <Services item={item} />
+              ) : (
+                <SubServices item={item} />
+              );
+            }}
+            ListEmptyComponent={() => {
+              return (
+                <EmptyView
+                  title={
+                    tab === 'services'
+                      ? 'No Services Found'
+                      : 'No Sub Services Found'
+                  }
+                />
+              );
+            }}
+          />
+          <View style={{height: 70}}></View>
         </View>
       )}
       <TouchableOpacity
@@ -462,7 +465,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   serviceCard: {
-    flexDirection: 'row',
     alignItems: 'flex-start',
     borderWidth: 1,
     borderColor: COLOR.lightGrey,
@@ -536,15 +538,15 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.45,
   },
   serviceImage: {
-    height: 40,
-    width: 40,
+    height: 100,
+    width: 100,
     borderRadius: 8,
     backgroundColor: '#f0f0f0',
   },
 
   metaInfo: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 4,
   },
@@ -555,5 +557,49 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 6,
     overflow: 'hidden',
+  },
+  serviceCard: {
+    padding: 14,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: {width: 0, height: 2},
+    elevation: 2,
+  },
+  serviceImage: {
+    width: 110,
+    height: 110,
+    borderRadius: 8,
+    backgroundColor: '#f0f0f0',
+  },
+  rowBetween: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  actionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  actionBtn: {
+    marginLeft: 8,
+    padding: 4,
+  },
+  actionIcon: {
+    width: 20,
+    height: 20,
+  },
+  metaInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 2,
+  },
+  pill: {
+    backgroundColor: '#e6f0ff',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
   },
 });
