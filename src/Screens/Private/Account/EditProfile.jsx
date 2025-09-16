@@ -163,7 +163,7 @@ const EditProfile = ({navigation}) => {
       formData.append('zip_code', '123456');
       formData.append('company_name', company);
       formData.append('category_id', userdata?.service_category);
-      formData.append('website', website);
+      formData.append('website', '');
       formData.append('business_name', buisness);
       formData.append('location_area_served', served);
       if (profileImage && profileImage?.mime) {

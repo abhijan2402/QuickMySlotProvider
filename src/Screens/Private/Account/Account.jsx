@@ -29,6 +29,9 @@ const Account = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const userdata = useSelector(store => store.userDetails);
   console.log(userdata, 'PPPPPPPPPPPP---->>>');
+  const token = useSelector(store => store.Token);
+  console.log(token, 'tokenuuuuuuu---->>>');
+
   const dispatch = useDispatch();
   const handleDeleteAccount = () => {
     setLoading(true);

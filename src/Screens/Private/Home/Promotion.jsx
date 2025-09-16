@@ -200,6 +200,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     elevation: 3,
     overflow: 'hidden',
+    marginHorizontal:1
   },
   strip: {
     backgroundColor: '#e0f3ff',

@@ -27,6 +27,7 @@ import ImageModal from '../../../Components/UI/ImageModal';
 import {GET_WITH_TOKEN, POST_FORM_DATA} from '../../../Backend/Api';
 import {useIsFocused} from '@react-navigation/native';
 import {Font} from '../../../Constants/Font';
+import EmptyView from '../../../Components/UI/EmptyView';
 
 const Support = () => {
   const [tickets, setTickets] = useState([]);
@@ -71,18 +72,6 @@ const Support = () => {
     setShowModal(false);
   };
 
-  const renderTicket = ({item}) => (
-    <View style={styles.ticketCard}>
-      <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
-        <Image source={{uri: item.image_url}} style={{height: 40, width: 40}} />
-        <View style={{marginLeft: 10}}>
-          <Typography style={styles.ticketTitle}>{item.title}</Typography>
-          <Typography style={styles.ticketDesc}>{item.description}</Typography>
-        </View>
-      </View>
-    </View>
-  );
-
   const handleUpdate = () => {
     let validationErrors = {
       title: validators.checkRequire('Title', newTitle),
@@ -120,6 +109,25 @@ const Support = () => {
     }
   };
 
+  const renderTicket = ({item}) => (
+    <View style={styles.ticketCard}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+        }}>
+        <Image
+          source={{uri: item.image_url}}
+          style={{height: 50, width: 50, borderRadius: 6}}
+        />
+        <View style={{marginLeft: 12}}>
+          <Typography style={styles.ticketTitle}>{item.title}</Typography>
+          <Typography style={styles.ticketDesc}>{item.description}</Typography>
+        </View>
+      </View>
+    </View>
+  );
   return (
     <View style={styles.container}>
       <HomeHeader
@@ -131,8 +139,8 @@ const Support = () => {
       {loading ? (
         <ActivityIndicator
           size="large"
-          color="#007bff"
-          style={{marginTop: 20}}
+          color={COLOR.primary}
+          style={{marginTop: 10}}
         />
       ) : (
         <FlatList
@@ -140,6 +148,9 @@ const Support = () => {
           renderItem={renderTicket}
           keyExtractor={item => item.id}
           contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 10}}
+          ListEmptyComponent={() => {
+            return <EmptyView title="No Support Yet" />;
+          }}
         />
       )}
       <View style={{position: 'absolute', left: 20, right: 20, bottom: 10}}>
@@ -255,6 +266,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     marginBottom: 10,
+    elevation: 3,
   },
   ticketTitle: {
     fontSize: 16,
@@ -262,7 +274,7 @@ const styles = StyleSheet.create({
     color: COLOR.black,
   },
   ticketDesc: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#555',
     marginVertical: 4,
   },

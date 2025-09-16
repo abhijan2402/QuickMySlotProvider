@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
-  Image,
 } from 'react-native';
 import {COLOR} from '../../../Constants/Colors';
 import {windowWidth} from '../../../Constants/Dimensions';
@@ -62,6 +61,7 @@ const BankDetails = ({navigation}) => {
         getBankList();
       },
       error => {
+        setLoading(false);
         setLoading(false);
         getBankList();
       },
@@ -183,7 +183,6 @@ const BankDetails = ({navigation}) => {
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
-
       {loading ? (
         <ActivityIndicator
           size="large"
@@ -313,11 +312,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginHorizontal: 8,
     alignItems: 'center',
-    marginTop: 12,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 3},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    marginTop: 10,
+    position: 'absolute',
+    left: 20,
+    right: 20,
+    bottom: 15,
   },
 });
