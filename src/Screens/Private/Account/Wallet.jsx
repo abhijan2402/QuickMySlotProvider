@@ -8,6 +8,7 @@ import {useIsFocused} from '@react-navigation/native';
 import {GET_WITH_TOKEN} from '../../../Backend/Api';
 import {ADD_WALLET} from '../../../Constants/ApiRoute';
 import {windowWidth} from '../../../Constants/Dimensions';
+import {Font} from '../../../Constants/Font';
 
 const Wallet = ({navigation}) => {
   const [balance, setBalance] = useState();
@@ -17,7 +18,7 @@ const Wallet = ({navigation}) => {
 
   useEffect(() => {
     if (isFocus) {
-      setLoading(true)
+      setLoading(true);
       GET_WITH_TOKEN(
         ADD_WALLET,
         success => {
@@ -56,16 +57,21 @@ const Wallet = ({navigation}) => {
         <Typography
           size={14}
           color={COLOR.black}
+          font={Font.medium}
           style={{width: windowWidth * 0.6}}>
-          Transaction ID: {item.transaction_id}
+          Txn ID: {item.transaction_id}
         </Typography>
-        <Typography size={12} color="#999" style={{marginTop: 5}}>
+        <Typography
+          size={12}
+          color="#999"
+          style={{marginTop: 5}}
+          font={Font.medium}>
           {formatDate(item.created_at)}
         </Typography>
       </View>
       <Typography
         size={16}
-        fontWeight="600"
+        font={Font.semibold}
         color={item.type === 'credit' ? 'green' : 'red'}>
         {item.type === 'credit' ? '+ ' : '- '}₹{item.amount}
       </Typography>
@@ -86,12 +92,12 @@ const Wallet = ({navigation}) => {
         <View style={{paddingHorizontal: 10}}>
           {/* Balance Card */}
           <View style={styles.balanceCard}>
-            <Typography size={14} color="#555">
+            <Typography size={14} color="#555" font={Font.medium}>
               Current Balance
             </Typography>
             <Typography
               size={28}
-              fontWeight="700"
+              font={Font.semibold}
               color={COLOR.black}
               style={{marginTop: 5}}>
               ₹{Number(balance).toFixed(2)}
@@ -108,7 +114,7 @@ const Wallet = ({navigation}) => {
           {/* Transaction History */}
           <Typography
             size={16}
-            fontWeight="700"
+            font={Font.medium}
             color={COLOR.black}
             style={{marginTop: 10, marginBottom: 8}}>
             Transaction History

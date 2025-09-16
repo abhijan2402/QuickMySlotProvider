@@ -23,6 +23,7 @@ import {ADD_PROMOTION, UPDATE_PROMOTION} from '../../../Constants/ApiRoute';
 import SwitchButton from '../../../Components/UI/SwitchButton';
 import {Typography} from '../../../Components/UI/Typography';
 import {useIsFocused} from '@react-navigation/native';
+import {Font} from '../../../Constants/Font';
 
 const AddPromotion = ({navigation, route}) => {
   const [error, setError] = useState({});
@@ -60,13 +61,13 @@ const AddPromotion = ({navigation, route}) => {
     // {label: 'Amount (₹)', value: 'amount'},
   ];
 
-  const formatDate = (date) => {
-  if (!date) return '';
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // ensure 2 digits
-  const day = String(date.getDate()).padStart(2, '0');       // ensure 2 digits
-  return `${year}-${month}-${day}`;
-};
+  const formatDate = date => {
+    if (!date) return '';
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // ensure 2 digits
+    const day = String(date.getDate()).padStart(2, '0'); // ensure 2 digits
+    return `${year}-${month}-${day}`;
+  };
 
   const handleAddPromotion = () => {
     let validationErrors = {
@@ -158,6 +159,7 @@ const AddPromotion = ({navigation, route}) => {
           Platform.OS === 'ios' ? 0 : isKeyboardVisible ? 40 : -40
         }>
         <ScrollView
+          showsVerticalScrollIndicator={false}
           style={{paddingHorizontal: 5}}
           contentContainerStyle={styles.container}>
           <Input
@@ -248,7 +250,7 @@ const AddPromotion = ({navigation, route}) => {
           />
           <View
             style={{flexDirection: 'row', alignItems: 'center', marginTop: 15}}>
-            <Typography size={18} fontWeight={'500'} style={{marginRight: 5}}>
+            <Typography size={18} font={Font.medium} style={{marginRight: 5}}>
               IsActive
             </Typography>
             <SwitchButton
@@ -298,6 +300,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderColor: COLOR.primary,
+    fontFamily: Font.medium,
   },
   label: {
     marginLeft: 20,
@@ -323,6 +326,7 @@ const styles = StyleSheet.create({
   selectedTextStyle: {
     fontSize: 14,
     color: COLOR.black,
+    fontFamily: Font.medium,
   },
   button: {
     marginTop: 20,
@@ -337,7 +341,7 @@ const styles = StyleSheet.create({
     color: COLOR.white,
     fontSize: 16,
     textAlign: 'center',
-    fontWeight: '600',
+    fontFamily: Font.semibold,
   },
   dateInput: {
     borderWidth: 1,
@@ -345,5 +349,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 14,
     backgroundColor: COLOR.white,
+    fontFamily: Font.medium,
   },
 });

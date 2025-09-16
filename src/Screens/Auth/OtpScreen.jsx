@@ -20,6 +20,7 @@ import {isAuth, Token, userDetails} from '../../Redux/action';
 import {isValidForm, ToastMsg} from '../../Backend/Utility';
 import {validators} from '../../Backend/Validator';
 import Button from '../../Components/UI/Button';
+import {Font} from '../../Constants/Font';
 
 const OtpScreen = ({navigation, route}) => {
   const {setUser, setToken} = useContext(AuthContext);
@@ -131,7 +132,7 @@ const OtpScreen = ({navigation, route}) => {
 
       <Image
         source={{
-          uri: 'https://cdn-icons-png.flaticon.com/128/9042/9042592.png',
+          uri: 'https://cdn-icons-png.flaticon.com/128/3954/3954515.png',
         }}
         style={styles.image}
       />
@@ -139,7 +140,7 @@ const OtpScreen = ({navigation, route}) => {
       <View style={{padding: 20, alignItems: 'center'}}>
         <Typography
           size={18}
-          fontWeight="800"
+          font={Font.semibold}
           color={COLOR.black}
           lineHeight={20}>
           OTP Verification
@@ -149,6 +150,7 @@ const OtpScreen = ({navigation, route}) => {
           size={14}
           color={COLOR.black}
           textAlign="center"
+          font={Font.medium}
           lineHeight={20}
           style={{marginTop: 10}}>
           We have sent a 6-digit verification code to your registered mobile
@@ -180,6 +182,7 @@ const OtpScreen = ({navigation, route}) => {
           size={13}
           color="red"
           textAlign=""
+          font={Font.regular}
           style={{
             marginBottom: windowHeight * 0.06,
             marginTop: 10,
@@ -199,14 +202,14 @@ const OtpScreen = ({navigation, route}) => {
 
       <View
         style={{marginTop: 20, flexDirection: 'row', justifyContent: 'center'}}>
-        <Typography size={14} color={COLOR.black}>
+        <Typography size={14} color={COLOR.black} font={Font.medium}>
           Didn't receive the code?{' '}
         </Typography>
         <Typography
           disabled={false}
           size={14}
           color={COLOR.primary}
-          fontWeight="600"
+          font={Font.semibold}
           onPress={() => handleResend()}>
           Resend OTP
         </Typography>
@@ -224,8 +227,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   image: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
     justifyContent: 'center',
     alignSelf: 'center',
     marginTop: 40,

@@ -7,6 +7,7 @@ import {COLOR} from '../Constants/Colors';
 import MainHome from '../Screens/Private/Home/MainHome';
 import Notification from '../Screens/Private/Home/Notification';
 import VendorAppointments from '../Screens/Private/AppointmentSection/Appointment';
+import {Font} from '../Constants/Font';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,7 +35,7 @@ const BottomNavigation = () => {
         },
         tabBarStyle: {
           paddingVertical: 8,
-          height: 60 , // Add safe area bottom inset for Android/iOS
+          height: 60, // Add safe area bottom inset for Android/iOS
         },
         tabBarIcon: ({focused}) => {
           const iconUri = icons[route.name];
@@ -43,8 +44,8 @@ const BottomNavigation = () => {
             <Image
               source={{uri: iconUri}}
               style={{
-                width: 24,
-                height: 24,
+                width: 22,
+                height: 22,
                 tintColor: focused ? COLOR.primary : 'gray',
               }}
               resizeMode="contain"
@@ -57,7 +58,13 @@ const BottomNavigation = () => {
 
           return (
             <Text
-              style={{color, fontSize: 12, marginTop: 4, textAlign: 'center'}}>
+              style={{
+                color,
+                fontSize: 10,
+                marginTop: 4,
+                textAlign: 'center',
+                fontFamily: Font.medium,
+              }}>
               {label}
             </Text>
           );

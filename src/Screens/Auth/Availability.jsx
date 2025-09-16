@@ -22,6 +22,7 @@ import {BUSINESS_AVAILABILITY} from '../../Constants/ApiRoute';
 import moment from 'moment';
 import {ToastMsg} from '../../Backend/Utility';
 import {isAuth, userDetails} from '../../Redux/action';
+import {Font} from '../../Constants/Font';
 
 const days = [
   'Monday',
@@ -141,6 +142,7 @@ const Availability = ({navigation}) => {
               size={14}
               color="#444"
               lineHeight={20}
+              font={Font.medium}
               style={{width: windowWidth * 0.75}}>
               Select your working days and set start and end times for each.
               This schedule will let customers know when you’re available for
@@ -150,13 +152,17 @@ const Availability = ({navigation}) => {
 
           <Typography
             size={16}
-            fontWeight="600"
+            font={Font.semibold}
             color={COLOR.black}
             style={{marginBottom: 8}}>
             Your Availability
           </Typography>
 
-          <Typography size={13} color="#555" style={{marginBottom: 15}}>
+          <Typography
+            size={13}
+            color="#555"
+            font={Font.medium}
+            style={{marginBottom: 15}}>
             Select the days that you are available
           </Typography>
 
@@ -184,7 +190,7 @@ const Availability = ({navigation}) => {
                     />
                   )}
                 </View>
-                <Typography size={14} color={COLOR.black}>
+                <Typography font={Font.semibold} size={14} color={COLOR.black}>
                   {day}
                 </Typography>
               </TouchableOpacity>
@@ -255,6 +261,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: '#f5a623',
     elevation: 3,
+    paddingHorizontal: 10,
   },
   daysContainer: {
     flexDirection: 'row',

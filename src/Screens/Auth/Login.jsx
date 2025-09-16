@@ -20,6 +20,7 @@ import {isAuth, Token, userDetails} from '../../Redux/action';
 import {ScrollView} from 'react-native';
 import Input from '../../Components/Input';
 import {Typography} from '../../Components/UI/Typography';
+import {Font} from '../../Constants/Font';
 
 const Login = ({navigation}) => {
   const [number, setNumber] = useState('');
@@ -79,9 +80,9 @@ const Login = ({navigation}) => {
           {/* Tagline */}
           <Typography
             size={18}
-            fontWeight="600"
             color="#242524"
             textAlign="center"
+            font={Font.medium}
             lineHeight={28}
             style={{width: windowWidth / 1.2, marginTop: 10}}>
             Get Bookings, Expand Business with QuickSlot
@@ -96,7 +97,7 @@ const Login = ({navigation}) => {
             error={error.mobile}
             text={'+ 91'}
             leftIcon={true}
-            style={{marginLeft: 5}}
+            style={{marginLeft: 5, fontFamily: Font.semibold}}
           />
 
           {/* Continue Button */}
@@ -110,7 +111,7 @@ const Login = ({navigation}) => {
           {/* Divider with text */}
           <View style={styles.dividerContainer}>
             <View style={styles.divider} />
-            <Typography size={14} color="#888">
+            <Typography size={14} color="#888" font={Font.medium}>
               Or
             </Typography>
             <View style={styles.divider} />

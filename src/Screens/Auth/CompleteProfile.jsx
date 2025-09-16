@@ -27,6 +27,7 @@ import {ToastMsg} from '../../Backend/Utility';
 import {userDetails} from '../../Redux/action';
 import {useIsFocused} from '@react-navigation/native';
 import {Dropdown} from 'react-native-element-dropdown';
+import {Font} from '../../Constants/Font';
 
 const CompleteProfile = ({navigation}) => {
   const [showModal, setShowModal] = useState(false);
@@ -226,6 +227,7 @@ const CompleteProfile = ({navigation}) => {
             resizeMode="contain"
           />
           <Typography
+            font={Font.regular}
             size={14}
             color="#444"
             lineHeight={20}
@@ -238,7 +240,7 @@ const CompleteProfile = ({navigation}) => {
 
         <Typography
           size={16}
-          fontWeight="600"
+          font={Font.semibold}
           color={COLOR.black}
           style={{marginBottom: 10}}>
           Business Information
@@ -247,7 +249,8 @@ const CompleteProfile = ({navigation}) => {
         {/* Photo Verification */}
         <Typography
           size={14}
-          fontWeight="500"
+          font={Font.semibold}
+          // font={Font.semibold}
           color={COLOR.black}
           style={{marginTop: 20, marginBottom: 6}}>
           Photo Verification
@@ -276,7 +279,7 @@ const CompleteProfile = ({navigation}) => {
         {/* Business Proof */}
         <Typography
           size={14}
-          fontWeight="500"
+          font={Font.semibold}
           color={COLOR.black}
           style={{marginTop: 20, marginBottom: 6}}>
           Business Proof
@@ -307,7 +310,7 @@ const CompleteProfile = ({navigation}) => {
         {/* Aadhaar Front */}
         <Typography
           size={14}
-          fontWeight="500"
+          font={Font.semibold}
           color={COLOR.black}
           style={{marginTop: 20, marginBottom: 6}}>
           Aadhaar Card Verification
@@ -338,7 +341,7 @@ const CompleteProfile = ({navigation}) => {
         {/* PAN */}
         <Typography
           size={14}
-          fontWeight="500"
+          font={Font.semibold}
           color={COLOR.black}
           style={{marginTop: 20, marginBottom: 6}}>
           PAN Card
@@ -385,6 +388,7 @@ const CompleteProfile = ({navigation}) => {
           style={{
             borderColor: COLOR.primary,
             height: 90,
+            fontFamily: Font.medium,
           }}
           multiline
           value={about}
@@ -396,7 +400,7 @@ const CompleteProfile = ({navigation}) => {
         <Input
           label="Years of Experience"
           placeholder="Enter Your Experience"
-          style={{borderColor: COLOR.primary}}
+          style={{borderColor: COLOR.primary, fontFamily: Font.medium}}
           value={experience}
           keyboardType="decimal-pad"
           onChangeText={setExperience}
@@ -407,7 +411,7 @@ const CompleteProfile = ({navigation}) => {
         <Input
           label="Exact Location"
           placeholder="Street, City, State, ZIP"
-          style={{borderColor: COLOR.primary}}
+          style={{borderColor: COLOR.primary, fontFamily: Font.medium}}
           value={location}
           onChangeText={setLocation}
           error={errors.location}
@@ -417,7 +421,7 @@ const CompleteProfile = ({navigation}) => {
         <Input
           label="Business Website (optional)"
           placeholder="https://yourbusiness.com"
-          style={{borderColor: COLOR.primary}}
+          style={{borderColor: COLOR.primary, fontFamily: Font.medium}}
           value={website}
           onChangeText={setWebsite}
           error={errors.website}
@@ -427,7 +431,7 @@ const CompleteProfile = ({navigation}) => {
         <Input
           label="GSTIN No."
           placeholder="Enter GST Number"
-          style={{borderColor: COLOR.primary}}
+          style={{borderColor: COLOR.primary, fontFamily: Font.medium}}
           value={gst}
           onChangeText={setGst}
           error={errors.gst}
@@ -480,6 +484,7 @@ const styles = StyleSheet.create({
   placeholderStyle: {
     fontSize: 14,
     color: 'gray',
+    fontFamily: Font.medium,
   },
   selectedTextStyle: {
     fontSize: 14,

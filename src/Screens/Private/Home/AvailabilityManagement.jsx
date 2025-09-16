@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import {COLOR} from '../../../Constants/Colors';
-import { Typography } from '../../../Components/UI/Typography';
-import { Font } from '../../../Constants/Font';
+import {Typography} from '../../../Components/UI/Typography';
+import {Font} from '../../../Constants/Font';
 
 const AvailabilityManagement = () => {
   const [availability, setAvailability] = useState({});
@@ -21,7 +21,7 @@ const AvailabilityManagement = () => {
   const today = new Date().toISOString().split('T')[0];
 
   // Format date YYYY-MM-DD → DD-MM-YYYY
-  const formatDate = (dateStr) => {
+  const formatDate = dateStr => {
     const [y, m, d] = dateStr.split('-');
     return `${d}-${m}-${y}`;
   };
@@ -83,7 +83,9 @@ const AvailabilityManagement = () => {
 
   return (
     <View style={styles.container}>
-      <Typography size={18} font={Font.bold}>Manage Availability</Typography>
+      <Typography size={18} font={Font.bold}>
+        Manage Availability
+      </Typography>
 
       <Calendar
         onDayPress={onDayPress}
@@ -91,8 +93,11 @@ const AvailabilityManagement = () => {
           Object.keys(availability).map(date => {
             // convert back DD-MM-YYYY → YYYY-MM-DD for calendar
             const [d, m, y] = date.split('-');
-            return [`${y}-${m}-${d}`, {selected: true, selectedColor: COLOR.primary}];
-          })
+            return [
+              `${y}-${m}-${d}`,
+              {selected: true, selectedColor: COLOR.primary},
+            ];
+          }),
         )}
         minDate={today}
       />
@@ -162,13 +167,14 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    fontWeight: '500',
+    fontFamily: Font.semibold,
     marginVertical: 10,
     paddingHorizontal: 5,
   },
   empty: {
     fontSize: 12,
     color: COLOR.darkGrey,
+    fontFamily: Font.semibold,
   },
   datesContainer: {
     flexDirection: 'row',
@@ -189,6 +195,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLOR.black,
     marginRight: 6,
+    fontFamily: Font.semibold,
   },
   crossIcon: {
     width: 11,
@@ -203,21 +210,23 @@ const styles = StyleSheet.create({
   slotChip: {
     borderWidth: 1,
     borderColor: COLOR.primary,
-    borderRadius: 20,
-    paddingHorizontal: 12,
+    borderRadius: 5,
+    paddingHorizontal: 3,
     paddingVertical: 8,
-    margin: 5,
-    width: '45%',
+    margin: 3,
+    width: '23%',
     alignItems: 'center',
   },
   selectedSlot: {
     backgroundColor: COLOR.primary,
   },
   slotText: {
-    fontSize: 13,
+    fontSize: 11,
     color: COLOR.primary,
+    fontFamily: Font.semibold,
   },
   selectedSlotText: {
     color: COLOR.white,
+    fontFamily: Font.semibold,
   },
 });

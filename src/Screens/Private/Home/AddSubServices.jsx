@@ -30,6 +30,7 @@ import {Typography} from '../../../Components/UI/Typography';
 import {images} from '../../../Components/UI/images';
 import ImageUpload from '../../../Components/UI/ImageUpload';
 import ImageModal from '../../../Components/UI/ImageModal';
+import {Font} from '../../../Constants/Font';
 
 const AddSubServices = ({navigation, route}) => {
   const [subServices, setSubServices] = useState('');
@@ -86,7 +87,7 @@ const AddSubServices = ({navigation, route}) => {
       console.log(ADD_SUB_SERVICES + data?.id, 'FormData ====>', formData);
       if (isEditing) {
         POST_FORM_DATA(
-          ADD_SUB_SERVICES ,
+          ADD_SUB_SERVICES,
           formData,
           success => {
             console.log(success, 'successsuccesssuccess-->>>');
@@ -151,13 +152,13 @@ const AddSubServices = ({navigation, route}) => {
           placeholder="Enter Sub Service name"
           value={subServices}
           onChangeText={setSubServices}
-          style={{borderColor: COLOR.primary}}
+          style={{borderColor: COLOR.primary, fontFamily: Font.medium}}
           error={error.setSubServices}
         />
         {/* Upload Image */}
         <Typography
           size={14}
-          fontWeight="700"
+          font={Font.semibold}
           style={[styles.label, {marginTop: 20}]}>
           Sub Service Image
         </Typography>
@@ -183,6 +184,7 @@ const AddSubServices = ({navigation, route}) => {
         <Typography
           size={12}
           color="#777"
+          font={Font.semibold}
           style={[styles.note, {marginTop: 5}]}>
           Max file size: 2MB. JPG, PNG allowed.
         </Typography>

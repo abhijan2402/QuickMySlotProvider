@@ -13,6 +13,7 @@ import {Typography} from '../../../Components/UI/Typography';
 import {useIsFocused} from '@react-navigation/native';
 import {GET_WITH_TOKEN} from '../../../Backend/Api';
 import {ANALYTICS} from '../../../Constants/ApiRoute';
+import {Font} from '../../../Constants/Font';
 
 const MyAnalytics = ({navigation}) => {
   const isFocus = useIsFocused();
@@ -151,7 +152,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   sectionTitle: {
-    fontWeight: '600',
+    fontFamily: Font.semibold,
     fontSize: 15,
     marginBottom: 10,
     color: COLOR.black,
@@ -164,13 +165,14 @@ const styles = StyleSheet.create({
   },
   amount: {
     color: COLOR.deepPurple,
-    fontWeight: 'bold',
+    fontFamily: Font.semibold,
     fontSize: 16,
   },
   label: {
-    color: COLOR.grey,
+    color: COLOR.black,
     fontSize: 12,
     marginTop: 4,
+    fontFamily: Font.medium,
   },
   promoBox: {
     backgroundColor: COLOR.lavender,
@@ -183,6 +185,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     marginBottom: 10,
+    fontFamily: Font.medium,
   },
   boostBtn: {
     backgroundColor: COLOR.white,
@@ -192,6 +195,6 @@ const styles = StyleSheet.create({
   },
   boostText: {
     color: COLOR.primary,
-    fontWeight: '600',
+    fontFamily: Font.semibold,
   },
 });

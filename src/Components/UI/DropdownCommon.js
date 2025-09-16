@@ -1,15 +1,15 @@
-import {StyleSheet, Text, View} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import {Dropdown} from 'react-native-element-dropdown';
-import {Typography} from './Typography';
-import {validators} from '../../Backend/Validator';
-import {COLOR} from '../../Constants/Colors';
-import {Font} from '../../Constants/Font';
+import { Dropdown } from 'react-native-element-dropdown';
+import { Typography } from './Typography';
+import { validators } from '../../Backend/Validator';
+import { COLOR } from '../../Constants/Colors';
+import { Font } from '../../Constants/Font';
 
-const DropdownCommon = ({onChange, data, value, label, disable}) => {
+const DropdownCommon = ({ onChange, data, value, label, disable }) => {
   return (
     <View>
-      <Typography style={[styles.label, {marginTop: 18}]}>{label}</Typography>
+      <Typography style={[styles.label, { marginTop: 18, fontFamily: Font.semibold }]}>{label}</Typography>
       <Dropdown
         disable={disable}
         style={styles.dropdown}
@@ -33,10 +33,12 @@ const styles = StyleSheet.create({
   placeholderStyle: {
     fontSize: 14,
     color: 'gray',
+    fontFamily: Font.semibold
   },
   selectedTextStyle: {
     fontSize: 14,
     color: COLOR.black,
+    fontFamily: Font.semibold
   },
   dropdown: {
     height: 50,

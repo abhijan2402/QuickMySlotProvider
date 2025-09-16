@@ -26,6 +26,7 @@ import {ErrorBox} from '../../../Components/UI/ErrorBox';
 import ImageModal from '../../../Components/UI/ImageModal';
 import {GET_WITH_TOKEN, POST_FORM_DATA} from '../../../Backend/Api';
 import {useIsFocused} from '@react-navigation/native';
+import {Font} from '../../../Constants/Font';
 
 const Support = () => {
   const [tickets, setTickets] = useState([]);
@@ -178,9 +179,9 @@ const Support = () => {
               />
               <Typography
                 size={14}
-                fontWeight="600"
+                font={Font.semibold}
                 color="#333"
-                style={[styles.label, {marginTop: 20}]}>
+                style={[styles.label, {marginTop: 20, marginBottom: 5}]}>
                 Image
               </Typography>
               {image ? (
@@ -205,36 +206,29 @@ const Support = () => {
               <Typography
                 size={12}
                 color="#777"
-                style={[styles.note, {marginBottom: 0}]}>
+                font={Font.semibold}
+                style={[styles.note, {marginBottom: 0, marginTop: 5}]}>
                 Max file size: 2MB. JPG, PNG allowed.
               </Typography>
               {/* show error below image */}
               {error.image && <ErrorBox error={error.image} />}
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  marginTop: 15,
-                }}>
-                <Button
-                  loading={loading}
-                  title="Submit Ticket"
-                  onPress={handleUpdate}
-                  containerStyle={{marginTop: 10, width: windowWidth * 0.4}}
-                />
-                <Button
-                  title="Cancel"
-                  onPress={() => setModalVisible(false)}
-                  titleColor={COLOR.primary}
-                  containerStyle={{
-                    marginTop: 10,
-                    width: windowWidth * 0.4,
-                    backgroundColor: 'white',
-                    borderWidth: 1,
-                    borderColor: COLOR.primary,
-                  }}
-                />
-              </View>
+              <Button
+                loading={loading}
+                title="Submit Ticket"
+                onPress={handleUpdate}
+                containerStyle={{marginTop: 10}}
+              />
+              <Button
+                title="Cancel"
+                onPress={() => setModalVisible(false)}
+                titleColor={COLOR.primary}
+                containerStyle={{
+                  marginTop: 10,
+                  backgroundColor: 'white',
+                  borderWidth: 1,
+                  borderColor: COLOR.primary,
+                }}
+              />
             </ScrollView>
             <ImageModal
               showModal={showModal}

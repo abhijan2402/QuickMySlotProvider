@@ -17,6 +17,7 @@ import {GET_WITH_TOKEN} from '../../../Backend/Api';
 import {GET_PROFILE} from '../../../Constants/ApiRoute';
 import {useDispatch, useSelector} from 'react-redux';
 import {userDetails} from '../../../Redux/action';
+import {Font} from '../../../Constants/Font';
 
 const MainHome = ({navigation}) => {
   const {width} = Dimensions.get('window');
@@ -116,7 +117,7 @@ const MainHome = ({navigation}) => {
           <View style={{marginLeft: 10, flex: 1}}>
             <Typography style={styles.cardTitle}>
               {userdata?.business_name ||
-                'Please provide you business Information'}
+                'Please provide your business Information'}
             </Typography>
             <Typography style={styles.cardSub}>
               {userdata?.name || 'Welcome'} | +91-{userdata?.phone_number}
@@ -259,7 +260,7 @@ const styles = StyleSheet.create({
   },
   card: {
     marginHorizontal: 20,
-    backgroundColor: COLOR.lavender,
+    backgroundColor: COLOR.background,
     borderRadius: 12,
     padding: 20,
     alignItems: 'center',
@@ -273,25 +274,27 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: Font.semibold,
     color: COLOR.black,
+    marginBottom: 4,
   },
   cardSub: {
     fontSize: 13,
     color: COLOR.grey,
     marginTop: 3,
+    fontFamily: Font.medium,
   },
   bookingContainer: {
     marginHorizontal: 20,
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: Font.semibold,
     color: COLOR.black,
     marginBottom: 12,
   },
   bookingCard: {
-    backgroundColor: '#f8f6ff',
+    backgroundColor: COLOR.background,
     borderRadius: 12,
     padding: 15,
     shadowColor: '#000',
@@ -311,24 +314,26 @@ const styles = StyleSheet.create({
   },
   customerName: {
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: Font.semibold,
     color: COLOR.black,
   },
   bookingDetail: {
     fontSize: 13,
     color: '#555',
     marginTop: 2,
+    fontFamily: Font.medium,
   },
   bookingPrice: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#7B5CFA',
+    color: COLOR.primary,
+    fontFamily: Font.semibold,
     marginTop: 4,
   },
   viewButton: {
     marginTop: 12,
     alignSelf: 'flex-end',
-    backgroundColor: '#7B5CFA',
+    backgroundColor: COLOR.primary,
     paddingVertical: 8,
     paddingHorizontal: 18,
     borderRadius: 8,
@@ -336,7 +341,7 @@ const styles = StyleSheet.create({
   viewButtonText: {
     color: COLOR.white,
     fontSize: 13,
-    fontWeight: '500',
+    fontFamily: Font.semibold,
   },
   grid: {
     flexDirection: 'row',
@@ -346,7 +351,7 @@ const styles = StyleSheet.create({
   },
   gridItem: {
     width: '48%',
-    backgroundColor: '#f5f3ff',
+    backgroundColor: COLOR.background,
     borderRadius: 12,
     paddingVertical: 25,
     alignItems: 'center',
@@ -355,12 +360,12 @@ const styles = StyleSheet.create({
   gridIcon: {
     width: 28,
     height: 28,
-    tintColor: '#7B5CFA',
+    tintColor: COLOR.primary,
     marginBottom: 8,
   },
   gridText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontFamily: Font.semibold,
     color: COLOR.black,
   },
   bannerWrapper: {

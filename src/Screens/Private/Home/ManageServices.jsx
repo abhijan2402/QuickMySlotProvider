@@ -22,6 +22,7 @@ import {
   SERVICE,
 } from '../../../Constants/ApiRoute';
 import EmptyView from '../../../Components/UI/EmptyView';
+import {Font} from '../../../Constants/Font';
 
 const ManageServices = ({navigation}) => {
   const [deleteService, setDeleteService] = useState(false);
@@ -125,7 +126,6 @@ const ManageServices = ({navigation}) => {
     }
   };
   const Services = ({item}) => {
-    console.log(item, 'itemitemitemitemitem');
     return (
       <View style={styles.serviceCard}>
         <View key={item.id} style={{flexDirection: 'row', marginBottom: 10}}>
@@ -140,7 +140,7 @@ const ManageServices = ({navigation}) => {
           <View style={{flex: 1, marginLeft: 12}}>
             {/* Title + Actions */}
             <View style={styles.rowBetween}>
-              <Typography size={16} fontWeight="700" color={COLOR.black}>
+              <Typography size={16} font={Font.bold} color={COLOR.black}>
                 {item.name}
               </Typography>
 
@@ -180,6 +180,7 @@ const ManageServices = ({navigation}) => {
             {/* Description */}
             <Typography
               size={12}
+              numberOfLines={2}
               color={COLOR.darkGrey}
               style={{marginVertical: 6}}>
               {item.description}
@@ -187,29 +188,37 @@ const ManageServices = ({navigation}) => {
 
             {/* Meta Info */}
             <View style={styles.metaInfo}>
-              <Typography size={12} fontWeight="600">
+              <Typography size={12} font={Font.semibold}>
                 Category:{' '}
-                <Typography size={12}>{item.category?.name}</Typography>
+                <Typography font={Font.medium} size={12}>
+                  {item.category?.name}
+                </Typography>
               </Typography>
 
-              <Typography size={12} fontWeight="600">
-                Gender: <Typography size={12}>{item.gender}</Typography>
+              <Typography size={12} font={Font.semibold}>
+                Gender:{' '}
+                <Typography font={Font.medium} size={12}>
+                  {item.gender}
+                </Typography>
               </Typography>
             </View>
 
             {/* Price & Duration */}
             <View style={[styles.metaInfo, {marginTop: 4}]}>
-              <Typography size={12} fontWeight="600">
+              <Typography size={12} font={Font.semibold}>
                 Price:{' '}
-                <Typography color="#004aad">
+                <Typography font={Font.medium} color="#004aad">
                   ${Number(item.price).toFixed(2)}
                 </Typography>
               </Typography>
 
-              <Typography size={12} fontWeight="600">
+              <Typography size={12} font={Font.semibold}>
                 Duration:{' '}
-                <Typography color="#004aad" style={styles.pill}>
-                  {item.duration}
+                <Typography
+                  font={Font.medium}
+                  color="#004aad"
+                  style={styles.pill}>
+                  {item.duration}mins
                 </Typography>
               </Typography>
             </View>
@@ -280,7 +289,7 @@ const ManageServices = ({navigation}) => {
         <View style={styles.detailsWrapper}>
           {/* Title + Actions */}
           <View style={styles.rowBetween}>
-            <Typography size={14} fontWeight="600" color={COLOR.black}>
+            <Typography size={14} font={Font.semibold} color={COLOR.black}>
               {item?.name}
             </Typography>
 
@@ -339,8 +348,8 @@ const ManageServices = ({navigation}) => {
           ]}
           onPress={() => setTab('services')}>
           <Typography
-            size={16}
-            fontWeight={'700'}
+            size={13}
+            font={Font.medium}
             textAlign={'center'}
             color={tab === 'services' ? COLOR.white : COLOR.primary}>
             Services
@@ -353,8 +362,8 @@ const ManageServices = ({navigation}) => {
           ]}
           onPress={() => setTab('subServices')}>
           <Typography
-            size={16}
-            fontWeight={'700'}
+            size={13}
+            font={Font.medium}
             textAlign={'center'}
             color={tab === 'subServices' ? COLOR.white : COLOR.primary}>
             Sub Services
@@ -373,7 +382,7 @@ const ManageServices = ({navigation}) => {
           {services.length > 0 && (
             <Typography
               size={15}
-              fontWeight="600"
+              font={Font.semibold}
               color={COLOR.black}
               style={{marginBottom: 10}}>
               Your Current Services
@@ -417,7 +426,7 @@ const ManageServices = ({navigation}) => {
           }}
           style={styles.addIcon}
         />
-        <Typography size={14} color={COLOR.white} fontWeight="600">
+        <Typography size={14} color={COLOR.white} font={Font.semibold}>
           {tab === 'services' ? 'Add New Services' : 'Add New Sub Services'}
         </Typography>
       </TouchableOpacity>
@@ -458,8 +467,8 @@ const styles = StyleSheet.create({
   addServiceBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#8f7de8',
-    borderRadius: 10,
+    backgroundColor: COLOR.primary,
+    borderRadius: 13,
     paddingVertical: 15,
     justifyContent: 'center',
     position: 'absolute',
@@ -532,19 +541,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderWidth: 1,
     marginBottom: 15,
-    marginTop: 20,
+    marginTop: 10,
     padding: 5,
-    borderRadius: 50,
+    borderRadius: 10,
   },
   services: {
     paddingVertical: 15,
-    borderRadius: 50,
+    borderRadius: 10,
     width: windowWidth * 0.45,
   },
   subServices: {
     paddingVertical: 15,
-    borderRadius: 50,
-    width: windowWidth * 0.45,
+    borderRadius: 15,
+    width: windowWidth * 0.43,
   },
   serviceImage: {
     height: 100,

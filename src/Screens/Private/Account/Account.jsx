@@ -18,6 +18,7 @@ import {POST_WITH_TOKEN} from '../../../Backend/Api';
 import {ANALYTICS, DELETE_ACCOUNT} from '../../../Constants/ApiRoute';
 import {useDispatch, useSelector} from 'react-redux';
 import {isAuth, Token, userDetails} from '../../../Redux/action';
+import {Font} from '../../../Constants/Font';
 
 const Account = ({navigation}) => {
   const {setUser} = useContext(AuthContext);
@@ -61,25 +62,25 @@ const Account = ({navigation}) => {
     ? userdata?.image
     : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
 
-  const arrowIcon = 'https://cdn-icons-png.flaticon.com/512/271/271228.png';
+  const arrowIcon = 'https://cdn-icons-png.flaticon.com/128/2989/2989988.png';
 
   const tabs = [
     {
       id: 1,
       title: 'Edit Profile',
-      icon: 'https://cdn-icons-png.flaticon.com/512/2922/2922561.png',
+      icon: 'https://cdn-icons-png.flaticon.com/128/1077/1077114.png',
       navigate: 'EditProfile',
     },
     {
       id: 7,
       title: 'QuickMySlot Wallet',
-      icon: 'https://cdn-icons-png.flaticon.com/128/3258/3258446.png',
+      icon: 'https://cdn-icons-png.flaticon.com/128/60/60484.png',
       navigate: 'Wallet',
     },
     {
       id: 3,
       title: 'Terms & Conditions',
-      icon: 'https://cdn-icons-png.flaticon.com/128/1458/1458279.png',
+      icon: 'https://cdn-icons-png.flaticon.com/128/10349/10349031.png',
       navigate: 'Cms',
       params: {
         title: `Terms & Conditions`,
@@ -89,7 +90,7 @@ const Account = ({navigation}) => {
     {
       id: 4,
       title: 'Privacy Policy',
-      icon: 'https://cdn-icons-png.flaticon.com/128/1458/1458279.png',
+      icon: 'https://cdn-icons-png.flaticon.com/128/10348/10348823.png',
       navigate: 'Cms',
       params: {
         title: `Privacy Policy`,
@@ -99,13 +100,13 @@ const Account = ({navigation}) => {
     {
       id: 5,
       title: 'Account Managment',
-      icon: 'https://cdn-icons-png.flaticon.com/128/3258/3258446.png',
+      icon: 'https://cdn-icons-png.flaticon.com/128/66/66455.png',
       navigate: 'BankDetails',
     },
     {
       id: 6,
       title: 'About Us',
-      icon: 'https://cdn-icons-png.flaticon.com/128/16343/16343680.png',
+      icon: 'https://cdn-icons-png.flaticon.com/128/1/1176.png',
       navigate: 'Cms',
       params: {
         title: `About Us`,
@@ -115,7 +116,7 @@ const Account = ({navigation}) => {
     {
       id: 7,
       title: 'Support',
-      icon: 'https://cdn-icons-png.flaticon.com/128/8898/8898827.png',
+      icon: 'https://cdn-icons-png.flaticon.com/128/4460/4460756.png',
       navigate: 'Support',
     },
     // {
@@ -127,7 +128,7 @@ const Account = ({navigation}) => {
     {
       id: 8,
       title: 'FAQ',
-      icon: 'https://cdn-icons-png.flaticon.com/128/4403/4403603.png',
+      icon: 'https://cdn-icons-png.flaticon.com/128/1660/1660165.png',
       navigate: 'Faq',
     },
   ];
@@ -140,20 +141,20 @@ const Account = ({navigation}) => {
         leftTint={COLOR.black}
       />
 
-      {/* Profile Section */}
-      <View style={styles.profileSection}>
-        <Image source={{uri: profileImage}} style={styles.profileImage} />
-        <Typography variant="h2" color={COLOR.black}>
-          {userdata?.name}
-        </Typography>
-        <Typography variant="body2" color={COLOR.GRAY}>
-          {userdata?.email || userdata?.phone_number}
-        </Typography>
-      </View>
-
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 20}}>
+        {/* Profile Section */}
+        <View style={styles.profileSection}>
+          <Image source={{uri: profileImage}} style={styles.profileImage} />
+          <Typography font={Font.semibold} variant="h2" color={COLOR.black}>
+            {userdata?.name}
+          </Typography>
+          <Typography font={Font.semibold} variant="body2" color={COLOR.GRAY}>
+            {userdata?.email || userdata?.phone_number}
+          </Typography>
+        </View>
+
         {/* Plan Card */}
         <View style={styles.tabContainer}>
           <View style={styles.planCard}>
@@ -178,7 +179,10 @@ const Account = ({navigation}) => {
               onPress={() => navigation.navigate(item.navigate, item.params)}>
               <View style={styles.tabLeft}>
                 <Image source={{uri: item.icon}} style={styles.leftIcon} />
-                <Typography variant="body1" color={COLOR.black}>
+                <Typography
+                  variant="body1"
+                  color={COLOR.black}
+                  font={Font.medium}>
                   {item.title}
                 </Typography>
               </View>
@@ -287,7 +291,7 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     resizeMode: 'contain',
-    tintColor: '#999',
+    tintColor: COLOR.black,
   },
   planCard: {
     backgroundColor: '#fff',
@@ -304,30 +308,31 @@ const styles = StyleSheet.create({
   },
   planTitle: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: Font.medium,
     color: '#888',
     marginBottom: 8,
   },
   planName: {
     fontSize: 20,
-    fontWeight: '700',
+    fontFamily: Font.bold,
     color: '#222',
     marginBottom: 6,
   },
   planDesc: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#666',
     textAlign: 'center',
     marginBottom: 10,
+    fontFamily: Font.medium,
   },
   planPrice: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#2E86DE',
+    color: COLOR.primary,
     marginBottom: 10,
   },
   upgradeBtn: {
-    backgroundColor: '#2E86DE',
+    backgroundColor: COLOR.primary,
     paddingVertical: 12,
     paddingHorizontal: 25,
     borderRadius: 10,

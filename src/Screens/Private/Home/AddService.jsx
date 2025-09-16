@@ -442,7 +442,8 @@ const AddService = ({route, navigation}) => {
         {/* Upload Image */}
         <Typography
           size={14}
-          fontWeight="600"
+          // fontWeight="600"
+          font={Font.semibold}
           color="#333"
           style={[styles.label, {marginTop: 20}]}>
           Service Image
@@ -469,6 +470,7 @@ const AddService = ({route, navigation}) => {
         <Typography
           size={12}
           color="#777"
+          font={Font.semibold}
           style={[styles.note, {marginBottom: 0}]}>
           Max file size: 2MB. JPG, PNG allowed.
         </Typography>
@@ -571,13 +573,17 @@ const AddService = ({route, navigation}) => {
               </TouchableOpacity>
             </View>
           ))}
-          <Typography size={12} color="#777" style={styles.subNote}>
+          <Typography
+            font={Font.semibold}
+            size={12}
+            color="#777"
+            style={styles.subNote}>
             Allows this service to be booked during peak times with extra
             charges.
           </Typography>
         </View>
 
-        <AvailabilityManagement/>
+        <AvailabilityManagement />
       </KeyboardAwareScrollView>
 
       {/* Add Button */}
@@ -643,7 +649,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: Font.semibold,
     color: COLOR.black,
   },
   addButton: {
