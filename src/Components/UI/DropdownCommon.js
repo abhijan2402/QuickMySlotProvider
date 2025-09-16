@@ -19,7 +19,7 @@ const DropdownCommon = ({onChange, data, value, label, disable}) => {
         maxHeight={150}
         labelField="label"
         valueField="value"
-        placeholder="Select Bank Type"
+        placeholder=""
         value={value}
         onChange={onChange}
       />

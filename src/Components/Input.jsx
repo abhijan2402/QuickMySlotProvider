@@ -138,10 +138,5 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginHorizontal: 5,
   },
-  text: {
-    borderRightWidth: 1,
-    // borderRightColor: COLOR.lightGrey,
-    paddingRight: 5,
-    marginRight: 5,
-  },
+  text: {marginRight: 5},
 });

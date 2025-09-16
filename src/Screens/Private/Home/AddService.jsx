@@ -26,20 +26,29 @@ import {ToastMsg} from '../../../Backend/Utility';
 import DropdownCommon from '../../../Components/UI/DropdownCommon';
 import {Font} from '../../../Constants/Font';
 import DatePickerModal from '../../../Components/UI/DatePicker';
-import {CATEGORY, SERVICE, UPDATE_SERVICE} from '../../../Constants/ApiRoute';
+import {
+  ADD_SUB_SERVICES,
+  CATEGORY,
+  SERVICE,
+  UPDATE_SERVICE,
+} from '../../../Constants/ApiRoute';
 import {GET_WITH_TOKEN, POST_FORM_DATA} from '../../../Backend/Api';
 import {useIsFocused} from '@react-navigation/native';
 import {Dropdown} from 'react-native-element-dropdown';
+import {useSelector} from 'react-redux';
+import moment from 'moment';
+import AvailabilityManagement from './AvailabilityManagement';
 
 const AddService = ({route, navigation}) => {
   const [serviceName, setServiceName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState();
   console.log(category);
-  
   const [price, setPrice] = useState('');
   const [duration, setDuration] = useState('');
   const [discount, setDiscount] = useState(false);
+  const [service, setService] = useState('');
+  const [serviceData, setServiceData] = useState([]);
   const [peak, setPeak] = useState(false);
   const [addons, setAddons] = useState([
     {
@@ -56,11 +65,12 @@ const AddService = ({route, navigation}) => {
       price: '',
     },
   ]);
+
   const [gender, setGender] = useState('');
   const [loading, setLoading] = useState(false);
   const {isKeyboardVisible} = useKeyboard();
   const data = route?.params?.data;
-  console.log(data);
+  console.log(data, 'dsauyiwequyi778877787');
   const isEditing = route?.params?.isEditing;
   const [image, setImage] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -68,17 +78,74 @@ const AddService = ({route, navigation}) => {
   console.log(errors);
   const isFocus = useIsFocused();
   const [categoryList, setCategoryList] = useState([]);
+  const userdata = useSelector(store => store.userDetails);
 
   useEffect(() => {
     if (isFocus) {
-      setServiceName(data?.name)
-      setDescription(data?.description)
-      setPrice(data?.price)
-      setDuration(data?.duration)
-      setImage(data?.image)
-      setGender(data?.gender)
+      GetSubServices();
+      setServiceName(data?.name);
+      setDescription(data?.description);
+      setPrice(data?.price);
+      setDuration(data?.duration);
+      setImage(data?.image ? {path: data?.image} : null);
+      setGender(data?.gender);
+
+      // ✅ Convert `addons` object to array
+      const parsedAddons = data?.addons
+        ? Object.entries(data.addons).map(([name, price], index) => ({
+            id: index + 1,
+            name,
+            price: price.toString(),
+          }))
+        : [{id: 1, name: '', price: ''}];
+      setAddons(parsedAddons);
+
+      // ✅ Convert `peak_hours` object to array
+      const parsedPeakHours = data?.peak_hours
+        ? Object.entries(data.peak_hours).map(([timeRange, price], index) => {
+            const [startTime, endTime] = timeRange.split('-');
+            return {
+              id: index + 1,
+              startTime: moment(startTime, 'HH:mm').toDate(),
+              endTime: moment(endTime, 'HH:mm').toDate(),
+              price: price.toString(),
+            };
+          })
+        : [{id: 1, startTime: '', endTime: '', price: ''}];
+      setPeakHours(parsedPeakHours);
     }
   }, [isFocus]);
+
+  const GetSubServices = () => {
+    setLoading(true);
+
+    GET_WITH_TOKEN(
+      ADD_SUB_SERVICES,
+      success => {
+        console.log(success, 'successsuccesssuccess-->>>');
+        setLoading(false);
+
+        const d =
+          success?.data?.map(v => ({
+            value: v?.id,
+            label: v?.name,
+          })) || [];
+
+        setServiceData(d);
+
+        const selectedService = d.find(v => data?.service_id === v.value);
+        setService(selectedService || null);
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+      },
+      fail => {
+        console.log(fail, 'errorerrorerror>>');
+        setLoading(false);
+      },
+    );
+  };
 
   useEffect(() => {
     if (isFocus) {
@@ -88,16 +155,14 @@ const AddService = ({route, navigation}) => {
           setLoading(false);
           console.log(success);
           const formattedData = success?.data?.map(item => ({
-          label: item.name,
-          value: item.id,
-        }));
-
-        setCategoryList(formattedData || []);
+            label: item.name,
+            value: item.id,
+          }));
+          setCategoryList(formattedData || []);
         },
         error => {
           setLoading(false);
           console.log(error);
-
           ToastMsg(error?.message);
         },
         fail => {
@@ -120,7 +185,7 @@ const AddService = ({route, navigation}) => {
     let validationErrors = {
       serviceName: validators.checkRequire('Service Name', serviceName),
       description: validators.checkRequire('Description', description),
-      category: validators.checkRequire('Category', category),
+      // category: validators.checkRequire('Category', category),
       price: validators.checkRequire('Price', price),
       duration: validators.checkRequire('Duration', duration),
       image: validators.checkRequire('Service Image', image),
@@ -164,81 +229,77 @@ const AddService = ({route, navigation}) => {
     const formData = new FormData();
     formData.append('name', serviceName);
     formData.append('description', description);
-    formData.append('category_id', category);
+    formData.append('category_id', userdata?.service_category);
     formData.append('price', price);
     formData.append('duration', duration);
-    formData.append('gender', gender);
-
-    if (image) {
+    formData.append('gender', gender?.value);
+    formData.append('service_id', service?.value);
+    if (image?.mime) {
       formData.append('image', {
-        uri: image.path || image.uri,
-        type: image.mime || 'image/jpeg',
-        name: image.filename || 'service.jpg',
+        uri: image?.path || image?.uri,
+        type: image?.mime || 'image/jpeg',
+        name: image?.filename || 'service.jpg',
       });
     }
-
-    // Add addons to formData
     addons.forEach((addon, index) => {
       if (addon.name && addon.price) {
-        formData.append(`addons[${index}][${addon.name}]`, addon.price);
+        formData.append(`addons[${addon.name}]`, addon.price);
         // formData.append(`addons[${index}][price]`, addon.price);
       }
     });
-
     // Add peak hours to formData
     peakHours.forEach((peakHour, index) => {
       if (peakHour.startTime && peakHour.endTime && peakHour.price) {
         formData.append(
-          `peak_hours[${index}][${moment(peakHour.startTime).format(
-            'HH:mm',
-          )}-${moment(peakHour.endTime).format('HH:mm')}]`,
+          `peak_hours[${moment(peakHour.startTime).format('HH:mm')}-${moment(
+            peakHour.endTime,
+          ).format('HH:mm')}]`,
           `${peakHour.price}`,
         );
         // formData.append(`peak_hours[${index}][price]`, peakHour.price);
       }
     });
-    console.log(formData);
+    console.log(formData, 'formDataformDataformDataformData');
 
-    if(isEditing){
+    if (isEditing) {
       POST_FORM_DATA(
-      UPDATE_SERVICE + data?.id,
-      formData,
-      success => {
-        setLoading(false);
-        console.log(success);
-        navigation.goBack();
-        ToastMsg(success?.message);
-      },
-      error => {
-        setLoading(false);
-        console.log(error);
-
-        ToastMsg(error?.message);
-      },
-      fail => {
-        setLoading(false);
-      },
-    );
-    }else{
+        UPDATE_SERVICE + data?.id,
+        formData,
+        success => {
+          setLoading(false);
+          console.log(success);
+          navigation.goBack();
+          ToastMsg(success?.message);
+        },
+        error => {
+          setLoading(false);
+          console.log(error);
+          ToastMsg(error?.message);
+        },
+        fail => {
+          setLoading(false);
+        },
+      );
+    } else {
       POST_FORM_DATA(
-      SERVICE,
-      formData,
-      success => {
-        setLoading(false);
-        console.log(success);
-        navigation.goBack();
-        ToastMsg(success?.message);
-      },
-      error => {
-        setLoading(false);
-        console.log(error);
+        SERVICE,
+        formData,
+        success => {
+          setLoading(false);
+          console.log(success);
+          navigation.goBack();
+          ToastMsg(success?.message);
+        },
+        error => {
+          setLoading(false);
+          console.log(error);
 
-        ToastMsg(error?.message);
-      },
-      fail => {
-        setLoading(false);
-      },
-    );
+          ToastMsg(error?.message);
+        },
+        fail => {
+          setLoading(false);
+        },
+      );
     }
   };
 
@@ -320,8 +381,8 @@ const AddService = ({route, navigation}) => {
         />
 
         {/* Category */}
-        <Text style={[styles.label, {marginTop: 18}]}>Category</Text>
-        <Dropdown
+        {/* <Text style={[styles.label, {marginTop: 18}]}>Category</Text> */}
+        {/* <Dropdown
           style={styles.dropdown}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
@@ -333,7 +394,7 @@ const AddService = ({route, navigation}) => {
           value={category} // category will hold the selected id
           onChange={item => setCategory(item.value)} // store id when selected
         />
-        {errors.category && <ErrorBox error={errors.category} />}
+        {errors.category && <ErrorBox error={errors.category} />} */}
 
         {/* Price */}
         <Input
@@ -355,6 +416,15 @@ const AddService = ({route, navigation}) => {
           ]}
           value={gender}
           onChange={v => setGender(v)}
+          placeholder="Select Gender"
+          error={errors.gender}
+        />
+
+        <DropdownCommon
+          label="Service"
+          data={serviceData}
+          value={service}
+          onChange={v => setService(v)}
           placeholder="Select Gender"
           error={errors.gender}
         />
@@ -506,6 +576,8 @@ const AddService = ({route, navigation}) => {
             charges.
           </Typography>
         </View>
+
+        <AvailabilityManagement/>
       </KeyboardAwareScrollView>
 
       {/* Add Button */}
@@ -515,7 +587,7 @@ const AddService = ({route, navigation}) => {
         disabled={loading}
         containerStyle={{
           width: '90%',
-          // paddingTop: 15,
+          marginTop: 10,
         }}
       />
 

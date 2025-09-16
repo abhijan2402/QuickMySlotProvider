@@ -16,7 +16,8 @@ import {Typography} from '../../../Components/UI/Typography';
 import {useIsFocused} from '@react-navigation/native';
 import {POST_WITH_TOKEN} from '../../../Backend/Api';
 import {ANALYTICS, DELETE_ACCOUNT} from '../../../Constants/ApiRoute';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {isAuth, Token, userDetails} from '../../../Redux/action';
 
 const Account = ({navigation}) => {
   const {setUser} = useContext(AuthContext);
@@ -27,7 +28,10 @@ const Account = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const userdata = useSelector(store => store.userDetails);
   console.log(userdata, 'PPPPPPPPPPPP---->>>');
+  const token = useSelector(store => store.Token);
+  console.log(token, 'tokenuuuuuuu---->>>');
 
+  const dispatch = useDispatch();
   const handleDeleteAccount = () => {
     setLoading(true);
     POST_WITH_TOKEN(
@@ -50,11 +54,14 @@ const Account = ({navigation}) => {
 
   const handleLogout = () => {
     setVisible(false);
+    dispatch(Token(''));
+    dispatch(userDetails(''));
+    dispatch(isAuth(false));
     console.log('User logged out');
   };
 
-  const profileImage = userdata?.photo_verification
-    ? userdata?.photo_verification
+  const profileImage = userdata?.image
+    ? userdata?.image
     : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
 
   const arrowIcon = 'https://cdn-icons-png.flaticon.com/512/271/271228.png';
@@ -187,7 +194,9 @@ const Account = ({navigation}) => {
         <CustomButton
           title={'Log Out'}
           style={{marginTop: 20}}
-          onPress={() => setVisible(true)}
+          onPress={() => {
+            setVisible(true);
+          }}
         />
         <CustomButton
           textStyle={{color: COLOR.red}}

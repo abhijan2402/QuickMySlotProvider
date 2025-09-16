@@ -85,13 +85,13 @@ const BoostProfile = ({navigation}) => {
 
               <View style={{flex: 1}}>
                 <Typography
-                  size={14}
-                  fontWeight="600"
+                  size={16}
+                  fontWeight="700"
                   style={styles.boostTitle}>
                   {item.subscription_name}
                 </Typography>
                 <Typography
-                  size={12}
+                  size={14}
                   color={COLOR.darkGrey}
                   style={styles.boostDesc}>
                   {item.description}
@@ -104,13 +104,9 @@ const BoostProfile = ({navigation}) => {
                 </Typography>
               </View>
 
-              <Typography
-                size={14}
-                fontWeight="600"
-                color={COLOR.black}
-                style={styles.boostPrice}>
-                ${Number(item.price).toFixed(2)}
-              </Typography>
+                <Typography size={15} fontWeight="700" color={COLOR.primary}>
+                  ${Number(item.price).toFixed(2)}
+                </Typography>
             </TouchableOpacity>
           ))}
 
@@ -147,7 +143,7 @@ const BoostProfile = ({navigation}) => {
 
       {/* Checkout Button */}
       <View style={{position: 'absolute', left: 20, right: 20, bottom: 10}}>
-        <Button title={'Checkout'} />
+        <Button title={'Checkout'} onPress={() => navigation.goBack()} />
       </View>
     </View>
   );
@@ -177,13 +173,13 @@ const styles = StyleSheet.create({
   },
   selectedBoost: {
     borderColor: COLOR.primary,
-    backgroundColor: '#f4e9ff',
+    backgroundColor: '#f9f4ff',
   },
   boostTitle: {
     color: COLOR.black,
   },
   boostDesc: {
-    marginTop: 4,
+    marginTop: 5,
   },
   boostPrice: {
     marginLeft: 8,

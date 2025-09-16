@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, FlatList, ActivityIndicator} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  ActivityIndicator,
+  RefreshControl,
+} from 'react-native';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import CustomButton from '../../../Components/CustomButton';
@@ -8,6 +14,8 @@ import {useIsFocused} from '@react-navigation/native';
 import {GET_WITH_TOKEN} from '../../../Backend/Api';
 import {ADD_WALLET} from '../../../Constants/ApiRoute';
 import {windowWidth} from '../../../Constants/Dimensions';
+import {Font} from '../../../Constants/Font';
+import EmptyView from '../../../Components/UI/EmptyView';
 
 const Wallet = ({navigation}) => {
   const [balance, setBalance] = useState();
@@ -17,27 +25,32 @@ const Wallet = ({navigation}) => {
 
   useEffect(() => {
     if (isFocus) {
-      setLoading(true)
-      GET_WITH_TOKEN(
-        ADD_WALLET,
-        success => {
-          console.log(success, 'successsuccesssuccess-->>>');
-          setLoading(false);
-          setTransaction(success?.data?.transactions);
-          setBalance(success?.data?.total_amount);
-        },
-        error => {
-          console.log(error, 'errorerrorerror>>');
-          setLoading(false);
-        },
-        fail => {
-          console.log(fail, 'errorerrorerror>>');
-
-          setLoading(false);
-        },
-      );
+      fetchWallet();
     }
   }, [isFocus]);
+
+  const fetchWallet = () => {
+    setLoading(true);
+    GET_WITH_TOKEN(
+      ADD_WALLET,
+      success => {
+        console.log(success, 'successsuccesssuccess-->>>');
+        setLoading(false);
+        setTransaction(success?.data?.transactions);
+        setBalance(success?.data?.total_amount);
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+      },
+      fail => {
+        console.log(fail, 'errorerrorerror>>');
+
+        setLoading(false);
+      },
+    );
+  };
+
   const formatDate = dateString => {
     const dateObj = new Date(dateString);
     const options = {day: '2-digit', month: 'short', year: 'numeric'};
@@ -59,7 +72,11 @@ const Wallet = ({navigation}) => {
           style={{width: windowWidth * 0.6}}>
           Transaction ID: {item.transaction_id}
         </Typography>
-        <Typography size={12} color="#999" style={{marginTop: 5}}>
+        <Typography
+          size={12}
+          color="#999"
+          font={Font.regular}
+          style={{marginTop: 5}}>
           {formatDate(item.created_at)}
         </Typography>
       </View>
@@ -81,7 +98,7 @@ const Wallet = ({navigation}) => {
       />
 
       {loading ? (
-        <ActivityIndicator size="large" color="#007bff" />
+        <ActivityIndicator size="large" color={COLOR.primary} />
       ) : (
         <View style={{paddingHorizontal: 10}}>
           {/* Balance Card */}
@@ -115,9 +132,18 @@ const Wallet = ({navigation}) => {
           </Typography>
           <FlatList
             data={transaction}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.id?.toString()}
             renderItem={renderTransaction}
-            contentContainerStyle={{paddingBottom: 20}}
+            contentContainerStyle={{paddingBottom: 30}}
+            refreshControl={
+              <RefreshControl refreshing={loading} onRefresh={fetchWallet} />
+            }
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={() => {
+              return (
+                <EmptyView title='No Wallet Transaction' />
+              )
+            }}
           />
         </View>
       )}
@@ -148,6 +174,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#e0e0e0',
-    marginBottom: 8,
+    marginBottom: 10,
   },
 });

@@ -9,75 +9,95 @@ import {
 } from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import {COLOR} from '../../../Constants/Colors';
-import HomeHeader from '../../../Components/HomeHeader';
-import CustomButton from '../../../Components/CustomButton';
-import Button from '../../../Components/UI/Button';
+import { Typography } from '../../../Components/UI/Typography';
+import { Font } from '../../../Constants/Font';
 
 const AvailabilityManagement = () => {
-  const [selectedDates, setSelectedDates] = useState({});
+  const [availability, setAvailability] = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedSlots, setSelectedSlots] = useState({});
+
+  console.log(availability, 'availability');
 
   const today = new Date().toISOString().split('T')[0];
+
+  // Format date YYYY-MM-DD → DD-MM-YYYY
+  const formatDate = (dateStr) => {
+    const [y, m, d] = dateStr.split('-');
+    return `${d}-${m}-${y}`;
+  };
 
   // Generate slots (10 AM to 8 PM)
   const slots = Array.from({length: 10}, (_, i) => {
     const startHour = 10 + i;
-    const endHour = startHour + 1;
-    return `${startHour}:00 - ${endHour}:00`;
+    const suffix = startHour >= 12 ? 'PM' : 'AM';
+    const hour12 = startHour > 12 ? startHour - 12 : startHour;
+    return `${hour12}:00 ${suffix}`;
   });
 
   // Handle date selection
   const onDayPress = day => {
-    const date = day.dateString;
-    setSelectedDate(date);
+    const formattedDate = formatDate(day.dateString);
+    setSelectedDate(formattedDate);
 
-    if (selectedDates[date]) {
-      // const updated = {...selectedDates};
-      // delete updated[date];
-      // setSelectedDates(updated);
-    } else {
-      setSelectedDates({
-        ...selectedDates,
-        [date]: {
-          selected: true,
-          marked: true,
-          selectedColor: COLOR.primary || '#8f7de8',
-        },
-      });
-    }
+    setAvailability(prev => {
+      const updated = {...prev};
+      if (!updated[formattedDate]) {
+        updated[formattedDate] = [];
+      }
+      return updated;
+    });
   };
 
   // Toggle slot for a date
   const toggleSlot = slot => {
     if (!selectedDate) return;
 
-    const updated = {...selectedSlots};
-    if (!updated[selectedDate]) updated[selectedDate] = [];
+    setAvailability(prev => {
+      const updated = {...prev};
+      const slotsArr = updated[selectedDate] || [];
 
-    if (updated[selectedDate].includes(slot)) {
-      updated[selectedDate] = updated[selectedDate].filter(s => s !== slot);
-    } else {
-      updated[selectedDate].push(slot);
-    }
-    setSelectedSlots(updated);
+      if (slotsArr.includes(slot)) {
+        updated[selectedDate] = slotsArr.filter(s => s !== slot);
+
+        // remove date completely if no slots remain
+        if (updated[selectedDate].length === 0) {
+          delete updated[selectedDate];
+          return updated;
+        }
+      } else {
+        updated[selectedDate] = [...slotsArr, slot];
+      }
+      return updated;
+    });
+  };
+
+  // Delete a date manually
+  const deleteDate = date => {
+    setAvailability(prev => {
+      const updated = {...prev};
+      delete updated[date];
+      return updated;
+    });
+    if (selectedDate === date) setSelectedDate(null);
   };
 
   return (
     <View style={styles.container}>
-      <HomeHeader
-        title="Manage Availability"
-        leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
-        leftTint={COLOR.black}
-      />
+      <Typography size={18} font={Font.bold}>Manage Availability</Typography>
+
       <Calendar
         onDayPress={onDayPress}
-        markedDates={selectedDates}
-        markingType={'multi-dot'}
+        markedDates={Object.fromEntries(
+          Object.keys(availability).map(date => {
+            // convert back DD-MM-YYYY → YYYY-MM-DD for calendar
+            const [d, m, y] = date.split('-');
+            return [`${y}-${m}-${d}`, {selected: true, selectedColor: COLOR.primary}];
+          })
+        )}
         minDate={today}
       />
 
-      {selectedDate && (
+      {selectedDate && availability[selectedDate] && (
         <>
           <Text style={styles.subtitle}>
             Available Slots for {selectedDate}:
@@ -88,14 +108,14 @@ const AvailabilityManagement = () => {
                 key={slot}
                 style={[
                   styles.slotChip,
-                  selectedSlots[selectedDate]?.includes(slot) &&
+                  availability[selectedDate]?.includes(slot) &&
                     styles.selectedSlot,
                 ]}
                 onPress={() => toggleSlot(slot)}>
                 <Text
                   style={[
                     styles.slotText,
-                    selectedSlots[selectedDate]?.includes(slot) &&
+                    availability[selectedDate]?.includes(slot) &&
                       styles.selectedSlotText,
                   ]}>
                   {slot}
@@ -108,22 +128,15 @@ const AvailabilityManagement = () => {
 
       <Text style={styles.subtitle}>Selected Dates:</Text>
       <ScrollView contentContainerStyle={styles.datesContainer}>
-        {Object.keys(selectedDates).length === 0 ? (
+        {Object.keys(availability).length === 0 ? (
           <Text style={styles.empty}>No dates selected</Text>
         ) : (
-          Object.keys(selectedDates).map(date => (
+          Object.keys(availability).map(date => (
             <View key={date} style={styles.dateChip}>
-              <Text style={styles.dateText}>{date}</Text>
-              <TouchableOpacity
-                onPress={() => {
-                  const updated = {...selectedDates};
-                  delete updated[date];
-                  setSelectedDates(updated);
-
-                  const updatedSlots = {...selectedSlots};
-                  delete updatedSlots[date];
-                  setSelectedSlots(updatedSlots);
-                }}>
+              <Text style={styles.dateText}>
+                {date}: {availability[date].join(', ')}
+              </Text>
+              <TouchableOpacity onPress={() => deleteDate(date)}>
                 <Image
                   source={{
                     uri: 'https://cdn-icons-png.flaticon.com/512/1828/1828778.png',
@@ -135,8 +148,6 @@ const AvailabilityManagement = () => {
           ))
         )}
       </ScrollView>
-
-      <Button title={'Update Availability'} />
     </View>
   );
 };
@@ -147,7 +158,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLOR.white,
-    paddingHorizontal:15
+    marginTop: 20,
   },
   subtitle: {
     fontSize: 14,
@@ -170,7 +181,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f1f1f1',
     borderRadius: 20,
-    paddingHorizontal: 5,
+    paddingHorizontal: 10,
     paddingVertical: 6,
     margin: 4,
   },
@@ -196,7 +207,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     margin: 5,
-    width: '45%', // ✅ 2 per row
+    width: '45%',
     alignItems: 'center',
   },
   selectedSlot: {
