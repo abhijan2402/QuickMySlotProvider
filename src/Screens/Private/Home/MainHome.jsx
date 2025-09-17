@@ -235,7 +235,7 @@ const MainHome = ({navigation}) => {
                 <Typography style={styles.bookingDetail}>
                   Time: 18 Aug, 3:00 PM - 4:00 PM
                 </Typography>
-                <Typography style={styles.bookingPrice}>₹1200</Typography>
+                <Typography style={styles.bookingPrice}>$1200</Typography>
               </View>
             </View>
             <TouchableOpacity style={styles.viewButton}>

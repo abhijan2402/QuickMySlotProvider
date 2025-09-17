@@ -26,7 +26,7 @@ const PropertyDetail = ({navigation}) => {
 
   const phoneNumber = '+919876543210';
   const location = 'Jaipur, Rajasthan';
-  const price = '₹ 25,00,000';
+  const price = '$ 25,00,000';
   const title = 'Luxury 2 BHK Apartment';
   const description =
     'A beautiful luxury apartment with all modern amenities and a prime location. This spacious apartment offers ample sunlight, cross ventilation, and premium fittings. Located close to schools, hospitals, and shopping malls, it is an ideal choice for families. The property includes modular kitchen, false ceiling, high-quality flooring, and designer bathrooms. Additional facilities include 24/7 water supply, security, and reserved parking.';

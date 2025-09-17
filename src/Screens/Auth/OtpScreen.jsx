@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -31,6 +31,17 @@ const OtpScreen = ({navigation, route}) => {
   const dispatch = useDispatch();
   const [error, setError] = useState('');
   console.log(error);
+  const [timer, setTimer] = useState(60);
+
+  useEffect(() => {
+    let interval = null;
+    if (timer > 0) {
+      interval = setInterval(() => {
+        setTimer(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [timer]);
 
   const handleChange = (text, index) => {
     let newOtp = [...otp];
@@ -110,6 +121,7 @@ const OtpScreen = ({navigation, route}) => {
       success => {
         console.log(success, 'successsuccesssuccess-->>>');
         setLoading(false);
+        setTimer(60)
       },
       error => {
         console.log(error, 'errorerrorerror>>');
@@ -120,6 +132,10 @@ const OtpScreen = ({navigation, route}) => {
       },
     );
   };
+
+  const maskedPhoneNumber = PhoneNumber
+  ? PhoneNumber.replace(/\d(?=\d{4})/g, '*')
+  : '';
 
   return (
     <SafeAreaView style={styles.container}>
@@ -152,7 +168,7 @@ const OtpScreen = ({navigation, route}) => {
           lineHeight={20}
           style={{marginTop: 10}}>
           We have sent a 6-digit verification code to your registered mobile
-          number ending in **** 1234. Please enter it below.
+          number ending in {maskedPhoneNumber}. Please enter it below.
         </Typography>
       </View>
 
@@ -179,7 +195,7 @@ const OtpScreen = ({navigation, route}) => {
         <Typography
           size={13}
           color="red"
-          textAlign=""
+          textAlign="right"
           style={{
             marginBottom: windowHeight * 0.06,
             marginTop: 10,
@@ -188,6 +204,14 @@ const OtpScreen = ({navigation, route}) => {
           {error}
         </Typography>
       ) : null}
+
+      { timer > 0 && <Typography
+        size={14}
+        color={COLOR.black}
+        textAlign="center"
+        style={{marginBottom: 30}}>
+        {timer} seconds
+      </Typography>}
 
       <Button
         loading={loading}

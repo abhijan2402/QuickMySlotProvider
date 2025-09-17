@@ -5,6 +5,8 @@ import {
   FlatList,
   ActivityIndicator,
   RefreshControl,
+  TouchableOpacity,
+  Clipboard,
 } from 'react-native';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
@@ -63,29 +65,55 @@ const Wallet = ({navigation}) => {
     return `${datePart}, ${timePart}`;
   };
 
+  const copyToClipboard = item => {
+    Clipboard.setString(item.transaction_id);
+  };
+
   const renderTransaction = ({item}) => (
     <View style={styles.transactionItem}>
-      <View>
+      <TouchableOpacity onPress={copyToClipboard}>
         <Typography
-          size={14}
+          size={13}
           color={COLOR.black}
-          style={{width: windowWidth * 0.6}}>
+          numberOfLines={1}
+          style={{width: windowWidth * 0.82}}>
           Transaction ID: {item.transaction_id}
         </Typography>
-        <Typography
-          size={12}
-          color="#999"
-          font={Font.regular}
-          style={{marginTop: 5}}>
-          {formatDate(item.created_at)}
-        </Typography>
+      </TouchableOpacity>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          marginTop: 5,
+          alignItems: 'center',
+        }}>
+        <View>
+          <Typography
+            size={16}
+            fontWeight="600"
+            color={item.type === 'credit' ? 'green' : 'red'}>
+            {item.type === 'credit' ? '+ ' : '- '}${item.amount}
+          </Typography>
+          <Typography
+            size={12}
+            color="#999"
+            font={Font.regular}
+            style={{marginTop: 5}}>
+            {formatDate(item.created_at)}
+          </Typography>
+        </View>
+        <View
+          style={{
+            backgroundColor: item.type === 'credit' ? '#E6F9EC' : '#FDE8E8',
+            paddingVertical: 5,
+            paddingHorizontal: 10,
+            borderRadius: 50,
+          }}>
+          <Typography size={13} color={item.type === 'credit' ? 'green' : 'red'} fontWeight="600">
+            {item?.type}
+          </Typography>
+        </View>
       </View>
-      <Typography
-        size={16}
-        fontWeight="600"
-        color={item.type === 'credit' ? 'green' : 'red'}>
-        {item.type === 'credit' ? '+ ' : '- '}₹{item.amount}
-      </Typography>
     </View>
   );
 
@@ -111,7 +139,7 @@ const Wallet = ({navigation}) => {
               fontWeight="700"
               color={COLOR.black}
               style={{marginTop: 5}}>
-              ₹{Number(balance).toFixed(2)}
+              ${Number(balance).toFixed(2)}
             </Typography>
           </View>
 
@@ -140,9 +168,7 @@ const Wallet = ({navigation}) => {
             }
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={() => {
-              return (
-                <EmptyView title='No Wallet Transaction' />
-              )
+              return <EmptyView title="No Wallet Transaction" />;
             }}
           />
         </View>
@@ -167,8 +193,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   transactionItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     padding: 12,
     borderRadius: 6,
     backgroundColor: '#fff',

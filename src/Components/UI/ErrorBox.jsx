@@ -10,8 +10,7 @@ export const ErrorBox = ({error, style}) => {
         {
           fontSize: 13,
           color: 'red',
-          alignSelf: 'flex-start',
-          // width: '95%',
+          alignSelf: 'flex-end',
           marginTop: 5,
         },
         style,

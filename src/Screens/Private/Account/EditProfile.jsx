@@ -73,7 +73,7 @@ const EditProfile = ({navigation}) => {
       setProfileImage({path: userdata?.image});
       setFirstName(userdata?.name || '');
       setEmail(userdata?.email || '');
-      setAddress(userdata?.exact_location ||'');
+      setAddress(userdata?.exact_location || '');
       setBuisness(userdata?.business_name || '');
       setServed(userdata?.location_area_served || '');
       setCompany(userdata?.company_name || '');
@@ -188,7 +188,7 @@ const EditProfile = ({navigation}) => {
         },
         error => {
           console.log(error, 'errorerrorerror>>');
-          setError(error?.data?.errors)
+          setError(error?.data?.errors);
           setLoading(false);
         },
         fail => {
@@ -231,10 +231,11 @@ const EditProfile = ({navigation}) => {
           Platform.OS === 'ios' ? 0 : isKeyboardVisible ? 0 : -40
         }>
         <ScrollView
+        showsVerticalScrollIndicator={false}
           style={{flex: 1, paddingHorizontal: 5}}
           contentContainerStyle={styles.container}>
           {/* 🚀 Promo Card */}
-          <View style={styles.card}>
+          {/* <View style={styles.card}>
             <Typography
               size={18}
               fontWeight="700"
@@ -267,7 +268,7 @@ const EditProfile = ({navigation}) => {
                 </Typography>
               </TouchableOpacity>
             </View>
-          </View>
+          </View> */}
           {/* Inputs with Error */}
           <Input
             label="Name"
@@ -334,6 +335,23 @@ const EditProfile = ({navigation}) => {
             editable={isEditing}
             error={error.country}
           />
+          <Text style={[styles.label, {marginTop: 18}]}>Service Category</Text>
+          <Dropdown
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            data={categoryList}
+            disable={!isEditing}
+            maxHeight={150}
+            labelField="label"
+            valueField="value"
+            placeholder="Select Service Category Type"
+            value={category}
+            onChange={item => setCategory(item.value)}
+          />
+          {error.category && (
+            <ErrorBox error={error.category} style={{marginBottom: 20}} />
+          )}
           <Input
             label="Pin Code"
             placeholder="Enter Your Pin Code"
@@ -379,29 +397,12 @@ const EditProfile = ({navigation}) => {
             editable={isEditing}
             error={error.location_served}
           />
-          <Text style={[styles.label, {marginTop: 18}]}>Service Category</Text>
-          <Dropdown
-            style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            data={categoryList}
-            disable={!isEditing}
-            maxHeight={150}
-            labelField="label"
-            valueField="value"
-            placeholder="Select Service Category Type"
-            value={category} // category will hold the selected id
-            onChange={item => setCategory(item.value)} // store id when selected
-          />
-          {error.category && (
-            <ErrorBox error={error.category} style={{marginBottom: 20}} />
-          )}
         </ScrollView>
       </KeyboardAvoidingView>
 
       {/* Edit / Update Button */}
       <Button
-      containerStyle={{marginTop:10}}
+        containerStyle={{marginTop: 10}}
         loading={loading}
         title={isEditing ? 'Update' : 'Edit'}
         onPress={() => {

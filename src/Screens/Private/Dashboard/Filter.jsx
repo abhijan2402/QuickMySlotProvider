@@ -165,7 +165,7 @@ const Filter = ({navigation, route}) => {
             onChangeText={setMaxPrice}
           />
         </View> */}
-        <Text style={styles.label}>Price Range (₹)</Text>
+        <Text style={styles.label}>Price Range ($)</Text>
 
         {renderOptions(
           'Furnishing Status',

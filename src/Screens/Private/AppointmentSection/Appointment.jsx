@@ -23,8 +23,8 @@ const VendorAppointments = () => {
       customerPhone: '9876543210',
       customerAddress: '123, MG Road, Jaipur',
       services: [
-        {name: 'Bridal Makeup', price: '₹3000'},
-        {name: 'Hair Styling', price: '₹500'},
+        {name: 'Bridal Makeup', price: '$3000'},
+        {name: 'Hair Styling', price: '$500'},
       ],
       date: 'Aug 20, 2025',
       time: '3:00 PM',
@@ -36,7 +36,7 @@ const VendorAppointments = () => {
       customerName: 'Priya Mehta',
       customerPhone: '9123456780',
       customerAddress: '22, Malviya Nagar, Delhi',
-      services: [{name: 'Hair Spa', price: '₹1200'}],
+      services: [{name: 'Hair Spa', price: '$1200'}],
       date: 'Aug 15, 2025',
       time: '1:00 PM',
       duration: '1 hr',
@@ -48,7 +48,7 @@ const VendorAppointments = () => {
 
   const renderCard = ({item}) => {
     const totalPrice = item.services.reduce(
-      (sum, s) => sum + parseInt(s.price.replace('₹', '')),
+      (sum, s) => sum + parseInt(s.price.replace('$', '')),
       0,
     );
 
@@ -79,7 +79,7 @@ const VendorAppointments = () => {
           </Typography>
         ))}
         <Typography style={styles.totalPrice}>
-          Total: ₹{totalPrice}
+          Total: ${totalPrice}
         </Typography>
 
         <View style={styles.divider} />

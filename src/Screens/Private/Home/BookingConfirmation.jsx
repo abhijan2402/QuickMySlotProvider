@@ -25,19 +25,19 @@ const BookingConfirmation = ({navigation}) => {
       <View style={styles.card}>
         <View style={styles.row}>
           <Text style={styles.label}>Subtotal</Text>
-          <Text style={styles.value}>₹50.00</Text>
+          <Text style={styles.value}>$50.00</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Tax (10%)</Text>
-          <Text style={styles.value}>₹5.00</Text>
+          <Text style={styles.value}>$5.00</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Fees</Text>
-          <Text style={styles.value}>₹0.00</Text>
+          <Text style={styles.value}>$0.00</Text>
         </View>
         <View style={styles.row}>
           <Text style={[styles.label, styles.totalLabel]}>Total</Text>
-          <Text style={[styles.value, styles.totalValue]}>₹55.00</Text>
+          <Text style={[styles.value, styles.totalValue]}>$55.00</Text>
         </View>
         {/* <View style={[styles.row, {marginTop: 10}]}>
           <Text style={styles.label}>Card</Text>

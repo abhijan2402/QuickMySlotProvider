@@ -57,7 +57,7 @@ const AddPromotion = ({navigation, route}) => {
 
   const discountOptions = [
     {label: 'Flat', value: 'flat'},
-    // {label: 'Amount (₹)', value: 'amount'},
+    // {label: 'Amount ($)', value: 'amount'},
   ];
 
   const formatDate = (date) => {
