@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {COLOR} from '../Constants/Colors'; // adjust path if needed
 import {useNavigation} from '@react-navigation/native';
+import {Font} from '../Constants/Font';
 
 const HomeHeader = ({
   title,
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: Font.semibold,
     color: COLOR.black,
   },
 });

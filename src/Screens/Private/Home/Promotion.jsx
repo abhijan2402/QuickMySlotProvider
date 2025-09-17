@@ -18,6 +18,7 @@ import {Typography} from '../../../Components/UI/Typography';
 import {useIsFocused} from '@react-navigation/native';
 import {GET_WITH_TOKEN, POST_WITH_TOKEN} from '../../../Backend/Api';
 import {ADD_PROMOTION, DELETE_PROMOTION} from '../../../Constants/ApiRoute';
+import {Font} from '../../../Constants/Font';
 
 const Promotion = ({navigation}) => {
   const [deletes, setDelete] = useState(false);
@@ -102,7 +103,7 @@ const Promotion = ({navigation}) => {
               }}>
               <Image
                 source={images.edit}
-                style={{height: 20, width: 20, tintColor: COLOR.grey}}
+                style={{height: 20, width: 20, tintColor: COLOR.black}}
               />
             </TouchableOpacity>
             <TouchableOpacity
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
   stripText: {
     transform: [{rotate: '-90deg'}],
     fontSize: 12,
-    fontWeight: 'bold',
+    fontFamily: Font.bold,
     color: '#007aff',
     textAlign: 'center',
     width: 120,
@@ -226,14 +227,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: Font.bold,
     color: '#000',
     flex: 1,
     marginRight: 8,
   },
   offerText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: Font.bold,
     color: 'green',
     marginVertical: 4,
   },
@@ -246,6 +247,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginVertical: 2,
+    fontFamily: Font.medium,
   },
   addButton: {
     alignItems: 'center',

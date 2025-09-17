@@ -72,48 +72,29 @@ const Wallet = ({navigation}) => {
   const renderTransaction = ({item}) => (
     <View style={styles.transactionItem}>
       <TouchableOpacity onPress={copyToClipboard}>
+        <View>
         <Typography
           size={13}
           color={COLOR.black}
-          numberOfLines={1}
-          style={{width: windowWidth * 0.82}}>
-          Transaction ID: {item.transaction_id}
+          font={Font.medium}
+          style={{width: windowWidth * 0.6}}>
+          Txn ID: {item.transaction_id}
         </Typography>
-      </TouchableOpacity>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginTop: 5,
-          alignItems: 'center',
-        }}>
-        <View>
-          <Typography
-            size={16}
-            fontWeight="600"
-            color={item.type === 'credit' ? 'green' : 'red'}>
-            {item.type === 'credit' ? '+ ' : '- '}${item.amount}
-          </Typography>
-          <Typography
-            size={12}
-            color="#999"
-            font={Font.regular}
-            style={{marginTop: 5}}>
-            {formatDate(item.created_at)}
-          </Typography>
-        </View>
-        <View
-          style={{
-            backgroundColor: item.type === 'credit' ? '#E6F9EC' : '#FDE8E8',
-            paddingVertical: 5,
-            paddingHorizontal: 10,
-            borderRadius: 50,
-          }}>
-          <Typography size={13} color={item.type === 'credit' ? 'green' : 'red'} fontWeight="600">
-            {item?.type}
-          </Typography>
-        </View>
+        <Typography
+          size={12}
+          color="#999"
+          style={{marginTop: 5}}
+          font={Font.medium}>
+          {formatDate(item.created_at)}
+        </Typography>
       </View>
+      <Typography
+        size={16}
+        font={Font.semibold}
+        color={item.type === 'credit' ? 'green' : 'red'}>
+        {item.type === 'credit' ? '+ ' : '- '}₹{item.amount}
+      </Typography>
+      </TouchableOpacity>
     </View>
   );
 
@@ -131,12 +112,12 @@ const Wallet = ({navigation}) => {
         <View style={{paddingHorizontal: 10}}>
           {/* Balance Card */}
           <View style={styles.balanceCard}>
-            <Typography size={14} color="#555">
+            <Typography size={14} color="#555" font={Font.medium}>
               Current Balance
             </Typography>
             <Typography
               size={28}
-              fontWeight="700"
+              font={Font.semibold}
               color={COLOR.black}
               style={{marginTop: 5}}>
               ${Number(balance).toFixed(2)}
@@ -153,7 +134,7 @@ const Wallet = ({navigation}) => {
           {/* Transaction History */}
           <Typography
             size={16}
-            fontWeight="700"
+            font={Font.medium}
             color={COLOR.black}
             style={{marginTop: 10, marginBottom: 8}}>
             Transaction History

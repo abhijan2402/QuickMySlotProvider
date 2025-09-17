@@ -53,7 +53,7 @@ const Input = ({
         {leftIcon && (
           <TouchableOpacity onPress={onLeftIconPress} activeOpacity={0.9}>
             {text ? (
-              <Typography size={16} fontWeight={'500'} style={styles.text}>
+              <Typography size={16} font={Font.semibold} style={styles.text}>
                 {text}
               </Typography>
             ) : (
@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLOR.black,
     fontFamily: Font.medium,
+    fontFamily: Font.semibold,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     color: COLOR.black,
     height: 52,
-    fontFamily: Font.regular,
+    fontFamily: Font.medium,
   },
   multilineInput: {
     paddingVertical: 10,

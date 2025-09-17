@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import {COLOR} from '../Constants/Colors';
 import {windowWidth} from '../Constants/Dimensions';
+import {Font} from '../Constants/Font';
 
 const CustomButton = ({title, onPress, style, textStyle, loading}) => {
   return (
@@ -27,7 +28,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLOR.royalBlue,
     paddingVertical: 13,
     paddingHorizontal: 40,
-    borderRadius: 6,
+    borderRadius: 13,
     alignItems: 'center',
     justifyContent: 'center',
     width: windowWidth / 1.15,
@@ -36,6 +37,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: COLOR.white,
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: Font.semibold,
   },
 });

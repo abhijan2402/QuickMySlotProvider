@@ -21,6 +21,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ADD_BANK, UPDATE_BANK} from '../../../Constants/ApiRoute';
 import {POST_FORM_DATA, POST_WITH_TOKEN} from '../../../Backend/Api';
 import {useIsFocused} from '@react-navigation/native';
+import {Font} from '../../../Constants/Font';
 
 const AddBank = ({navigation, route}) => {
   const [bankName, setBankName] = useState('');
@@ -120,7 +121,7 @@ const AddBank = ({navigation, route}) => {
       }
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 40}>
       <HomeHeader
-        title={isEditing ? "Edit Bank" : "Add Bank"}
+        title={isEditing ? 'Edit Bank' : 'Add Bank'}
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
@@ -191,8 +192,8 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 8,
     fontSize: 14,
-    fontWeight: '500',
     color: COLOR.black,
+    fontFamily: Font.semibold,
   },
   dropdown: {
     height: 50,
@@ -200,14 +201,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 12,
+    fontFamily: Font.semibold,
   },
   placeholderStyle: {
     fontSize: 14,
     color: 'gray',
+    fontFamily: Font.semibold,
   },
   selectedTextStyle: {
     fontSize: 14,
     color: COLOR.black,
+    fontFamily: Font.semibold,
   },
   button: {
     marginTop: 20,

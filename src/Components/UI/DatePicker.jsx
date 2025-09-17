@@ -4,6 +4,7 @@ import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import {ErrorBox} from './ErrorBox';
 import {COLOR} from '../../Constants/Colors';
+import {Font} from '../../Constants/Font';
 
 const DatePickerModal = ({
   value,
@@ -13,7 +14,7 @@ const DatePickerModal = ({
   error,
   containerStyle,
   placeholder,
-  minimumDate
+  minimumDate,
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -64,11 +65,13 @@ const styles = StyleSheet.create({
   timeText: {
     fontSize: 14,
     color: COLOR.black,
+    fontFamily: Font.semibold,
   },
   label: {
     marginBottom: 6,
     fontSize: 14,
     color: COLOR.black,
+    fontFamily: Font.semibold,
   },
 });
 

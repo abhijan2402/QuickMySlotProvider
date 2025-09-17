@@ -53,9 +53,7 @@ const EditProfile = ({navigation}) => {
   const {isKeyboardVisible} = useKeyboard();
   const userdata = useSelector(store => store.userDetails);
   console.log(userdata, 'userdatauserdatauserdatauserdata===>');
-  const [profileImage, setProfileImage] = useState(
-    'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
-  );
+  const [profileImage, setProfileImage] = useState('');
   console.log(profileImage);
 
   const [showModal, setShowModal] = useState(false);
@@ -80,31 +78,7 @@ const EditProfile = ({navigation}) => {
     }
   }, [isFocus]);
 
-  // useEffect(() => {
-  //   if (isFocus) {
-  //     GET_WITH_TOKEN(
-  //       CATEGORY,
-  //       success => {
-  //         setLoading(false);
-  //         console.log(success);
-  //         const formattedData = success?.data?.map(item => ({
-  //           label: item.name,
-  //           value: item.id,
-  //         }));
-  //         setCategoryList(formattedData || []);
-  //       },
-  //       error => {
-  //         setLoading(false);
-  //         console.log(error);
 
-  //         ToastMsg(error?.message);
-  //       },
-  //       fail => {
-  //         setLoading(false);
-  //       },
-  //     );
-  //   }
-  // }, [isFocus]);
 
   const handleImageSelected = response => {
     console.log(response);
@@ -141,13 +115,13 @@ const EditProfile = ({navigation}) => {
 
   const handleUpdate = () => {
     let validationErrors = {
-      // name: validators.checkRequire('Name', firstName),
-      // email: validators.checkEmail('Email', email),
-      // phone: validators.checkNumber('Phone Number', phone),
-      // address: validators.checkRequire('Address', address),
-      // buisness: validators.checkRequire('Buisness Name', buisness),
-      // location_served: validators.checkRequire('Location Area Served', served),
-      // category: validators.checkRequire('Service Category', category),
+      name: validators.checkRequire('Name', firstName),
+      email: validators.checkEmail('Email', email),
+      phone: validators.checkNumber('Phone Number', phone),
+      address: validators.checkRequire('Address', address),
+      buisness: validators.checkRequire('Buisness Name', buisness),
+      location_served: validators.checkRequire('Location Area Served', served),
+      category: validators.checkRequire('Service Category', category),
     };
     setError(validationErrors);
     if (isValidForm(validationErrors)) {
@@ -210,7 +184,14 @@ const EditProfile = ({navigation}) => {
 
       {/* Profile Image */}
       <View style={styles.profileSection}>
-        <Image source={{uri: profileImage?.path}} style={styles.profileImage} />
+        <Image
+          source={{
+            uri: profileImage?.path
+              ? profileImage?.path
+              : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+          }}
+          style={styles.profileImage}
+        />
 
         {isEditing && (
           <TouchableOpacity
@@ -231,7 +212,7 @@ const EditProfile = ({navigation}) => {
           Platform.OS === 'ios' ? 0 : isKeyboardVisible ? 0 : -40
         }>
         <ScrollView
-        showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
           style={{flex: 1, paddingHorizontal: 5}}
           contentContainerStyle={styles.container}>
           {/* 🚀 Promo Card */}

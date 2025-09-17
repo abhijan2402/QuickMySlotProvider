@@ -1,7 +1,8 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import { images } from './images';
-import { Typography } from './Typography';
+import {images} from './images';
+import {Typography} from './Typography';
+import {Font} from '../../Constants/Font';
 
 const EmptyView = ({style = {}, title = 'No record found!'}) => {
   return (
@@ -22,10 +23,12 @@ const EmptyView = ({style = {}, title = 'No record found!'}) => {
           height: 50,
           width: 50,
           alignSelf: 'center',
-          marginBottom:10
+          marginBottom: 10,
         }}
       />
-      <Typography textAlign="center">{title}</Typography>
+      <Typography font={Font.semibold} textAlign="center">
+        {title}
+      </Typography>
     </View>
   );
 };

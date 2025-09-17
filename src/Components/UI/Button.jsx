@@ -10,6 +10,7 @@ import React from 'react';
 import {Typography} from './Typography';
 import {COLOR} from '../../Constants/Colors';
 import {TouchableOpacity} from 'react-native';
+import {Font} from '../../Constants/Font';
 
 const Button = ({
   onPress = () => {},
@@ -62,7 +63,7 @@ const Button = ({
           <Typography
             size={titleSize}
             color={titleColor ?? COLOR.white}
-            font={titleType}
+            font={Font.semibold}
             style={{
               marginLeft: leftIcon ? 5 : 0,
             }}
@@ -81,7 +82,7 @@ const createStyles = theme =>
   StyleSheet.create({
     buttons: {
       backgroundColor: COLOR.royalBlue,
-      borderRadius: 7,
+      borderRadius: 17,
       height: 55,
       width: '100%',
       alignSelf: 'center',
@@ -94,7 +95,7 @@ const createStyles = theme =>
       shadowOpacity: Platform.OS === 'ios' ? 0.2 : 0.2,
       shadowRadius: 4,
       elevation: Platform.OS === 'ios' ? 0 : 5,
-      marginBottom:10
+      marginBottom: 10,
     },
     indicator: {
       justifyContent: 'center',

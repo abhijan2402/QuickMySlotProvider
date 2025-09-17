@@ -1,13 +1,13 @@
 export const COLOR = {
   black: '#000000',
   white: '#FFFFFF',
-  royalBlue: '#796FC3FF',
+  royalBlue: '#EE4E34',
   grey: '#A9A9A9', // for placeholder & borders
   pink: '#FFC0CB',
   lightGrey: '#c2c8d1',
   green: '#28a745',
   blue: '#a8050a',
-  primary: '#796FC3FF',
+  primary: '#EE4E34',
   HomeBtnBg: '#8880CA91',
   iconBg: '#796FC31A',
   red: '#da2727ff',
@@ -17,7 +17,7 @@ export const COLOR = {
   lightYellow: '#FFFFE0', // very light yellow
 
   // New harmonious additions
-  deepPurple: '#5D4E9A', // darker complement to royal blue
+  deepPurple: '#EE4E34', // darker complement to royal blue
   lavender: '#E6E6FA', // soft and light purple
   lightPink: '#FFEEF0', // subtle background pink
   softBlue: '#DDE7FF', // for info backgrounds / cards
@@ -25,4 +25,6 @@ export const COLOR = {
   darkGrey: '#444444', // for text contrast
   orange: '#FFA500', // alerts or secondary buttons
   softRed: '#FFE5E5', // gentle error background
+
+  background: '#fcf9f6ff',
 };

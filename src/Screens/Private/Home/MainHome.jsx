@@ -17,6 +17,7 @@ import {GET_WITH_TOKEN} from '../../../Backend/Api';
 import {GET_PROFILE} from '../../../Constants/ApiRoute';
 import {useDispatch, useSelector} from 'react-redux';
 import {userDetails} from '../../../Redux/action';
+import {Font} from '../../../Constants/Font';
 
 const MainHome = ({navigation}) => {
   const {width} = Dimensions.get('window');
@@ -26,6 +27,7 @@ const MainHome = ({navigation}) => {
   const isFocus = useIsFocused();
   const dispatch = useDispatch();
   const userdata = useSelector(store => store.userDetails);
+  console.log(userdata);
 
   useEffect(() => {
     if (isFocus) {
@@ -100,6 +102,53 @@ const MainHome = ({navigation}) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 30}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginTop: 20,
+            paddingHorizontal: 20,
+          }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('EditProfile');
+              }}>
+              <Image
+                source={{uri: userdata?.image}}
+                style={{height: 40, width: 40, borderRadius: 50}}
+              />
+            </TouchableOpacity>
+            <Typography
+              size={18}
+              font={Font.semibold}
+              color={COLOR.black}
+              style={{marginLeft: 10}}>
+              Dashboard
+            </Typography>
+          </View>
+          <TouchableOpacity
+          onPress={() => {
+                navigation.navigate('Notification');
+              }}
+            style={{
+              height: 30,
+              width: 30,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: COLOR.primary,
+              borderRadius: 50,
+            }}>
+            <Image
+              source={{
+                uri: 'https://cdn-icons-png.flaticon.com/128/10502/10502974.png',
+              }}
+              style={{height: 18, width: 18}}
+              tintColor={COLOR.white}
+            />
+          </TouchableOpacity>
+        </View>
         {/* Salon Card */}
         <TouchableOpacity
           activeOpacity={0.99}
@@ -116,7 +165,7 @@ const MainHome = ({navigation}) => {
           <View style={{marginLeft: 10, flex: 1}}>
             <Typography style={styles.cardTitle}>
               {userdata?.business_name ||
-                'Please provide you business Information'}
+                'Please provide your business Information'}
             </Typography>
             <Typography style={styles.cardSub}>
               {userdata?.name || 'Welcome'} | +91-{userdata?.phone_number}
@@ -259,7 +308,7 @@ const styles = StyleSheet.create({
   },
   card: {
     marginHorizontal: 20,
-    backgroundColor: COLOR.lavender,
+    backgroundColor: COLOR.background,
     borderRadius: 12,
     padding: 20,
     alignItems: 'center',
@@ -273,25 +322,27 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: Font.semibold,
     color: COLOR.black,
+    marginBottom: 4,
   },
   cardSub: {
     fontSize: 13,
     color: COLOR.grey,
     marginTop: 3,
+    fontFamily: Font.medium,
   },
   bookingContainer: {
     marginHorizontal: 20,
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: Font.semibold,
     color: COLOR.black,
     marginBottom: 12,
   },
   bookingCard: {
-    backgroundColor: '#f8f6ff',
+    backgroundColor: COLOR.background,
     borderRadius: 12,
     padding: 15,
     shadowColor: '#000',
@@ -311,24 +362,26 @@ const styles = StyleSheet.create({
   },
   customerName: {
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: Font.semibold,
     color: COLOR.black,
   },
   bookingDetail: {
     fontSize: 13,
     color: '#555',
     marginTop: 2,
+    fontFamily: Font.medium,
   },
   bookingPrice: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#7B5CFA',
+    color: COLOR.primary,
+    fontFamily: Font.semibold,
     marginTop: 4,
   },
   viewButton: {
     marginTop: 12,
     alignSelf: 'flex-end',
-    backgroundColor: '#7B5CFA',
+    backgroundColor: COLOR.primary,
     paddingVertical: 8,
     paddingHorizontal: 18,
     borderRadius: 8,
@@ -336,7 +389,7 @@ const styles = StyleSheet.create({
   viewButtonText: {
     color: COLOR.white,
     fontSize: 13,
-    fontWeight: '500',
+    fontFamily: Font.semibold,
   },
   grid: {
     flexDirection: 'row',
@@ -346,7 +399,7 @@ const styles = StyleSheet.create({
   },
   gridItem: {
     width: '48%',
-    backgroundColor: '#f5f3ff',
+    backgroundColor: COLOR.background,
     borderRadius: 12,
     paddingVertical: 25,
     alignItems: 'center',
@@ -355,12 +408,12 @@ const styles = StyleSheet.create({
   gridIcon: {
     width: 28,
     height: 28,
-    tintColor: '#7B5CFA',
+    tintColor: COLOR.primary,
     marginBottom: 8,
   },
   gridText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontFamily: Font.semibold,
     color: COLOR.black,
   },
   bannerWrapper: {

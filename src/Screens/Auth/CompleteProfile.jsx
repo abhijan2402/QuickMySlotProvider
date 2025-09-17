@@ -27,6 +27,7 @@ import {ToastMsg} from '../../Backend/Utility';
 import {userDetails} from '../../Redux/action';
 import {useIsFocused} from '@react-navigation/native';
 import {Dropdown} from 'react-native-element-dropdown';
+import {Font} from '../../Constants/Font';
 
 const CompleteProfile = ({navigation}) => {
   const [showModal, setShowModal] = useState(false);
@@ -72,6 +73,8 @@ const CompleteProfile = ({navigation}) => {
           setCategoryList(formattedData || []);
         },
         error => {
+          console.log(error);
+          
           setLoading(false);
           console.log(error);
 
@@ -137,7 +140,7 @@ const CompleteProfile = ({navigation}) => {
       formData.append('user_id', userdata?.id);
       formData.append('business_description', about);
       formData.append('exact_location', location);
-      formData.append('years_of_experience', experience);
+      formData.append('years_of_experience', Number(experience));
       formData.append('gstin_number', gst);
       formData.append('business_website', website);
       formData.append('service_category', category);
@@ -154,6 +157,8 @@ const CompleteProfile = ({navigation}) => {
       if (image?.pan) {
         formData.append('pan_card', image?.pan);
       }
+      console.log(formData);
+      
       POST_FORM_DATA(
         BUSINESS_PROFILE,
         formData,
@@ -200,7 +205,7 @@ const CompleteProfile = ({navigation}) => {
         title="Complete Your Profile"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
-        onLeftPress={() => navigation.goBack()}
+        onLeftPress={() => navigation.pop(2)}
       />
 
       <KeyboardAwareScrollView
@@ -226,6 +231,7 @@ const CompleteProfile = ({navigation}) => {
             resizeMode="contain"
           />
           <Typography
+            font={Font.regular}
             size={14}
             color="#444"
             lineHeight={20}
@@ -238,7 +244,7 @@ const CompleteProfile = ({navigation}) => {
 
         <Typography
           size={16}
-          fontWeight="600"
+          font={Font.semibold}
           color={COLOR.black}
           style={{marginBottom: 10}}>
           Business Information
@@ -247,7 +253,8 @@ const CompleteProfile = ({navigation}) => {
         {/* Photo Verification */}
         <Typography
           size={14}
-          fontWeight="500"
+          font={Font.semibold}
+          // font={Font.semibold}
           color={COLOR.black}
           style={{marginTop: 20, marginBottom: 6}}>
           Photo Verification
@@ -276,7 +283,7 @@ const CompleteProfile = ({navigation}) => {
         {/* Business Proof */}
         <Typography
           size={14}
-          fontWeight="500"
+          font={Font.semibold}
           color={COLOR.black}
           style={{marginTop: 20, marginBottom: 6}}>
           Business Proof
@@ -307,7 +314,7 @@ const CompleteProfile = ({navigation}) => {
         {/* Aadhaar Front */}
         <Typography
           size={14}
-          fontWeight="500"
+          font={Font.semibold}
           color={COLOR.black}
           style={{marginTop: 20, marginBottom: 6}}>
           Aadhaar Card Verification
@@ -338,7 +345,7 @@ const CompleteProfile = ({navigation}) => {
         {/* PAN */}
         <Typography
           size={14}
-          fontWeight="500"
+          font={Font.semibold}
           color={COLOR.black}
           style={{marginTop: 20, marginBottom: 6}}>
           PAN Card
@@ -385,6 +392,7 @@ const CompleteProfile = ({navigation}) => {
           style={{
             borderColor: COLOR.primary,
             height: 90,
+            fontFamily: Font.medium,
           }}
           multiline
           value={about}
@@ -396,7 +404,7 @@ const CompleteProfile = ({navigation}) => {
         <Input
           label="Years of Experience"
           placeholder="Enter Your Experience"
-          style={{borderColor: COLOR.primary}}
+          style={{borderColor: COLOR.primary, fontFamily: Font.medium}}
           value={experience}
           keyboardType="decimal-pad"
           onChangeText={setExperience}
@@ -407,7 +415,7 @@ const CompleteProfile = ({navigation}) => {
         <Input
           label="Exact Location"
           placeholder="Street, City, State, ZIP"
-          style={{borderColor: COLOR.primary}}
+          style={{borderColor: COLOR.primary, fontFamily: Font.medium}}
           value={location}
           onChangeText={setLocation}
           error={errors.location}
@@ -417,7 +425,7 @@ const CompleteProfile = ({navigation}) => {
         <Input
           label="Business Website (optional)"
           placeholder="https://yourbusiness.com"
-          style={{borderColor: COLOR.primary}}
+          style={{borderColor: COLOR.primary, fontFamily: Font.medium}}
           value={website}
           onChangeText={setWebsite}
           error={errors.website}
@@ -427,7 +435,7 @@ const CompleteProfile = ({navigation}) => {
         <Input
           label="GSTIN No."
           placeholder="Enter GST Number"
-          style={{borderColor: COLOR.primary}}
+          style={{borderColor: COLOR.primary, fontFamily: Font.medium}}
           value={gst}
           onChangeText={setGst}
           error={errors.gst}
@@ -480,6 +488,7 @@ const styles = StyleSheet.create({
   placeholderStyle: {
     fontSize: 14,
     color: 'gray',
+    fontFamily: Font.medium,
   },
   selectedTextStyle: {
     fontSize: 14,
