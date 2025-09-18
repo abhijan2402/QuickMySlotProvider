@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     color: COLOR.black,
     fontSize: 12,
     marginTop: 4,
-    fontFamily: Font.medium,
+    fontFamily: Font.semibold,
   },
   promoBox: {
     backgroundColor: COLOR.lavender,

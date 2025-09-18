@@ -398,7 +398,7 @@ const AddService = ({route, navigation}) => {
 
         {/* Price */}
         <Input
-          label="Price ($)"
+          label="Price (₹)"
           placeholder="eg., 45.00"
           value={price}
           onChangeText={setPrice}
@@ -431,7 +431,7 @@ const AddService = ({route, navigation}) => {
 
         {/* Duration */}
         <Input
-          label="Estimated Duration (minutes)"
+          label="Estimated Duration (in minutes)"
           placeholder="eg., 45"
           value={duration}
           onChangeText={setDuration}
@@ -496,7 +496,7 @@ const AddService = ({route, navigation}) => {
                 error={errors[`addonName_${index}`]}
               />
               <Input
-                placeholder="Price ($)"
+                placeholder="Price (₹)"
                 value={addon.price}
                 onChangeText={text => updateAddon(addon.id, 'price', text)}
                 keyboardType="decimal-pad"
@@ -535,6 +535,7 @@ const AddService = ({route, navigation}) => {
                 },
               ]}>
               <DatePickerModal
+                containerStyle={{width: '30%'}}
                 mode={'time'}
                 value={peakHour.startTime}
                 onChange={time => handleTimeChange(peakHour.id, 'start', time)}
@@ -542,13 +543,14 @@ const AddService = ({route, navigation}) => {
               />
               <Typography style={styles.timeSeparator}>to</Typography>
               <DatePickerModal
+                containerStyle={{width: '30%'}}
                 mode={'time'}
                 value={peakHour.endTime}
                 onChange={time => handleTimeChange(peakHour.id, 'end', time)}
                 placeholder="End time"
               />
               <Input
-                placeholder="Price ($)"
+                placeholder="Price (₹)"
                 value={peakHour.price}
                 onChangeText={text =>
                   updatePeakHour(peakHour.id, 'price', text)
@@ -556,7 +558,7 @@ const AddService = ({route, navigation}) => {
                 keyboardType="decimal-pad"
                 mainStyle={{width: '30%', marginTop: -15, marginStart: 10}}
                 error={errors[`peakPrice_${index}`]}
-                style={{height: 48}}
+                style={{height: 48, fontFamily: Font.medium}}
               />
               <TouchableOpacity
                 disabled={index == 0}
@@ -691,6 +693,7 @@ const styles = StyleSheet.create({
   },
   timeSeparator: {
     marginHorizontal: 5,
+    fontFamily: Font.medium,
   },
   subNote: {
     marginTop: 5,

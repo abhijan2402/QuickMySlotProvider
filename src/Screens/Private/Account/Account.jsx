@@ -166,7 +166,7 @@ const Account = ({navigation}) => {
             <Text style={styles.planDesc}>
               Appear higher in search results for 7 days.
             </Text>
-            <Text style={styles.planPrice}>$25.00</Text>{' '}
+            <Text style={styles.planPrice}>₹25.00</Text>{' '}
             <TouchableOpacity
               style={styles.upgradeBtn}
               onPress={() => navigation.navigate('BoostProfile')}>
@@ -185,7 +185,7 @@ const Account = ({navigation}) => {
                 <Typography
                   variant="body1"
                   color={COLOR.black}
-                  font={Font.medium}>
+                  font={Font.semibold}>
                   {item.title}
                 </Typography>
               </View>
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
   },
   planPrice: {
     fontSize: 22,
-    fontWeight: '700',
+    fontFamily: Font.bold,
     color: COLOR.primary,
     marginBottom: 10,
   },
@@ -342,7 +342,8 @@ const styles = StyleSheet.create({
   },
   upgradeText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: Font.medium,
+
     color: '#fff',
   },
 });

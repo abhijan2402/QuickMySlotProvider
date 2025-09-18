@@ -13,6 +13,7 @@ import {Typography} from '../../../Components/UI/Typography'; // ✅ import Typo
 import {useIsFocused} from '@react-navigation/native';
 import {SUBSCRIPTION} from '../../../Constants/ApiRoute';
 import {GET_WITH_TOKEN} from '../../../Backend/Api';
+import {Font} from '../../../Constants/Font';
 
 const BoostProfile = ({navigation}) => {
   const isFocus = useIsFocused();
@@ -67,7 +68,7 @@ const BoostProfile = ({navigation}) => {
         <ScrollView
           contentContainerStyle={{paddingVertical: 15, paddingHorizontal: 5}}>
           {/* Boost Options */}
-          <Typography size={15} fontWeight="600" style={styles.sectionTitle}>
+          <Typography size={15} font={Font.medium} style={styles.sectionTitle}>
             Choose Plan
           </Typography>
 
@@ -86,17 +87,19 @@ const BoostProfile = ({navigation}) => {
               <View style={{flex: 1}}>
                 <Typography
                   size={16}
-                  fontWeight="700"
+                  font={Font.semibold}
                   style={styles.boostTitle}>
                   {item.subscription_name}
                 </Typography>
                 <Typography
-                  size={14}
+                  font={Font.medium}
+                  size={12}
                   color={COLOR.darkGrey}
                   style={styles.boostDesc}>
                   {item.description}
                 </Typography>
                 <Typography
+                  font={Font.medium}
                   size={12}
                   color={COLOR.darkGrey}
                   style={styles.boostDesc}>
@@ -104,20 +107,26 @@ const BoostProfile = ({navigation}) => {
                 </Typography>
               </View>
 
-                <Typography size={15} fontWeight="700" color={COLOR.primary}>
-                  ${Number(item.price).toFixed(2)}
-                </Typography>
+              <Typography size={15} font={Font.semibold} color={COLOR.primary}>
+                ₹{Number(item.price).toFixed(2)}
+              </Typography>
             </TouchableOpacity>
           ))}
 
           {/* Order Summary */}
           <View style={styles.summaryBox}>
             <View style={styles.summaryRow}>
-              <Typography size={13} style={styles.summaryText}>
+              <Typography
+                font={Font.medium}
+                size={13}
+                style={styles.summaryText}>
                 {selected?.subscription_name}
               </Typography>
-              <Typography size={13} style={styles.summaryText}>
-                ${Number(selected?.price || 0).toFixed(2)}
+              <Typography
+                font={Font.semibold}
+                size={13}
+                style={styles.summaryText}>
+                ₹{Number(selected?.price || 0).toFixed(2)}
               </Typography>
             </View>
 
@@ -126,15 +135,15 @@ const BoostProfile = ({navigation}) => {
             <View style={styles.summaryRow}>
               <Typography
                 size={13}
-                fontWeight="bold"
+                font={Font.medium}
                 style={styles.summaryText}>
                 Total:
               </Typography>
               <Typography
                 size={13}
-                fontWeight="bold"
+                font={Font.semibold}
                 style={styles.summaryText}>
-                ${Number(selected?.price || 0).toFixed(2)}
+                ₹{Number(selected?.price || 0).toFixed(2)}
               </Typography>
             </View>
           </View>

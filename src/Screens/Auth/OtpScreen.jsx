@@ -122,7 +122,7 @@ const OtpScreen = ({navigation, route}) => {
       success => {
         console.log(success, 'successsuccesssuccess-->>>');
         setLoading(false);
-        setTimer(60)
+        setTimer(60);
       },
       error => {
         console.log(error, 'errorerrorerror>>');
@@ -135,8 +135,8 @@ const OtpScreen = ({navigation, route}) => {
   };
 
   const maskedPhoneNumber = PhoneNumber
-  ? PhoneNumber.replace(/\d(?=\d{4})/g, '*')
-  : '';
+    ? PhoneNumber.replace(/\d(?=\d{4})/g, '*')
+    : '';
 
   return (
     <SafeAreaView style={styles.container}>
@@ -146,11 +146,15 @@ const OtpScreen = ({navigation, route}) => {
         leftTint={COLOR.black}
       />
 
-      <Image
+      {/* <Image
         source={{
           uri: 'https://cdn-icons-png.flaticon.com/128/3954/3954515.png',
         }}
         style={styles.image}
+      /> */}
+      <Image
+        source={require('../../assets/Images/logo.png')}
+        style={styles.logo}
       />
 
       <View style={{padding: 20, alignItems: 'center'}}>
@@ -208,13 +212,16 @@ const OtpScreen = ({navigation, route}) => {
         </Typography>
       ) : null}
 
-      { timer > 0 && <Typography
-        size={14}
-        color={COLOR.black}
-        textAlign="center"
-        style={{marginBottom: 30}}>
-        {timer} seconds
-      </Typography>}
+      {timer > 0 && (
+        <Typography
+          size={14}
+          font={Font.medium}
+          color={COLOR.black}
+          textAlign="center"
+          style={{marginBottom: 30}}>
+          Resend OTP in {timer} seconds
+        </Typography>
+      )}
 
       <Button
         loading={loading}
@@ -271,7 +278,12 @@ const styles = StyleSheet.create({
     height: 50,
     textAlign: 'center',
     fontSize: 18,
-    fontWeight: '500',
+    fontFamily: Font.medium,
     backgroundColor: '#f9f9f9',
+  },
+  logo: {
+    width: 290,
+    height: 200,
+    // marginTop: windowHeight * 0.1,
   },
 });

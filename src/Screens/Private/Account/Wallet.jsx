@@ -73,27 +73,27 @@ const Wallet = ({navigation}) => {
     <View style={styles.transactionItem}>
       <TouchableOpacity onPress={copyToClipboard}>
         <View>
+          <Typography
+            size={13}
+            color={COLOR.black}
+            font={Font.medium}
+            style={{width: windowWidth * 0.6}}>
+            Txn ID: {item.transaction_id}
+          </Typography>
+          <Typography
+            size={12}
+            color="#999"
+            style={{marginTop: 5}}
+            font={Font.medium}>
+            {formatDate(item.created_at)}
+          </Typography>
+        </View>
         <Typography
-          size={13}
-          color={COLOR.black}
-          font={Font.medium}
-          style={{width: windowWidth * 0.6}}>
-          Txn ID: {item.transaction_id}
+          size={16}
+          font={Font.semibold}
+          color={item.type === 'credit' ? 'green' : 'red'}>
+          {item.type === 'credit' ? '+ ' : '- '}₹{item.amount}
         </Typography>
-        <Typography
-          size={12}
-          color="#999"
-          style={{marginTop: 5}}
-          font={Font.medium}>
-          {formatDate(item.created_at)}
-        </Typography>
-      </View>
-      <Typography
-        size={16}
-        font={Font.semibold}
-        color={item.type === 'credit' ? 'green' : 'red'}>
-        {item.type === 'credit' ? '+ ' : '- '}₹{item.amount}
-      </Typography>
       </TouchableOpacity>
     </View>
   );
@@ -120,7 +120,7 @@ const Wallet = ({navigation}) => {
               font={Font.semibold}
               color={COLOR.black}
               style={{marginTop: 5}}>
-              ${Number(balance).toFixed(2)}
+              ₹{Number(balance).toFixed(2)}
             </Typography>
           </View>
 
