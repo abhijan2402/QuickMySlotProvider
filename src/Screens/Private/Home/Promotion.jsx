@@ -77,57 +77,72 @@ const Promotion = ({navigation}) => {
     );
   };
 
-  const renderOffer = ({item}) => (
-    <View style={styles.card}>
-      {/* Left Strip */}
-      <LinearGradient
-        colors={['#fbc2eb', '#a6c1ee']}
-        start={{x: 0, y: 0}}
-        end={{x: 0, y: 1}}
-        style={styles.strip}>
-        <Typography style={styles.stripText}>{item.promo_code}</Typography>
-      </LinearGradient>
+  const renderOffer = ({item}) => {
+    const formatDate = date => {
+      if (!date) return '';
+      return new Date(date).toLocaleDateString(); // format: DD/MM/YYYY
+    };
 
-      {/* Content */}
-      <View style={styles.content}>
-        <View style={styles.headerRow}>
-          <Typography style={styles.title}>{item.amount}</Typography>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <TouchableOpacity
-              style={[styles.addButton, {marginRight: 10}]}
-              onPress={() => {
-                navigation.navigate('AddPromotion', {
-                  data: item,
-                  isEditing: true,
-                });
-              }}>
-              <Image
-                source={images.edit}
-                style={{height: 20, width: 20, tintColor: COLOR.black}}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.addButton}
-              onPress={() => {
-                setDelete(true);
-                setPromoId(item?.id);
-              }}>
-              <Image
-                source={images.delete}
-                style={{height: 20, width: 20, tintColor: COLOR.red}}
-              />
-            </TouchableOpacity>
+    return (
+      <View style={styles.card}>
+        {/* Left Strip */}
+        <LinearGradient
+          colors={['#fbc2eb', '#a6c1ee']}
+          start={{x: 0, y: 0}}
+          end={{x: 0, y: 1}}
+          style={styles.strip}>
+          <Typography style={styles.stripText}>{item.promo_code}</Typography>
+        </LinearGradient>
+
+        {/* Content */}
+        <View style={styles.content}>
+          <View style={styles.headerRow}>
+            {/* Amount + Type */}
+            <Typography style={styles.title}>
+              ₹{item.amount} {item.type ? `(${item.type})` : ''}
+            </Typography>
+
+            {/* Edit + Delete */}
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <TouchableOpacity
+                style={[styles.addButton, {marginRight: 10}]}
+                onPress={() => {
+                  navigation.navigate('AddPromotion', {
+                    data: item,
+                    isEditing: true,
+                  });
+                }}>
+                <Image
+                  source={images.edit}
+                  style={{height: 20, width: 20, tintColor: COLOR.black}}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => {
+                  setDelete(true);
+                  setPromoId(item?.id);
+                }}>
+                <Image
+                  source={images.delete}
+                  style={{height: 20, width: 20, tintColor: COLOR.red}}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
+          <Typography style={styles.description}>{item.description}</Typography>
+          <Typography style={styles.validity}>
+            Validity: {formatDate(item.start_on)} -{' '}
+            {formatDate(item.expired_on)}
+          </Typography>
+          <Typography
+            style={[styles.status, {color: item.isActive ? 'green' : 'red'}]}>
+            {item.isActive ? 'Active' : 'Inactive'}
+          </Typography>
         </View>
-
-        {/* <Typography style={styles.offerText}>
-          {item.discount} Discount + {item.cashback} Cashback
-        </Typography> */}
-        {/* <Typography style={styles.validity}>{item.validity}</Typography> */}
-        <Typography style={styles.description}>{item.description}</Typography>
       </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <View style={{flex: 1, backgroundColor: '#fff', paddingHorizontal: 15}}>
@@ -200,7 +215,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     elevation: 3,
     overflow: 'hidden',
-    marginHorizontal:1
+    marginHorizontal: 1,
   },
   strip: {
     backgroundColor: '#e0f3ff',
@@ -241,17 +256,23 @@ const styles = StyleSheet.create({
   validity: {
     fontSize: 12,
     color: '#555',
-    marginVertical: 2,
+    marginTop: 5,
+    fontFamily: Font.medium,
   },
   description: {
     fontSize: 12,
-    color: '#666',
-    marginVertical: 2,
+    color: '#555',
     fontFamily: Font.medium,
+    marginTop: 8,
   },
   addButton: {
     alignItems: 'center',
     alignSelf: 'flex-end',
     justifyContent: 'center',
+  },
+  status: {
+    fontSize: 12,
+    fontFamily: Font.bold,
+    marginTop: 5,
   },
 });

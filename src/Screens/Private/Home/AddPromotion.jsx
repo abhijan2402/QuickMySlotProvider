@@ -58,14 +58,13 @@ const AddPromotion = ({navigation, route}) => {
 
   const discountOptions = [
     {label: 'Flat', value: 'flat'},
-    // {label: 'Amount ($)', value: 'amount'},
   ];
 
   const formatDate = date => {
     if (!date) return '';
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // ensure 2 digits
-    const day = String(date.getDate()).padStart(2, '0'); // ensure 2 digits
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const day = String(date.getDate()).padStart(2, '0'); 
     return `${year}-${month}-${day}`;
   };
 
@@ -169,6 +168,8 @@ const AddPromotion = ({navigation, route}) => {
             onChangeText={setPromoCode}
             style={styles.input}
             error={error.promoCode}
+            maxLength={8}
+
           />
           <View style={{alignSelf: 'center', width: '100%', marginTop: 20}}>
             <Text style={{marginBottom: 5, fontSize: 14, fontWeight: '500'}}>

@@ -145,6 +145,7 @@ const AddBank = ({navigation, route}) => {
           onChangeText={setAccountNumber}
           style={{borderColor: COLOR.primary}}
           error={error.accountNumber}
+          keyboardType='numeric'
         />
 
         <Input

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -12,11 +12,23 @@ import {COLOR} from '../../../Constants/Colors';
 import {Typography} from '../../../Components/UI/Typography';
 import {Font} from '../../../Constants/Font';
 
-const AvailabilityManagement = () => {
+const AvailabilityManagement = ({onChange,initialAvailability={}}) => {
   const [availability, setAvailability] = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
 
   console.log(availability, 'availability');
+
+  useEffect(() => {
+    setAvailability(initialAvailability); // load when editing
+  }, [initialAvailability]);
+
+  const updateAvailability = updater => {
+    setAvailability(prev => {
+      const updated = updater(prev);
+      if (onChange) onChange(updated); // ✅ send to parent
+      return updated;
+    });
+  };
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -49,21 +61,38 @@ const AvailabilityManagement = () => {
   };
 
   // Toggle slot for a date
+  // const toggleSlot = slot => {
+  //   if (!selectedDate) return;
+
+  //   setAvailability(prev => {
+  //     const updated = {...prev};
+  //     const slotsArr = updated[selectedDate] || [];
+
+  //     if (slotsArr.includes(slot)) {
+  //       updated[selectedDate] = slotsArr.filter(s => s !== slot);
+
+  //       // remove date completely if no slots remain
+  //       if (updated[selectedDate].length === 0) {
+  //         delete updated[selectedDate];
+  //         return updated;
+  //       }
+  //     } else {
+  //       updated[selectedDate] = [...slotsArr, slot];
+  //     }
+  //     return updated;
+  //   });
+  // };
+
   const toggleSlot = slot => {
     if (!selectedDate) return;
 
-    setAvailability(prev => {
+    updateAvailability(prev => {
       const updated = {...prev};
       const slotsArr = updated[selectedDate] || [];
 
       if (slotsArr.includes(slot)) {
         updated[selectedDate] = slotsArr.filter(s => s !== slot);
-
-        // remove date completely if no slots remain
-        if (updated[selectedDate].length === 0) {
-          delete updated[selectedDate];
-          return updated;
-        }
+        if (updated[selectedDate].length === 0) delete updated[selectedDate];
       } else {
         updated[selectedDate] = [...slotsArr, slot];
       }

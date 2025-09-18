@@ -34,6 +34,7 @@ const Input = ({
   inputContainer,
   leftTintColor,
   rightIconStyle,
+  maxLength,
   ...rest
 }) => {
   return (
@@ -74,6 +75,7 @@ const Input = ({
           secureTextEntry={secureTextEntry}
           keyboardType={keyboardType}
           multiline={multiline}
+          maxLength={maxLength}
           style={[
             styles.input,
             multiline && styles.multilineInput,

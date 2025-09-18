@@ -128,23 +128,25 @@ const ManageServices = ({navigation}) => {
   const Services = ({item}) => {
     return (
       <View style={styles.serviceCard}>
-        <View key={item.id} style={{flexDirection: 'row', marginBottom: 10}}>
-          {/* Left Icon / Image */}
+        {/* Main Content Row */}
+        <View style={{flexDirection: 'row'}}>
+          {/* Left: Service Image */}
           <Image
             source={{uri: item?.image}}
             style={styles.serviceImage}
             resizeMode="cover"
           />
 
-          {/* Right Content */}
-          <View style={{flex: 1, marginLeft: 12}}>
-            {/* Title + Actions */}
+          {/* Right: Details */}
+          <View
+            style={{flex: 1, marginLeft: 12, justifyContent: 'space-between'}}>
+            {/* Title and Actions */}
             <View style={styles.rowBetween}>
               <Typography size={16} font={Font.bold} color={COLOR.black}>
                 {item.name}
               </Typography>
-
               <View style={styles.actionsRow}>
+                {/* Edit Button */}
                 <TouchableOpacity
                   onPress={() =>
                     navigation.navigate('AddService', {
@@ -161,6 +163,7 @@ const ManageServices = ({navigation}) => {
                   />
                 </TouchableOpacity>
 
+                {/* Delete Button */}
                 <TouchableOpacity
                   onPress={() => {
                     setDeleteService(true);
@@ -182,90 +185,188 @@ const ManageServices = ({navigation}) => {
               size={12}
               numberOfLines={2}
               color={COLOR.darkGrey}
-              style={{marginVertical: 6}}>
+              style={{
+                marginTop: 6,
+                marginBottom: 10,
+                lineHeight: 18,
+              }}>
               {item.description}
             </Typography>
 
-            {/* Meta Info */}
-            <View style={styles.metaInfo}>
-              <Typography size={12} font={Font.semibold}>
-                Category:{' '}
-                <Typography font={Font.medium} size={12}>
-                  {item.category?.name}
-                </Typography>
+            {/* Meta Info Section */}
+            <View
+              style={[
+                styles.metaInfo,
+                {
+                  paddingVertical: 4,
+                  borderTopWidth: 0.5,
+                  borderBottomWidth: 0.5,
+                  borderColor: COLOR.lightGrey,
+                  // marginBottom: 8,
+                },
+              ]}>
+              {/* Category:{' '} */}
+              <Typography font={Font.medium} size={12}>
+                {item.category?.name}
               </Typography>
 
-              <Typography size={12} font={Font.semibold}>
-                Gender:{' '}
-                <Typography font={Font.medium} size={12}>
-                  {item.gender}
-                </Typography>
+              <Typography
+                font={Font.medium}
+                size={12}
+                style={{textTransform: 'capitalize'}}>
+                {item.gender}
               </Typography>
             </View>
 
             {/* Price & Duration */}
             <View style={[styles.metaInfo, {marginTop: 4}]}>
-              <Typography size={12} font={Font.semibold}>
-                Price:{' '}
-                <Typography font={Font.medium} color="#004aad">
-                  ${Number(item.price).toFixed(2)}
-                </Typography>
+              <Typography font={Font.medium} color="#004aad">
+                ₹{Number(item.price).toFixed(2)}
               </Typography>
-
-              <Typography size={12} font={Font.semibold}>
-                Duration:{' '}
-                <Typography
-                  font={Font.medium}
-                  color="#004aad"
-                  style={styles.pill}>
-                  {item.duration}mins
-                </Typography>
+              <Typography
+                font={Font.medium}
+                color="#004aad"
+                style={styles.pill}>
+                {item.duration} mins
               </Typography>
             </View>
           </View>
         </View>
 
-        {/* Peak Hours */}
+        {/* Peak Hours Section */}
         {item.peak_hours && Object.keys(item.peak_hours).length > 0 && (
-          <View style={{marginTop: 8}}>
+          <View
+            style={{
+              marginTop: 12,
+              backgroundColor: '#f9f9f9',
+              padding: 8,
+              borderRadius: 8,
+            }}>
             <Typography
               size={13}
-              fontWeight="700"
+              font={Font.semibold}
               color={COLOR.black}
-              style={{marginBottom: 4}}>
+              style={{marginBottom: 6}}>
               Peak Hours
             </Typography>
             {Object.entries(item.peak_hours).map(([time, price], idx) => (
-              <View key={idx} style={styles.metaInfo}>
-                <Typography size={12}>{time}</Typography>
-                <Typography size={12} color="#004aad">
-                  ${price}
+              <View
+                key={idx}
+                style={{
+                  ...styles.metaInfo,
+                  paddingVertical: 2,
+                }}>
+                <Typography font={Font.medium} size={12} color={COLOR.darkGrey}>
+                  {time}
+                </Typography>
+                <Typography font={Font.semibold} size={12} color="#004aad">
+                  ₹{price}
                 </Typography>
               </View>
             ))}
           </View>
         )}
 
-        {/* Addons */}
+        {/* Addons Section */}
         {item.addons && Object.keys(item.addons).length > 0 && (
-          <View style={{marginTop: 8}}>
+          <View
+            style={{
+              marginTop: 12,
+              backgroundColor: '#f9f9f9',
+              padding: 8,
+              borderRadius: 8,
+            }}>
             <Typography
               size={13}
-              fontWeight="700"
+              font={Font.semibold}
               color={COLOR.black}
-              style={{marginBottom: 4}}>
+              style={{marginBottom: 6}}>
               Addons
             </Typography>
             {Object.entries(item.addons).map(([addon, price], idx) => (
-              <View key={idx} style={styles.metaInfo}>
-                <Typography size={12}>{addon}</Typography>
-                <Typography size={12} color="#004aad">
-                  ${price}
+              <View
+                key={idx}
+                style={{
+                  ...styles.metaInfo,
+                  paddingVertical: 2,
+                }}>
+                <Typography size={12} color={COLOR.darkGrey} font={Font.medium}>
+                  {addon}
+                </Typography>
+                <Typography font={Font.semibold} size={12} color="#004aad">
+                  ₹{price}
                 </Typography>
               </View>
             ))}
           </View>
         )}
+
+        {/* Availability Section */}
+        {item.available_schedule &&
+          Object.keys(item.available_schedule).length > 0 && (
+            <View
+              style={{
+                marginTop: 12,
+                backgroundColor: '#f9f9f9',
+                padding: 8,
+                borderRadius: 8,
+              }}>
+              <Typography
+                size={13}
+                font={Font.semibold}
+                color={COLOR.black}
+                style={{marginBottom: 6}}>
+                Availability
+              </Typography>
+
+              {/* Group times by date */}
+              {Object.entries(
+                Object.entries(item.available_schedule).reduce(
+                  (acc, [time, date]) => {
+                    if (!acc[date]) acc[date] = [];
+                    acc[date].push(time);
+                    return acc;
+                  },
+                  {},
+                ),
+              ).map(([date, times], idx) => (
+                <View
+                  key={idx}
+                  style={{
+                    marginBottom: 6,
+                    borderBottomWidth: 0.5,
+                    borderColor: COLOR.lightGrey,
+                    paddingBottom: 4,
+                  }}>
+                  <Typography
+                    size={12}
+                    font={Font.semibold}
+                    color={COLOR.darkGrey}
+                    style={{marginBottom: 3}}>
+                    {date}
+                  </Typography>
+                  <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                    {times.map((time, i) => (
+                      <Typography
+                        key={i}
+                        size={12}
+                        color="#004aad"
+                        style={{
+                          marginRight: 10,
+                          backgroundColor: '#e6f0ff',
+                          paddingHorizontal: 6,
+                          marginTop: 5,
+                          borderRadius: 4,
+                          marginBottom: 4,
+                        }}>
+                        {time}
+                      </Typography>
+                    ))}
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
       </View>
     );
   };
@@ -533,6 +634,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowOffset: {width: 0, height: 2},
     elevation: 2,
+    marginHorizontal: 10,
   },
   serviceImage: {
     width: 110,

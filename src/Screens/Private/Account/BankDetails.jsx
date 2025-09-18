@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import {COLOR} from '../../../Constants/Colors';
 import {windowWidth} from '../../../Constants/Dimensions';
@@ -307,7 +308,7 @@ const styles = StyleSheet.create({
   },
   addBtn: {
     backgroundColor: COLOR.primary,
-    paddingVertical: 12,
+    paddingVertical: 15,
     paddingHorizontal: 14,
     borderRadius: 10,
     marginHorizontal: 8,

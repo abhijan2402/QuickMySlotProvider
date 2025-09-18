@@ -78,6 +78,7 @@ const AddService = ({route, navigation}) => {
   console.log(errors);
   const isFocus = useIsFocused();
   const [categoryList, setCategoryList] = useState([]);
+  const [availability, setAvailability] = useState({});
   const userdata = useSelector(store => store.userDetails);
 
   useEffect(() => {
@@ -114,6 +115,17 @@ const AddService = ({route, navigation}) => {
         : [{id: 1, startTime: '', endTime: '', price: ''}];
       setPeakHours(parsedPeakHours);
     }
+
+     if (data?.available_schedule) {
+      const formatted = {};
+      Object.entries(data.available_schedule).forEach(([time, date]) => {
+        const slot = moment(time, "HH:mm").format("h:mm A"); // → 11:00 AM
+        if (!formatted[date]) formatted[date] = [];
+        formatted[date].push(slot);
+      });
+      setAvailability(formatted);
+    }
+  
   }, [isFocus]);
 
   const GetSubServices = () => {
@@ -259,6 +271,15 @@ const AddService = ({route, navigation}) => {
         // formData.append(`peak_hours[${index}][price]`, peakHour.price);
       }
     });
+
+    Object.entries(availability).forEach(([date, slots]) => {
+
+      slots.forEach(slot => {
+        const time24 = moment(slot, ['h:mm A']).format('HH:mm');
+        const formattedDate = moment(date, 'DD-MM-YYYY').format('D/M/YYYY');
+        formData.append(`available_schedule[${time24}]`, formattedDate);
+      });
+    });
     console.log(formData, 'formDataformDataformDataformData');
 
     if (isEditing) {
@@ -398,7 +419,7 @@ const AddService = ({route, navigation}) => {
 
         {/* Price */}
         <Input
-          label="Price ($)"
+          label="Price (₹)"
           placeholder="eg., 45.00"
           value={price}
           onChangeText={setPrice}
@@ -431,7 +452,7 @@ const AddService = ({route, navigation}) => {
 
         {/* Duration */}
         <Input
-          label="Estimated Duration (minutes)"
+          label="Estimated Duration (in minutes)"
           placeholder="eg., 45"
           value={duration}
           onChangeText={setDuration}
@@ -496,7 +517,7 @@ const AddService = ({route, navigation}) => {
                 error={errors[`addonName_${index}`]}
               />
               <Input
-                placeholder="Price ($)"
+                placeholder="Price (₹)"
                 value={addon.price}
                 onChangeText={text => updateAddon(addon.id, 'price', text)}
                 keyboardType="decimal-pad"
@@ -525,52 +546,50 @@ const AddService = ({route, navigation}) => {
           </View>
 
           {peakHours.map((peakHour, index) => (
-            <View
-              key={peakHour.id}
-              style={[
-                styles.peakHourRow,
-                {
-                  justifyContent: 'space-between',
-                  // flexDirection: 'column',
-                },
-              ]}>
-              <DatePickerModal
-                mode={'time'}
-                value={peakHour.startTime}
-                onChange={time => handleTimeChange(peakHour.id, 'start', time)}
-                placeholder="Start time"
-              />
-              <Typography style={styles.timeSeparator}>to</Typography>
-              <DatePickerModal
-                mode={'time'}
-                value={peakHour.endTime}
-                onChange={time => handleTimeChange(peakHour.id, 'end', time)}
-                placeholder="End time"
-              />
-              <Input
-                placeholder="Price ($)"
-                value={peakHour.price}
-                onChangeText={text =>
-                  updatePeakHour(peakHour.id, 'price', text)
-                }
-                keyboardType="decimal-pad"
-                mainStyle={{width: '30%', marginTop: -15, marginStart: 10}}
-                error={errors[`peakPrice_${index}`]}
-                style={{height: 48}}
-              />
-              <TouchableOpacity
-                disabled={index == 0}
-                onPress={() => removePeakHour(peakHour.id)}
-                style={[
-                  styles.removeButton,
-                  {
-                    marginTop: -15,
-                  },
-                ]}>
-                {index != 0 && (
+            <View key={peakHour.id} style={[styles.peakHourRow]}>
+              {index != 0 && (
+                <TouchableOpacity
+                  disabled={index == 0}
+                  onPress={() => removePeakHour(peakHour.id)}
+                  style={[
+                    styles.removeButton,
+                    {
+                      marginTop: -35,
+                    },
+                  ]}>
                   <Image source={images.close} style={styles.removeIcon} />
-                )}
-              </TouchableOpacity>
+                </TouchableOpacity>
+              )}
+              <View style={{flexDirection: 'row', marginBottom: 10}}>
+                <DatePickerModal
+                  containerStyle={{width: '30%'}}
+                  mode={'time'}
+                  value={peakHour.startTime}
+                  onChange={time =>
+                    handleTimeChange(peakHour.id, 'start', time)
+                  }
+                  placeholder="Start time"
+                />
+                <Typography style={styles.timeSeparator}>to</Typography>
+                <DatePickerModal
+                  containerStyle={{width: '30%'}}
+                  mode={'time'}
+                  value={peakHour.endTime}
+                  onChange={time => handleTimeChange(peakHour.id, 'end', time)}
+                  placeholder="End time"
+                />
+                <Input
+                  placeholder="Price (₹)"
+                  value={peakHour.price}
+                  onChangeText={text =>
+                    updatePeakHour(peakHour.id, 'price', text)
+                  }
+                  keyboardType="decimal-pad"
+                  mainStyle={{width: '30%', marginTop: 0, marginStart: 10}}
+                  error={errors[`peakPrice_${index}`]}
+                  style={{height: 48, fontFamily: Font.medium}}
+                />
+              </View>
             </View>
           ))}
           <Typography
@@ -583,7 +602,7 @@ const AddService = ({route, navigation}) => {
           </Typography>
         </View>
 
-        <AvailabilityManagement />
+        <AvailabilityManagement onChange={setAvailability} initialAvailability={availability} />
       </KeyboardAwareScrollView>
 
       {/* Add Button */}
@@ -665,6 +684,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 40,
     width: 40,
+    alignSelf: 'flex-end',
   },
   removeIcon: {
     height: 20,
@@ -678,9 +698,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   peakHourRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    // alignItems: 'center',
     marginBottom: 10,
   },
   timePickers: {
@@ -691,6 +709,7 @@ const styles = StyleSheet.create({
   },
   timeSeparator: {
     marginHorizontal: 5,
+    fontFamily: Font.medium,
   },
   subNote: {
     marginTop: 5,

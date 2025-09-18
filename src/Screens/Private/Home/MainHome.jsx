@@ -98,60 +98,58 @@ const MainHome = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: 30}}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginTop: 20,
-            paddingHorizontal: 20,
-          }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('EditProfile');
-              }}>
-              <Image
-                source={{
-                  uri: userdata?.image
-                    ? userdata?.image
-                    : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
-                }}
-                style={{height: 35, width: 35, borderRadius: 50}}
-              />
-            </TouchableOpacity>
-            <Typography
-              size={18}
-              font={Font.semibold}
-              color={COLOR.black}
-              style={{marginLeft: 15}}>
-              Dashboard
-            </Typography>
-          </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginTop: 20,
+          paddingHorizontal: 20,
+        }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('Notification');
-            }}
-            style={{
-              height: 30,
-              width: 30,
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: COLOR.primary,
-              borderRadius: 50,
+              navigation.navigate('EditProfile');
             }}>
             <Image
               source={{
-                uri: 'https://cdn-icons-png.flaticon.com/128/10502/10502974.png',
+                uri: 'https://cdn-icons-png.flaticon.com/128/535/535239.png',
               }}
-              style={{height: 18, width: 18}}
-              tintColor={COLOR.white}
+              style={{height: 30, width: 30}}
             />
           </TouchableOpacity>
+          <Typography
+            size={16}
+            font={Font.semibold}
+            color={COLOR.black}
+            style={{marginLeft: 10}}>
+            Jaipur, Rajasthan
+          </Typography>
         </View>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Notification');
+          }}
+          style={{
+            height: 30,
+            width: 30,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: COLOR.primary,
+            borderRadius: 50,
+          }}>
+          <Image
+            source={{
+              uri: 'https://cdn-icons-png.flaticon.com/128/10502/10502974.png',
+            }}
+            style={{height: 18, width: 18}}
+            tintColor={COLOR.white}
+          />
+        </TouchableOpacity>
+      </View>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingBottom: 30}}>
         {/* Salon Card */}
         <TouchableOpacity
           activeOpacity={0.99}
@@ -287,7 +285,7 @@ const MainHome = ({navigation}) => {
                 <Typography style={styles.bookingDetail}>
                   Time: 18 Aug, 3:00 PM - 4:00 PM
                 </Typography>
-                <Typography style={styles.bookingPrice}>$1200</Typography>
+                <Typography style={styles.bookingPrice}>₹1200</Typography>
               </View>
             </View>
             <TouchableOpacity style={styles.viewButton}>
