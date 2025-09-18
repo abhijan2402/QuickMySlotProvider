@@ -27,7 +27,6 @@ const MainHome = ({navigation}) => {
   const isFocus = useIsFocused();
   const dispatch = useDispatch();
   const userdata = useSelector(store => store.userDetails);
-  console.log(userdata);
 
   useEffect(() => {
     if (isFocus) {
@@ -116,22 +115,26 @@ const MainHome = ({navigation}) => {
                 navigation.navigate('EditProfile');
               }}>
               <Image
-                source={{uri: userdata?.image}}
-                style={{height: 40, width: 40, borderRadius: 50}}
+                source={{
+                  uri: userdata?.image
+                    ? userdata?.image
+                    : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+                }}
+                style={{height: 35, width: 35, borderRadius: 50}}
               />
             </TouchableOpacity>
             <Typography
               size={18}
               font={Font.semibold}
               color={COLOR.black}
-              style={{marginLeft: 10}}>
+              style={{marginLeft: 15}}>
               Dashboard
             </Typography>
           </View>
           <TouchableOpacity
-          onPress={() => {
-                navigation.navigate('Notification');
-              }}
+            onPress={() => {
+              navigation.navigate('Notification');
+            }}
             style={{
               height: 30,
               width: 30,

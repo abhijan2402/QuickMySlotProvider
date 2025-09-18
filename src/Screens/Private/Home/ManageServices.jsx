@@ -482,52 +482,7 @@ const styles = StyleSheet.create({
     tintColor: COLOR.white,
     marginRight: 8,
   },
-  serviceCard: {
-    alignItems: 'flex-start',
-    borderWidth: 1,
-    borderColor: COLOR.lightGrey,
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 15,
-    backgroundColor: COLOR.white,
-  },
-  categoryBox: {
-    width: 45,
-    height: 45,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rowBetween: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  labelsRow: {
-    flexDirection: 'row',
-    marginTop: 6,
-    gap: 6,
-  },
-  labelOrange: {
-    backgroundColor: COLOR.lightYellow,
-    color: '#9a5c00',
-    paddingHorizontal: 6,
-    paddingVertical: 5,
-    borderRadius: 10,
-    elevation: 2,
-  },
-  labelGreen: {
-    backgroundColor: COLOR.lightGreen,
-    color: '#056b26',
-    paddingHorizontal: 6,
-    paddingVertical: 5,
-    borderRadius: 10,
-    elevation: 2,
-  },
-  actionsRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
+
   actionBtn: {
     padding: 3,
   },
@@ -561,11 +516,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#f0f0f0',
   },
-  metaInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
-  },
+
   pill: {
     backgroundColor: '#e6f0ff',
     paddingHorizontal: 8,
@@ -589,23 +540,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#f0f0f0',
   },
-  rowBetween: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
+
   actionsRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  actionBtn: {
-    marginLeft: 8,
-    padding: 4,
-  },
-  actionIcon: {
-    width: 20,
-    height: 20,
-  },
+
   metaInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -647,9 +587,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  actionsRow: {
-    flexDirection: 'row',
-  },
+
   actionBtn: {
     padding: 6,
     marginLeft: 8,

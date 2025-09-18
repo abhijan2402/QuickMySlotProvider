@@ -40,6 +40,8 @@ const Login = ({navigation}) => {
     const body = {
       phone_number: number,
     };
+    console.log(body);
+    
     POST(
       SIGN_UP,
       body,
