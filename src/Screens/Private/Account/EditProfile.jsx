@@ -52,10 +52,9 @@ const EditProfile = ({navigation}) => {
   const [isEditing, setIsEditing] = useState(true);
   const {isKeyboardVisible} = useKeyboard();
   const userdata = useSelector(store => store.userDetails);
-  console.log(userdata, 'userdatauserdatauserdatauserdata===>');
+  console.log(userdata,'userdatauserdatauserdatauserdata');
+  
   const [profileImage, setProfileImage] = useState('');
-  console.log(profileImage);
-
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState({});
   const isFocus = useIsFocused();
@@ -69,12 +68,14 @@ const EditProfile = ({navigation}) => {
       setPhone(userdata?.phone_number);
       setWebsite(userdata?.website || userdata?.business_website);
       setProfileImage({path: userdata?.image});
+      setCity(userdata?.city || '')
       setFirstName(userdata?.name || '');
       setEmail(userdata?.email || '');
       setAddress(userdata?.exact_location || '');
       setBuisness(userdata?.business_name || '');
       setServed(userdata?.location_area_served || '');
       setCompany(userdata?.company_name || '');
+      setPinCode(userdata?.zip_code)
     }
   }, [isFocus]);
 
@@ -131,10 +132,10 @@ const EditProfile = ({navigation}) => {
       formData.append('email', email);
       formData.append('address', address);
       formData.append('phone', phone);
-      formData.append('city', 'jaipur');
-      formData.append('state', 'Rajasthan');
-      formData.append('country', 'india');
-      formData.append('zip_code', '123456');
+      formData.append('city', city);
+      formData.append('state', state);
+      formData.append('country', country);
+      formData.append('zip_code', pinCode);
       formData.append('company_name', company);
       formData.append('category_id', userdata?.service_category);
       formData.append('website', '');

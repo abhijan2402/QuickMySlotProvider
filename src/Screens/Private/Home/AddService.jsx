@@ -34,7 +34,6 @@ import {
 } from '../../../Constants/ApiRoute';
 import {GET_WITH_TOKEN, POST_FORM_DATA} from '../../../Backend/Api';
 import {useIsFocused} from '@react-navigation/native';
-import {Dropdown} from 'react-native-element-dropdown';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
 import AvailabilityManagement from './AvailabilityManagement';
@@ -50,6 +49,11 @@ const AddService = ({route, navigation}) => {
   const [service, setService] = useState('');
   const [serviceData, setServiceData] = useState([]);
   const [peak, setPeak] = useState(false);
+  const genderData = [
+    {value: 'male', label: 'Male'},
+    {value: 'female', label: 'Female'},
+    {value: 'other', label: 'Other'},
+  ];
   const [addons, setAddons] = useState([
     {
       id: 1,
@@ -80,6 +84,7 @@ const AddService = ({route, navigation}) => {
   const [categoryList, setCategoryList] = useState([]);
   const [availability, setAvailability] = useState({});
   const userdata = useSelector(store => store.userDetails);
+  console.log(availability, 'availabilityavailabilityavailability');
 
   useEffect(() => {
     if (isFocus) {
@@ -89,9 +94,8 @@ const AddService = ({route, navigation}) => {
       setPrice(data?.price);
       setDuration(data?.duration);
       setImage(data?.image ? {path: data?.image} : null);
-      setGender(data?.gender);
-
-      // ✅ Convert `addons` object to array
+      const genderTemp = genderData.find(v => v?.value == data?.gender);
+      setGender(genderTemp);
       const parsedAddons = data?.addons
         ? Object.entries(data.addons).map(([name, price], index) => ({
             id: index + 1,
@@ -100,8 +104,6 @@ const AddService = ({route, navigation}) => {
           }))
         : [{id: 1, name: '', price: ''}];
       setAddons(parsedAddons);
-
-      // ✅ Convert `peak_hours` object to array
       const parsedPeakHours = data?.peak_hours
         ? Object.entries(data.peak_hours).map(([timeRange, price], index) => {
             const [startTime, endTime] = timeRange.split('-');
@@ -116,16 +118,16 @@ const AddService = ({route, navigation}) => {
       setPeakHours(parsedPeakHours);
     }
 
-     if (data?.available_schedule) {
+    if (data?.available_schedule) {
       const formatted = {};
       Object.entries(data.available_schedule).forEach(([time, date]) => {
-        const slot = moment(time, "HH:mm").format("h:mm A"); // → 11:00 AM
-        if (!formatted[date]) formatted[date] = [];
-        formatted[date].push(slot);
+        const slot = moment(time, 'HH:mm').format('h:mm A'); // → 11:00 AM
+        const formattedDate = moment(date, 'D/M/YYYY').format('DD-MM-YYYY'); // → 20-9-2025
+        if (!formatted[formattedDate]) formatted[formattedDate] = [];
+        formatted[formattedDate].push(slot);
       });
       setAvailability(formatted);
     }
-  
   }, [isFocus]);
 
   const GetSubServices = () => {
@@ -145,7 +147,7 @@ const AddService = ({route, navigation}) => {
 
         setServiceData(d);
 
-        const selectedService = d.find(v => data?.service_id === v.value);
+        const selectedService = d.find(v => v.value == data?.service_id);
         setService(selectedService || null);
       },
       error => {
@@ -256,10 +258,8 @@ const AddService = ({route, navigation}) => {
     addons.forEach((addon, index) => {
       if (addon.name && addon.price) {
         formData.append(`addons[${addon.name}]`, addon.price);
-        // formData.append(`addons[${index}][price]`, addon.price);
       }
     });
-    // Add peak hours to formData
     peakHours.forEach((peakHour, index) => {
       if (peakHour.startTime && peakHour.endTime && peakHour.price) {
         formData.append(
@@ -268,12 +268,10 @@ const AddService = ({route, navigation}) => {
           ).format('HH:mm')}]`,
           `${peakHour.price}`,
         );
-        // formData.append(`peak_hours[${index}][price]`, peakHour.price);
       }
     });
 
     Object.entries(availability).forEach(([date, slots]) => {
-
       slots.forEach(slot => {
         const time24 = moment(slot, ['h:mm A']).format('HH:mm');
         const formattedDate = moment(date, 'DD-MM-YYYY').format('D/M/YYYY');
@@ -281,47 +279,27 @@ const AddService = ({route, navigation}) => {
       });
     });
     console.log(formData, 'formDataformDataformDataformData');
+    alert(!isEditing ? SERVICE : UPDATE_SERVICE + data?.id);
+    POST_FORM_DATA(
+      !isEditing ? SERVICE : UPDATE_SERVICE + data?.id,
+      formData,
+      success => {
+        setLoading(false);
+        console.log(success);
+        navigation.goBack();
+        ToastMsg(success?.message);
+      },
+      error => {
+        console.log(error, 'errorerrorerror');
 
-    if (isEditing) {
-      POST_FORM_DATA(
-        UPDATE_SERVICE + data?.id,
-        formData,
-        success => {
-          setLoading(false);
-          console.log(success);
-          navigation.goBack();
-          ToastMsg(success?.message);
-        },
-        error => {
-          setLoading(false);
-          console.log(error);
-          ToastMsg(error?.message);
-        },
-        fail => {
-          setLoading(false);
-        },
-      );
-    } else {
-      POST_FORM_DATA(
-        SERVICE,
-        formData,
-        success => {
-          setLoading(false);
-          console.log(success);
-          navigation.goBack();
-          ToastMsg(success?.message);
-        },
-        error => {
-          setLoading(false);
-          console.log(error);
-
-          ToastMsg(error?.message);
-        },
-        fail => {
-          setLoading(false);
-        },
-      );
-    }
+        setLoading(false);
+        console.log(error);
+        ToastMsg(error?.message);
+      },
+      fail => {
+        setLoading(false);
+      },
+    );
   };
 
   const addAddon = () => {
@@ -430,11 +408,7 @@ const AddService = ({route, navigation}) => {
         {/* Gender Dropdown */}
         <DropdownCommon
           label="Gender"
-          data={[
-            {value: 'male', label: 'Male'},
-            {value: 'female', label: 'Female'},
-            {value: 'other', label: 'Other'},
-          ]}
+          data={genderData}
           value={gender}
           onChange={v => setGender(v)}
           placeholder="Select Gender"
@@ -602,7 +576,10 @@ const AddService = ({route, navigation}) => {
           </Typography>
         </View>
 
-        <AvailabilityManagement onChange={setAvailability} initialAvailability={availability} />
+        <AvailabilityManagement
+          onChange={setAvailability}
+          initialAvailability={availability}
+        />
       </KeyboardAwareScrollView>
 
       {/* Add Button */}

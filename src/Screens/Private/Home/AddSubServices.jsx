@@ -83,47 +83,23 @@ const AddSubServices = ({navigation, route}) => {
           name: image.filename || 'service.jpg',
         });
       }
-
-      console.log(ADD_SUB_SERVICES + data?.id, 'FormData ====>', formData);
-      if (isEditing) {
-        POST_FORM_DATA(
-          ADD_SUB_SERVICES,
-          formData,
-          success => {
-            console.log(success, 'successsuccesssuccess-->>>');
-            setLoading(false);
-            navigation.goBack();
-          },
-          error => {
-            console.log(error, 'errorerrorerror>>');
-            setLoading(false);
-          },
-          fail => {
-            console.log(fail, 'errorerrorerror>>');
-
-            setLoading(false);
-          },
-        );
-      } else {
-        POST_FORM_DATA(
-          ADD_SUB_SERVICES,
-          formData,
-          success => {
-            console.log(success, 'successsuccesssuccess-->>>');
-            setLoading(false);
-            navigation.goBack();
-          },
-          error => {
-            console.log(error, 'errorerrorerror>>');
-            setLoading(false);
-          },
-          fail => {
-            console.log(fail, 'errorerrorerror>>');
-
-            setLoading(false);
-          },
-        );
-      }
+      POST_FORM_DATA(
+        isEditing ? ADD_SUB_SERVICES + '/' + data?.id : ADD_SUB_SERVICES,
+        formData,
+        success => {
+          console.log(success, 'successsuccesssuccess-->>>');
+          setLoading(false);
+          navigation.goBack();
+        },
+        error => {
+          console.log(error, 'errorerrorerror>>');
+          setLoading(false);
+        },
+        fail => {
+          console.log(fail, 'errorerrorerror>>');
+          setLoading(false);
+        },
+      );
     }
   };
 
