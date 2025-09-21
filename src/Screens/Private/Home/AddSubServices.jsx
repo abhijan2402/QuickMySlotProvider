@@ -83,6 +83,8 @@ const AddSubServices = ({navigation, route}) => {
           name: image.filename || 'service.jpg',
         });
       }
+      console.log(formData,'formDataformDataformDataqw');
+      
       POST_FORM_DATA(
         isEditing ? ADD_SUB_SERVICES + '/' + data?.id : ADD_SUB_SERVICES,
         formData,

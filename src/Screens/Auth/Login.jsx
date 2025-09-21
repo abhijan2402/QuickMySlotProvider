@@ -41,7 +41,6 @@ const Login = ({navigation}) => {
       phone_number: number,
     };
     console.log(body);
-    
     POST(
       SIGN_UP,
       body,
@@ -53,7 +52,7 @@ const Login = ({navigation}) => {
         });
       },
       error => {
-        console.log(error);
+        console.log(error,'dddsadsadsadfsfrse');
         
         setLoading(false);
       },
