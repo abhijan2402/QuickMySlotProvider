@@ -10,13 +10,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import {windowHeight, windowWidth} from '../../Constants/Dimensions';
 import {COLOR} from '../../Constants/Colors';
 import {validators} from '../../Backend/Validator';
-import {isValidForm, ToastMsg} from '../../Backend/Utility';
-import {ErrorBox} from '../../Components/UI/ErrorBox';
+import {isValidForm} from '../../Backend/Utility';
 import Button from '../../Components/UI/Button';
 import GoogleAuthButton from '../../Components/UI/GoogleAuthButton';
-import {POST, useApi} from '../../Backend/Api';
+import {POST} from '../../Backend/Api';
 import {SIGN_UP} from '../../Constants/ApiRoute';
-import {isAuth, Token, userDetails} from '../../Redux/action';
 import {ScrollView} from 'react-native';
 import Input from '../../Components/Input';
 import {Typography} from '../../Components/UI/Typography';
@@ -52,8 +50,7 @@ const Login = ({navigation}) => {
         });
       },
       error => {
-        console.log(error,'dddsadsadsadfsfrse');
-        
+        console.log(error, 'dddsadsadsadfsfrse');
         setLoading(false);
       },
       fail => {

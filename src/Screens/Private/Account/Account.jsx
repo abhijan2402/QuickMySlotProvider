@@ -47,7 +47,6 @@ const Account = ({navigation}) => {
       },
       fail => {
         console.log(fail, 'errorerrorerror>>');
-
         setLoading(false);
       },
     );
