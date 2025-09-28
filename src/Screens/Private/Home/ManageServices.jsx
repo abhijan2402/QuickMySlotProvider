@@ -47,6 +47,7 @@ const ManageServices = ({navigation}) => {
   }, [isFocus, tab]);
 
   const GetServices = () => {
+    setServices([]);
     setLoading(true);
     GET_WITH_TOKEN(
       SERVICE,
@@ -596,6 +597,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
+    borderColor: COLOR.lightGrey,
     marginBottom: 15,
     marginTop: 10,
     padding: 5,

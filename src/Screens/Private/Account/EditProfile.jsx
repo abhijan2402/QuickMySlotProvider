@@ -69,8 +69,8 @@ const EditProfile = ({navigation}) => {
   const [isEditing, setIsEditing] = useState(true);
   const {isKeyboardVisible} = useKeyboard();
   const userdata = useSelector(store => store.userDetails);
-  console.log(userdata, 'lllllll');
-
+  console.log(userdata,'userdatauserdatauserdatauserdata');
+  
   const [profileImage, setProfileImage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState({});
@@ -105,6 +105,7 @@ const EditProfile = ({navigation}) => {
       setPhone(userdata?.phone_number);
       setWebsite(userdata?.website || userdata?.business_website);
       setProfileImage({path: userdata?.image});
+      setCity(userdata?.city || '')
       setFirstName(userdata?.name || '');
       setEmail(userdata?.email || '');
       setAddress(userdata?.exact_location || '');

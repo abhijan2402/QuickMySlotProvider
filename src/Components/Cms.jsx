@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import RenderHTML from 'react-native-render-html';
-import Header from './FeedHeader';
 import HomeHeader from './HomeHeader';
 import {COLOR} from '../Constants/Colors';
 import {CMS} from '../Constants/ApiRoute';
