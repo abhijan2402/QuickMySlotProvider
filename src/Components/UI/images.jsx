@@ -12,4 +12,12 @@ export const images = {
   arrowup: require('../../assets/Images/arrowup.png'),
   arrowdown: require('../../assets/Images/arrowdown.png'),
   file: require('../../assets/Images/file.png'),
+  user: require('../../assets/Images/user.png'),
+  dashboard: require('../../assets/Images/dashboard.png'),
+  notification: require('../../assets/Images/notification.png'),
+  document: require('../../assets/Images/document.png'),
+  userFocused: require('../../assets/Images/userFocused.png'),
+  dashboardFocused: require('../../assets/Images/dashboardFocused.png'),
+  notificationFocused: require('../../assets/Images/notificationFocused.png'),
+  documentFocused: require('../../assets/Images/documentFocused.png'),
 };

@@ -4,6 +4,7 @@ import {
   Modal,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import React from 'react';
 import {images} from './images';
@@ -68,9 +69,13 @@ const ConfirmModal = ({
               style={[styles.btn, styles.yesBtn]}
               onPress={onPressYes}
               disabled={loading}>
-              <Typography size={16} fontWeight={'500'} color={'#fff'}>
-                {loading ? '...' : yesTitle}
-              </Typography>
+              {loading ? (
+                <ActivityIndicator size={'small'} color={COLOR.primary} />
+              ) : (
+                <Typography size={16} fontWeight={'500'} color={'#fff'}>
+                  {yesTitle}
+                </Typography>
+              )}
             </TouchableOpacity>
           </View>
         </View>

@@ -116,16 +116,15 @@ const AddService = ({route, navigation}) => {
       setPeakHours(parsedPeakHours);
     }
 
-     if (data?.available_schedule) {
+    if (data?.available_schedule) {
       const formatted = {};
       Object.entries(data.available_schedule).forEach(([time, date]) => {
-        const slot = moment(time, "HH:mm").format("h:mm A"); // → 11:00 AM
+        const slot = moment(time, 'HH:mm').format('h:mm A'); // → 11:00 AM
         if (!formatted[date]) formatted[date] = [];
         formatted[date].push(slot);
       });
       setAvailability(formatted);
     }
-  
   }, [isFocus]);
 
   const GetSubServices = () => {
@@ -273,7 +272,6 @@ const AddService = ({route, navigation}) => {
     });
 
     Object.entries(availability).forEach(([date, slots]) => {
-
       slots.forEach(slot => {
         const time24 = moment(slot, ['h:mm A']).format('HH:mm');
         const formattedDate = moment(date, 'DD-MM-YYYY').format('D/M/YYYY');
@@ -469,25 +467,13 @@ const AddService = ({route, navigation}) => {
           style={[styles.label, {marginTop: 20}]}>
           Service Image
         </Typography>
-        {image ? (
-          <View style={styles.imgWrapper}>
-            <Image
-              source={{uri: image.path || image.uri}}
-              style={styles.previewImg}
-            />
-            <TouchableOpacity
-              style={styles.deleteBtn}
-              onPress={() => setImage(null)}>
-              <Image
-                source={images.cross}
-                style={{height: 12, width: 12}}
-                tintColor={'white'}
-              />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <ImageUpload onPress={() => setShowModal(true)} />
-        )}
+
+        <ImageUpload
+          file={image}
+          setFile={file => setImage(file)}
+          document={false}
+        />
+
         <Typography
           size={12}
           color="#777"
@@ -602,7 +588,10 @@ const AddService = ({route, navigation}) => {
           </Typography>
         </View>
 
-        <AvailabilityManagement onChange={setAvailability} initialAvailability={availability} />
+        <AvailabilityManagement
+          onChange={setAvailability}
+          initialAvailability={availability}
+        />
       </KeyboardAwareScrollView>
 
       {/* Add Button */}

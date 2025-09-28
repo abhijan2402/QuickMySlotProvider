@@ -8,6 +8,8 @@ import { AuthProvider } from './src/Backend/AuthContent';
 import AddService from './src/Screens/Private/Home/AddService';
 import AddBank from './src/Screens/Private/Account/AddBank';
 import BankDetails from './src/Screens/Private/Account/BankDetails';
+import 'react-native-get-random-values';
+
 
 const App = () => {
   return (
@@ -17,7 +19,6 @@ const App = () => {
         <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
         <NavigationContainer>
           <MainNavigation />
-          {/* <BankDetails /> */}
         </NavigationContainer>
       </View>
     </AuthProvider>

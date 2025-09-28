@@ -1,142 +1,124 @@
-import React, {forwardRef, useEffect, useImperativeHandle, useRef} from 'react';
-import {StyleProp, StyleSheet, TextStyle, View, ViewStyle} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-import {useIsFocused} from '@react-navigation/native';
 import {Typography} from './Typography';
-import {ErrorBox} from './ErrorBox';
-import { COLOR } from '../../Constants/Colors';
+import {COLOR} from '../../Constants/Colors';
+import {Font} from '../../Constants/Font';
+import { Google_Key } from '../../Constants/Utility';
+const GoogleAutoLocaton = ({
+  width,
+  onPress = () => {},
+  renderRightButton,
+  value,
+  style,
+  placeholder = '',
+  descriptionColor = COLOR.black,
+  labelmainStyle,
+  label,
+  marginLeft,
+}) => {
+  const addressRef = useRef(null);
+  const [isFocus, setIsFocus] = useState(false);
 
+  useEffect(() => {
+    addressRef?.current?.setAddressText(value);
+  }, [value]);
 
-const GoogleAutoLocaton = forwardRef(
-  (
-    {
-      error,
-      placeholder = '',
-      onPress = () => {},
-      value,
-      onChangeText = () => {},
-      predefinedPlaces,
-      mainStyle = {},
-      editable,
-      inputStyle = {},
-      req = false,
-      title,
-      labelStyle = {},
-    },
-    ref,
-  ) => {
-    const addressRef = useRef<any>(null);
-    const isFocused = useIsFocused();
-
-    useImperativeHandle(ref, () => ({
-      clearAddress: () => {
-        addressRef?.current?.setAddressText('');
-      },
-      setAddress: (text) => {
-        addressRef?.current?.setAddressText(text);
-      },
-    }));
-
-    useEffect(() => {
-      if (isFocused && addressRef?.current) {
-        addressRef.current.setAddressText(value);
-      }
-    }, [isFocused]);
-
-    return (
-      <View
-        style={[
-          {
-            width: '100%',
-            borderBottomWidth: 1,
-            marginTop: 16,
-            borderBottomColor: COLOR?.lightBlue,
-          },
-          mainStyle,
-        ]}>
-        {title && (
-          <View
-            style={{
-              paddingStart: 18,
-            }}>
-            <Typography
-              size={16}
-              color={COLOR.black}
-              style={[labelStyle]}>
-              {title}
-              {req && <Typography color="#D90028">*</Typography>}
-            </Typography>
-          </View>
-        )}
-
-        <View style={[styles.TextInput, inputStyle]}>
-          <GooglePlacesAutocomplete
-            ref={addressRef}
-            debounce={10}
-            minLength={1}
-            disableScroll={true}
-            placeholder={placeholder}
-            keyboardShouldPersistTaps="always"
-            enablePoweredByContainer={false}
-            predefinedPlaces={predefinedPlaces}
-            fetchDetails={true}
-            onPress={onPress}
-            textInputProps={{
-              placeholderTextColor: COLOR.black,
-              onChangeText: onChangeText,
-              editable: editable,
-              multiline: false,
-            }}
-            query={{
-              key: '',
-              language: 'en',
-            }}
-            styles={{
-              textInputContainer: {
-                height: 50,
-                width: '100%',
-                paddingLeft: 17,
-                backgroundColor: COLOR.white,
-                borderColor: COLOR.black,
-              },
-              textInput: {
-                height: 50,
-                backgroundColor: COLOR.white,
-                color: editable ? COLOR.black : COLOR.black,
-                fontSize: 19,
-                paddingRight: 1,
-                paddingLeft: 1,
-              },
-              row: {
-                backgroundColor: 'transparent',
-              },
-              description: {
-                color: COLOR.black,
-              },
-              listView: {
-                borderWidth: 1,
-                borderColor: COLOR.black,
-                borderRadius: 4,
-                marginTop: 14,
-              },
-              separator: {
-                backgroundColor: COLOR.black,
-              },
-            }}
-            onFail={() => {}}
-            onNotFound={() => {}}
-          />
+  return (
+    <View style={[styles.container(width, isFocus), style]}>
+      {!!label && (
+        <View style={[{paddingBottom: 5, paddingTop: 20}, labelmainStyle]}>
+          <Typography
+            size={14}
+            color={'black'}
+            marginLeft={marginLeft}
+            font={Font.semibold}>
+            {label}
+          </Typography>
         </View>
-        {error && <ErrorBox error={error} />}
-      </View>
-    );
-  },
-);
+      )}
+      <GooglePlacesAutocomplete
+        ref={addressRef}
+        placeholder={placeholder}
+        fetchDetails={true}
+        enablePoweredByContainer={false}
+        suppressDefaultStyles={false}
+        debounce={200}
+        minLength={0}
+        disableScroll={false}
+        timeout={5000}
+        keyboardShouldPersistTaps="always"
+        textInputProps={{
+          placeholderTextColor: COLOR.grey,
+          onFocus: () => console.log('Focused'),
+        }}
+        predefinedPlaces={[]}
+        styles={{
+          textInputContainer: {
+            borderWidth: 1,
+            borderColor: COLOR.primary,
+            borderRadius: 10,
+            backgroundColor: COLOR.white,
+            paddingHorizontal: 10,
+            overflow: 'hidden',
+          },
 
+          description: {
+            fontSize: 13,
+            color: descriptionColor,
+            fontFamily: Font?.MontserratRegular,
+          },
+          poweredContainer: {
+            borderColor: 'transparent',
+            backgroundColor: 'transparent',
+          },
+          row: {
+            backgroundColor: 'transparent',
+            padding: 13,
+            height: 44,
+            flexDirection: 'row',
+            zIndex:999
+          },
+          separator: {
+            height: 0.5,
+            backgroundColor: '#FFFDFD',
+          },
+        }}
+        renderRightButton={renderRightButton}
+        onPress={onPress}
+        query={{
+          key: `${Google_Key}`,
+          language: 'en',
+          // types: 'address',
+        }}
+        backgroundColor={'transparent'}
+        onFail={error => console.log(error)}
+        onNotFound={() => console.log('No results found')}
+      />
+    </View>
+  );
+};
 export default GoogleAutoLocaton;
 
 const styles = StyleSheet.create({
-  TextInput: {
-    width: '100%',
+  labelContainer: {
+    marginLeft: 5,
+    marginTop: 10,
+    bottom: -5,
+    backgroundColor: '#735AE7',
   },
+  textInput: {
+    fontSize: 12,
+    borderWidth: 1,
+    borderColor: COLOR.primary,
+    borderRadius: 10,
+    backgroundColor: COLOR.white,
+    paddingHorizontal: 10,
+    textAlignVertical: 'center',
+    fontFamily: Font?.MontserratMedium,
+  },
+  container: width => ({
+    width: width,
+    flex: 1,
+  }),
 });

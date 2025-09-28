@@ -30,6 +30,9 @@ const Login = ({navigation}) => {
     let error = {
       mobile: validators.checkNumber('Mobile Number', number),
     };
+    if (!error.mobile && number.length !== 10) {
+      error.mobile = 'Mobile number must be 10 digits';
+    }
     setError(error);
     if (isValidForm(error)) {
       handleSignup();
@@ -41,7 +44,7 @@ const Login = ({navigation}) => {
       phone_number: number,
     };
     console.log(body);
-    
+
     POST(
       SIGN_UP,
       body,
@@ -54,7 +57,7 @@ const Login = ({navigation}) => {
       },
       error => {
         console.log(error);
-        
+
         setLoading(false);
       },
       fail => {

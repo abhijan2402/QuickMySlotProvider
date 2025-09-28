@@ -275,3 +275,20 @@ export const ToastMsg = (message, time = 100) => {
     clearTimeout(timeout);
   }, 500);
 };
+
+export const cleanImageUrl = url => {
+  if (!url) return null;
+
+  // If HTTPS fails, try forcing HTTP
+  let cleanedUrl = url.replace(/(https?:\/\/[^\/]+)\/\//, '$1/');
+
+  // If URL starts with https but we know it might fail, try http
+  if (
+    cleanedUrl.startsWith('https://') &&
+    url.includes('lemonchiffon-walrus-503913.hostingersite.com')
+  ) {
+    cleanedUrl = cleanedUrl.replace('https://', 'http://');
+  }
+
+  return cleanedUrl;
+};

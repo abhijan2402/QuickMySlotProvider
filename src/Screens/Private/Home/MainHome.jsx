@@ -18,6 +18,8 @@ import {GET_PROFILE} from '../../../Constants/ApiRoute';
 import {useDispatch, useSelector} from 'react-redux';
 import {userDetails} from '../../../Redux/action';
 import {Font} from '../../../Constants/Font';
+import { windowWidth } from '../../../Constants/Dimensions';
+import { cleanImageUrl } from '../../../Backend/Utility';
 
 const MainHome = ({navigation}) => {
   const {width} = Dimensions.get('window');
@@ -38,9 +40,7 @@ const MainHome = ({navigation}) => {
     GET_WITH_TOKEN(
       GET_PROFILE,
       success => {
-        console.log(success, 'successsuccesssuccess-->>>');
-        // alert (JSON.stringify(success?.data))
-        // dispatch(userDetails(success?.data));
+        console.log(success, 'GET_PROFILE-->>>');
       },
       error => {
         console.log(error, 'errorerrorerror>>');
@@ -122,8 +122,9 @@ const MainHome = ({navigation}) => {
             size={16}
             font={Font.semibold}
             color={COLOR.black}
-            style={{marginLeft: 10}}>
-            Jaipur, Rajasthan
+            numberOfLines={1}
+            style={{marginLeft: 10,width: windowWidth * 0.6}}>
+            {userdata?.exact_location}
           </Typography>
         </View>
         <TouchableOpacity
@@ -159,7 +160,7 @@ const MainHome = ({navigation}) => {
           style={styles.card}>
           <Image
             source={{
-              uri: userdata?.photo_verification,
+              uri: cleanImageUrl(userdata?.photo_verification),
             }}
             style={styles.cardIcon}
           />
@@ -172,7 +173,7 @@ const MainHome = ({navigation}) => {
               {userdata?.name || 'Welcome'} | +91-{userdata?.phone_number}
             </Typography>
             <Typography style={styles.cardSub}>
-              {userdata?.location_area_served || ''}
+              {userdata?.exact_location || ''}
             </Typography>
           </View>
         </TouchableOpacity>

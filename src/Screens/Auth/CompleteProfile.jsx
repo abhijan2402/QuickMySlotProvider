@@ -19,7 +19,7 @@ import {ErrorBox} from '../../Components/UI/ErrorBox';
 import Button from '../../Components/UI/Button';
 import {Typography} from '../../Components/UI/Typography';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import useKeyboard from '../../Constants/Utility';
+import useKeyboard, {Google_Key} from '../../Constants/Utility';
 import {useDispatch, useSelector} from 'react-redux';
 import {BUSINESS_PROFILE, CATEGORY} from '../../Constants/ApiRoute';
 import {GET_WITH_TOKEN, POST_FORM_DATA} from '../../Backend/Api';
@@ -28,6 +28,8 @@ import {userDetails} from '../../Redux/action';
 import {useIsFocused} from '@react-navigation/native';
 import {Dropdown} from 'react-native-element-dropdown';
 import {Font} from '../../Constants/Font';
+import GoogleAutoLocaton from '../../Components/UI/GoogleAutoLocaton';
+import MapView, {Marker} from 'react-native-maps';
 
 const CompleteProfile = ({navigation}) => {
   const [showModal, setShowModal] = useState(false);
@@ -40,7 +42,6 @@ const CompleteProfile = ({navigation}) => {
     aadhaarFront: null,
     pan: null,
   });
-  console.log(image, 'lllllll');
 
   // Text field states
   const [about, setAbout] = useState('');
@@ -55,6 +56,14 @@ const CompleteProfile = ({navigation}) => {
   const isFocus = useIsFocused();
   const [categoryList, setCategoryList] = useState([]);
   const [category, setCategory] = useState();
+  const [region, setRegion] = useState({
+    latitude: 28.6139,
+    longitude: 77.209,
+    latitudeDelta: 0.05,
+    longitudeDelta: 0.05,
+  });
+
+  const [markerCoords, setMarkerCoords] = useState(null);
 
   // Error state
   const [errors, setErrors] = useState({});
@@ -74,7 +83,7 @@ const CompleteProfile = ({navigation}) => {
         },
         error => {
           console.log(error);
-          
+
           setLoading(false);
           console.log(error);
 
@@ -86,6 +95,22 @@ const CompleteProfile = ({navigation}) => {
       );
     }
   }, [isFocus]);
+
+  const getAddressFromCoords = async (lat, lng) => {
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${Google_Key}`,
+      );
+      const data = await response.json();
+      if (data.status === 'OK') {
+        return data.results[0]?.formatted_address || '';
+      }
+      return '';
+    } catch (err) {
+      console.log('Reverse Geocode Error:', err);
+      return '';
+    }
+  };
 
   const handleSelect = response => {
     if (currentField) {
@@ -146,19 +171,35 @@ const CompleteProfile = ({navigation}) => {
       formData.append('service_category', category);
 
       if (image?.PhotoVerifi) {
-        formData.append('photo_verification', image?.PhotoVerifi);
+        formData.append('photo_verification', {
+          uri: image?.PhotoVerifi.path || image?.PhotoVerifi.uri,
+          type: image?.PhotoVerifi.mime || 'image/jpeg',
+          name: image?.PhotoVerifi.fileName || 'image/jpeg',
+        });
       }
       if (image?.businessProof) {
-        formData.append('business_proof', image?.businessProof);
+        formData.append('business_proof', {
+          uri: image?.businessProof.path || image?.businessProof.uri,
+          type: image?.businessProof.mime || 'image/jpeg',
+          name: image?.businessProof.fileName || 'image/jpeg',
+        });
       }
       if (image?.aadhaarFront) {
-        formData.append('adhaar_card_verification', image?.aadhaarFront);
+        formData.append('adhaar_card_verification', {
+          uri: image?.aadhaarFront.path || image?.aadhaarFront.uri,
+          type: image?.aadhaarFront.mime || 'image/jpeg',
+          name: image?.aadhaarFront.fileName || 'image/jpeg',
+        });
       }
       if (image?.pan) {
-        formData.append('pan_card', image?.pan);
+        formData.append('pan_card', {
+          uri: image?.pan.path || image?.pan.uri,
+          type: image?.pan.mime || 'image/jpeg',
+          name: image?.pan.fileName || 'image/jpeg',
+        });
       }
       console.log(formData);
-      
+
       POST_FORM_DATA(
         BUSINESS_PROFILE,
         formData,
@@ -168,6 +209,8 @@ const CompleteProfile = ({navigation}) => {
           navigation.navigate('Availability');
         },
         error => {
+          console.log(error);
+
           setLoading(false);
           if (error?.data?.errors) {
             const errorKeyMap = {
@@ -210,6 +253,7 @@ const CompleteProfile = ({navigation}) => {
 
       <KeyboardAwareScrollView
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={{paddingBottom: 20}}
         style={{flex: 1, paddingHorizontal: 5}}>
         <View
@@ -250,124 +294,6 @@ const CompleteProfile = ({navigation}) => {
           Business Information
         </Typography>
 
-        {/* Photo Verification */}
-        <Typography
-          size={14}
-          font={Font.semibold}
-          // font={Font.semibold}
-          color={COLOR.black}
-          style={{marginTop: 20, marginBottom: 6}}>
-          Photo Verification
-        </Typography>
-        {image.PhotoVerifi ? (
-          <View style={styles.imgWrapper}>
-            <Image
-              source={{uri: image.PhotoVerifi.uri}}
-              style={styles.previewImg}
-            />
-            <TouchableOpacity
-              style={styles.deleteBtn}
-              onPress={() => setImages(prev => ({...prev, PhotoVerifi: null}))}>
-              <Image
-                source={images.cross}
-                style={{height: 12, width: 12}}
-                tintColor={'white'}
-              />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <ImageUpload onPress={() => openUpload('PhotoVerifi')} />
-        )}
-        {errors.PhotoVerifi && <ErrorBox error={errors.PhotoVerifi} />}
-
-        {/* Business Proof */}
-        <Typography
-          size={14}
-          font={Font.semibold}
-          color={COLOR.black}
-          style={{marginTop: 20, marginBottom: 6}}>
-          Business Proof
-        </Typography>
-        {image.businessProof ? (
-          <View style={styles.imgWrapper}>
-            <Image
-              source={{uri: image.businessProof.uri}}
-              style={styles.previewImg}
-            />
-            <TouchableOpacity
-              style={styles.deleteBtn}
-              onPress={() =>
-                setImages(prev => ({...prev, businessProof: null}))
-              }>
-              <Image
-                source={images.cross}
-                style={{height: 12, width: 12}}
-                tintColor={'white'}
-              />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <ImageUpload onPress={() => openUpload('businessProof')} />
-        )}
-        {errors.businessProof && <ErrorBox error={errors.businessProof} />}
-
-        {/* Aadhaar Front */}
-        <Typography
-          size={14}
-          font={Font.semibold}
-          color={COLOR.black}
-          style={{marginTop: 20, marginBottom: 6}}>
-          Aadhaar Card Verification
-        </Typography>
-        {image.aadhaarFront ? (
-          <View style={styles.imgWrapper}>
-            <Image
-              source={{uri: image.aadhaarFront.uri}}
-              style={styles.previewImg}
-            />
-            <TouchableOpacity
-              style={styles.deleteBtn}
-              onPress={() =>
-                setImages(prev => ({...prev, aadhaarFront: null}))
-              }>
-              <Image
-                source={images.cross}
-                style={{height: 12, width: 12}}
-                tintColor={'white'}
-              />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <ImageUpload onPress={() => openUpload('aadhaarFront')} />
-        )}
-        {errors.aadhaarFront && <ErrorBox error={errors.aadhaarFront} />}
-
-        {/* PAN */}
-        <Typography
-          size={14}
-          font={Font.semibold}
-          color={COLOR.black}
-          style={{marginTop: 20, marginBottom: 6}}>
-          PAN Card
-        </Typography>
-        {image.pan ? (
-          <View style={styles.imgWrapper}>
-            <Image source={{uri: image.pan.uri}} style={styles.previewImg} />
-            <TouchableOpacity
-              style={styles.deleteBtn}
-              onPress={() => setImages(prev => ({...prev, pan: null}))}>
-              <Image
-                source={images.cross}
-                style={{height: 12, width: 12}}
-                tintColor={'white'}
-              />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <ImageUpload onPress={() => openUpload('pan')} />
-        )}
-        {errors.pan && <ErrorBox error={errors.pan} />}
-
         <Text style={[styles.label, {marginTop: 18}]}>Service Category</Text>
         <Dropdown
           style={styles.dropdown}
@@ -384,6 +310,70 @@ const CompleteProfile = ({navigation}) => {
         {errors.category && (
           <ErrorBox error={errors.category} style={{marginBottom: 20}} />
         )}
+
+        {/* Photo Verification */}
+        <Typography
+          size={14}
+          font={Font.semibold}
+          // font={Font.semibold}
+          color={COLOR.black}
+          style={{marginTop: 20, marginBottom: 6}}>
+          Photo Verification
+        </Typography>
+        <ImageUpload
+          file={image.PhotoVerifi}
+          setFile={file => setImages(prev => ({...prev, PhotoVerifi: file}))}
+          document={false}
+        />
+        {errors.PhotoVerifi && <ErrorBox error={errors.PhotoVerifi} />}
+
+        {/* Business Proof */}
+        <Typography
+          size={14}
+          font={Font.semibold}
+          color={COLOR.black}
+          style={{marginTop: 20, marginBottom: 6}}>
+          Business Proof
+        </Typography>
+
+        <ImageUpload
+          file={image.businessProof}
+          setFile={file => setImages(prev => ({...prev, businessProof: file}))}
+        />
+
+        {errors.businessProof && <ErrorBox error={errors.businessProof} />}
+
+        {/* Aadhaar Front */}
+        <Typography
+          size={14}
+          font={Font.semibold}
+          color={COLOR.black}
+          style={{marginTop: 20, marginBottom: 6}}>
+          Aadhaar Card Verification
+        </Typography>
+
+        <ImageUpload
+          file={image.aadhaarFront}
+          setFile={file => setImages(prev => ({...prev, aadhaarFront: file}))}
+        />
+
+        {errors.aadhaarFront && <ErrorBox error={errors.aadhaarFront} />}
+
+        {/* PAN */}
+        <Typography
+          size={14}
+          font={Font.semibold}
+          color={COLOR.black}
+          style={{marginTop: 20, marginBottom: 6}}>
+          PAN Card
+        </Typography>
+
+        <ImageUpload
+          file={image.pan}
+          setFile={file => setImages(prev => ({...prev, pan: file}))}
+        />
+
+        {errors.pan && <ErrorBox error={errors.pan} />}
 
         {/* About Business */}
         <Input
@@ -412,14 +402,78 @@ const CompleteProfile = ({navigation}) => {
         />
 
         {/* Location */}
-        <Input
+
+        <GoogleAutoLocaton
           label="Exact Location"
-          placeholder="Street, City, State, ZIP"
-          style={{borderColor: COLOR.primary, fontFamily: Font.medium}}
           value={location}
-          onChangeText={setLocation}
-          error={errors.location}
+          placeholder="Enter your Exact Location"
+          onPress={(data, details) => {
+            const loc =
+              data?.description || details?.formatted_address || details?.name;
+            setLocation(loc);
+
+            if (details?.geometry?.location) {
+              const {lat, lng} = details.geometry.location;
+              const newRegion = {
+                latitude: lat,
+                longitude: lng,
+                latitudeDelta: 0.05,
+                longitudeDelta: 0.05,
+              };
+              setRegion(newRegion);
+              setMarkerCoords({latitude: lat, longitude: lng});
+            }
+          }}
+          renderRightButton={() => {
+            if (location) {
+              return (
+                <TouchableOpacity
+                  onPress={() => {
+                    setLocation('');
+                    setMarkerCoords(null);
+                  }}
+                  style={{marginTop: 15}}>
+                  <Image
+                    source={images.cross}
+                    style={{height: 14, width: 14, tintColor: 'red'}}
+                  />
+                </TouchableOpacity>
+              );
+            }
+            return null;
+          }}
         />
+
+        {location && (
+          <View
+            style={{
+              width: '100%',
+              height: 200,
+              overflow: 'hidden',
+              marginTop: 20,
+              borderRadius: 10,
+            }}>
+            <MapView
+              style={{flex: 1}}
+              region={region}
+              onRegionChangeComplete={async newRegion => {
+                setRegion(newRegion);
+                setMarkerCoords({
+                  latitude: newRegion.latitude,
+                  longitude: newRegion.longitude,
+                });
+                const address = await getAddressFromCoords(
+                  newRegion.latitude,
+                  newRegion.longitude,
+                );
+                if (address) {
+                  setLocation(address);
+                }
+              }}>
+              {markerCoords && <Marker coordinate={markerCoords} />}
+            </MapView>
+          </View>
+        )}
 
         {/* Website */}
         <Input
@@ -449,6 +503,8 @@ const CompleteProfile = ({navigation}) => {
         close={() => setShowModal(false)}
         selected={handleSelect}
         mediaType="photo"
+        document={true}
+        documents={true}
       />
     </KeyboardAvoidingView>
   );

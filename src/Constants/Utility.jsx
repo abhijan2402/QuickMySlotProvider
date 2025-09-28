@@ -24,3 +24,5 @@ export default function useKeyboard() {
 
   return { isKeyboardVisible, keyboardHeight };
 }
+
+export const Google_Key = 'AIzaSyDsRXO8vkZFS6TnnNs6i0MD_d_De7d5xqo'

@@ -13,8 +13,8 @@ import Input from '../../../Components/Input';
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import ImageModal from '../../../Components/UI/ImageModal';
-import useKeyboard from '../../../Constants/Utility';
-import {isValidForm, ToastMsg} from '../../../Backend/Utility';
+import useKeyboard, {Google_Key} from '../../../Constants/Utility';
+import {cleanImageUrl, isValidForm, ToastMsg} from '../../../Backend/Utility';
 import {validators} from '../../../Backend/Validator';
 import Button from '../../../Components/UI/Button';
 import {Typography} from '../../../Components/UI/Typography';
@@ -34,12 +34,29 @@ import {
 import {userDetails} from '../../../Redux/action';
 import {Dropdown} from 'react-native-element-dropdown';
 import {ErrorBox} from '../../../Components/UI/ErrorBox';
+import {Font} from '../../../Constants/Font';
+import moment from 'moment';
+import {images} from '../../../Components/UI/images';
+import DatePickerModal from '../../../Components/UI/DatePicker';
+import GoogleAutoLocaton from '../../../Components/UI/GoogleAutoLocaton';
+import MapView, {Marker} from 'react-native-maps';
+
+const days = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+];
 
 const EditProfile = ({navigation}) => {
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  console.log(address);
   const [company, setCompany] = useState('');
   const [website, setWebsite] = useState('');
   const [buisness, setBuisness] = useState('');
@@ -52,16 +69,35 @@ const EditProfile = ({navigation}) => {
   const [isEditing, setIsEditing] = useState(true);
   const {isKeyboardVisible} = useKeyboard();
   const userdata = useSelector(store => store.userDetails);
-  console.log(userdata, 'userdatauserdatauserdatauserdata===>');
-  const [profileImage, setProfileImage] = useState('');
-  console.log(profileImage);
+  console.log(userdata, 'lllllll');
 
+  const [profileImage, setProfileImage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState({});
   const isFocus = useIsFocused();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [categoryList, setCategoryList] = useState([]);
+  const [experience, setExperience] = useState('');
+  const [selectedDays, setSelectedDays] = useState([]);
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [region, setRegion] = useState({
+    latitude: 28.6139,
+    longitude: 77.209,
+    latitudeDelta: 0.05,
+    longitudeDelta: 0.05,
+  });
+
+  const [markerCoords, setMarkerCoords] = useState(null);
+
+  const toggleDay = day => {
+    if (selectedDays.includes(day)) {
+      setSelectedDays(selectedDays.filter(d => d !== day));
+    } else {
+      setSelectedDays([...selectedDays, day]);
+    }
+  };
 
   useEffect(() => {
     if (isFocus) {
@@ -75,15 +111,59 @@ const EditProfile = ({navigation}) => {
       setBuisness(userdata?.business_name || '');
       setServed(userdata?.location_area_served || '');
       setCompany(userdata?.company_name || '');
+      setExperience(
+        userdata?.years_of_experience
+          ? userdata.years_of_experience.toString()
+          : '',
+      );
+      setStartTime(
+        userdata?.daily_start_time
+          ? moment(userdata.daily_start_time, 'HH:mm').toDate()
+          : '',
+      );
+      setEndTime(
+        userdata?.daily_end_time
+          ? moment(userdata.daily_end_time, 'HH:mm').toDate()
+          : '',
+      );
+      if (userdata?.working_days?.length) {
+        const formattedDays = userdata.working_days.map(
+          d => d.charAt(0).toUpperCase() + d.slice(1),
+        );
+        setSelectedDays(formattedDays);
+      }
+      if (userdata?.exact_location) {
+        const parts = userdata.exact_location.split(',').map(p => p.trim());
+        const len = parts.length;
+
+        if (len >= 1) setCountry(parts[len - 1]);
+        if (len >= 2) setState(parts[len - 2]);
+        if (len >= 3) setCity(parts[len - 3]);
+        setPinCode('');
+      }
     }
   }, [isFocus]);
-
-
 
   const handleImageSelected = response => {
     console.log(response);
     if (response) {
       setProfileImage(response);
+    }
+  };
+
+  const getAddressFromCoords = async (lat, lng) => {
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${Google_Key}`,
+      );
+      const data = await response.json();
+      if (data.status === 'OK') {
+        return data.results[0]?.formatted_address || '';
+      }
+      return '';
+    } catch (err) {
+      console.log('Reverse Geocode Error:', err);
+      return '';
     }
   };
 
@@ -118,10 +198,21 @@ const EditProfile = ({navigation}) => {
       name: validators.checkRequire('Name', firstName),
       email: validators.checkEmail('Email', email),
       phone: validators.checkNumber('Phone Number', phone),
-      address: validators.checkRequire('Address', address),
+      exact_location: validators.checkRequire('exact_location', address),
+      city: validators.checkRequire('City', city),
+      country: validators.checkRequire('Country', country),
+      state: validators.checkRequire('State', state),
+      pinCode: validators.checkRequire('Pin Code', pinCode),
       buisness: validators.checkRequire('Buisness Name', buisness),
       location_served: validators.checkRequire('Location Area Served', served),
       category: validators.checkRequire('Service Category', category),
+      experience: validators.checkRequire('Experience', experience),
+      start: validators.checkRequire('Start Time', startTime),
+      end: validators.checkRequire('End Time', endTime),
+      days:
+        selectedDays.length === 0
+          ? 'Please select at least one working day.'
+          : '',
     };
     setError(validationErrors);
     if (isValidForm(validationErrors)) {
@@ -129,17 +220,23 @@ const EditProfile = ({navigation}) => {
       const formData = new FormData();
       formData.append('name', firstName);
       formData.append('email', email);
-      formData.append('address', address);
+      formData.append('exact_location', address);
       formData.append('phone', phone);
-      formData.append('city', 'jaipur');
-      formData.append('state', 'Rajasthan');
-      formData.append('country', 'india');
-      formData.append('zip_code', '123456');
+      formData.append('city', city);
+      formData.append('state', state);
+      formData.append('country', country);
+      formData.append('zip_code', pinCode);
       formData.append('company_name', company);
       formData.append('category_id', userdata?.service_category);
       formData.append('website', '');
       formData.append('business_name', buisness);
+      formData.append('years_of_experience', Number(experience));
       formData.append('location_area_served', served);
+      formData.append('daily_end_time', moment(endTime).format('HH:mm'));
+      formData.append('daily_start_time', moment(startTime).format('HH:mm'));
+      selectedDays.map((item, index) => {
+        formData.append(`working_days[${index}]`, item.toLowerCase());
+      });
       if (profileImage && profileImage?.mime) {
         formData.append('profile_picture', {
           uri: profileImage?.path,
@@ -186,9 +283,7 @@ const EditProfile = ({navigation}) => {
       <View style={styles.profileSection}>
         <Image
           source={{
-            uri: profileImage?.path
-              ? profileImage?.path
-              : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+            uri: cleanImageUrl(profileImage?.path),
           }}
           style={styles.profileImage}
         />
@@ -213,6 +308,7 @@ const EditProfile = ({navigation}) => {
         }>
         <ScrollView
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
           style={{flex: 1, paddingHorizontal: 5}}
           contentContainerStyle={styles.container}>
           {/* 🚀 Promo Card */}
@@ -280,15 +376,53 @@ const EditProfile = ({navigation}) => {
             editable={false}
             error={error.phone}
           />
-          <Input
-            label="Address"
-            placeholder="Enter Your Address"
+          <GoogleAutoLocaton
+            label="exact_location"
             value={address}
-            style={{borderColor: COLOR.primary}}
-            onChangeText={setAddress}
-            editable={isEditing}
-            error={error.address}
+            placeholder="Enter your exact_location"
+            onPress={(data, details) => {
+              console.log('DATA==>', data);
+              console.log('DETAILS==>', details);
+              const loc =
+                data?.description ||
+                details?.formatted_address ||
+                details?.name;
+              setAddress(loc);
+
+              if (details?.address_components?.length) {
+                let city = '';
+                let state = '';
+                let country = '';
+                let zip = '';
+
+                details.address_components.forEach(component => {
+                  if (component.types.includes('locality')) {
+                    city = component.long_name;
+                  }
+                  if (component.types.includes('administrative_area_level_1')) {
+                    state = component.long_name;
+                  }
+                  if (component.types.includes('country')) {
+                    country = component.long_name;
+                  }
+                  if (
+                    component.types.includes('postal_code') ||
+                    component.types.includes('postal_code_suffix')
+                  ) {
+                    zip = component.long_name;
+                  }
+                });
+
+                if (city) setCity(city);
+                if (state) setState(state);
+                if (country) setCountry(country);
+                if (zip) setPinCode(zip);
+              }
+            }}
           />
+          {error.exact_location && (
+            <ErrorBox style={{marginTop: 0}} error={error.exact_location} />
+          )}
           <Input
             label="City"
             placeholder="Enter Your City"
@@ -316,7 +450,9 @@ const EditProfile = ({navigation}) => {
             editable={isEditing}
             error={error.country}
           />
-          <Text style={[styles.label, {marginTop: 18}]}>Service Category</Text>
+          <Typography size={14} font={Font.semibold} style={[{marginTop: 18}]}>
+            Service Category
+          </Typography>
           <Dropdown
             style={styles.dropdown}
             placeholderStyle={styles.placeholderStyle}
@@ -341,6 +477,73 @@ const EditProfile = ({navigation}) => {
             onChangeText={setPinCode}
             editable={isEditing}
             error={error.pinCode}
+          />
+          <Input
+            label="Years of Experience"
+            placeholder="Enter Your Experience"
+            style={{borderColor: COLOR.primary, fontFamily: Font.medium}}
+            value={experience}
+            keyboardType="decimal-pad"
+            onChangeText={setExperience}
+            error={error.experience}
+          />
+          <Typography size={14} font={Font.semibold} style={[{marginTop: 18}]}>
+            Working Days
+          </Typography>
+          <View style={styles.daysContainer}>
+            {days.map(day => (
+              <TouchableOpacity
+                key={day}
+                style={styles.dayRow}
+                onPress={() => toggleDay(day)}>
+                <View
+                  style={[
+                    styles.checkbox,
+                    selectedDays.includes(day) && styles.checkboxSelected,
+                  ]}>
+                  {selectedDays.includes(day) && (
+                    <Image
+                      source={images.check}
+                      style={{
+                        width: 14,
+                        height: 14,
+                        tintColor: COLOR.white,
+                        resizeMode: 'contain',
+                      }}
+                    />
+                  )}
+                </View>
+                <Typography font={Font.semibold} size={14} color={COLOR.black}>
+                  {day}
+                </Typography>
+              </TouchableOpacity>
+            ))}
+          </View>
+          {error.days && (
+            <ErrorBox style={{marginTop: -6}} error={error.days} />
+          )}
+
+          <View style={{marginTop: error.days ? 10 : 5}}>
+            <DatePickerModal
+              label="Daily Start Time (e.g., 9:00 AM)"
+              value={startTime}
+              mode="time"
+              error={error.start}
+              onChange={v => setStartTime(v)}
+            />
+          </View>
+
+          {/* End Time */}
+          <DatePickerModal
+            containerStyle={{
+              marginTop: error.start ? 50 : 30,
+              marginBottom: error.end ? 40 : 20,
+            }}
+            label="Daily End Time (e.g., 5:00 PM)"
+            value={endTime}
+            mode="time"
+            error={error.end}
+            onChange={v => setEndTime(v)}
           />
           <Input
             label="company name"
@@ -369,15 +572,82 @@ const EditProfile = ({navigation}) => {
             editable={isEditing}
             error={error.buisness}
           />
-          <Input
+          <GoogleAutoLocaton
             label="location area served"
-            placeholder="Enter Your location area served"
             value={served}
-            style={{borderColor: COLOR.primary}}
-            onChangeText={setServed}
-            editable={isEditing}
-            error={error.location_served}
+            placeholder="Enter your location area served"
+            onPress={(data, details) => {
+              console.log('DATA==>', data);
+              console.log('DETAILS==>', details);
+              const loc =
+                data?.description ||
+                details?.formatted_address ||
+                details?.name;
+              setServed(loc);
+              if (details?.geometry?.location) {
+                const {lat, lng} = details.geometry.location;
+                const newRegion = {
+                  latitude: lat,
+                  longitude: lng,
+                  latitudeDelta: 0.05,
+                  longitudeDelta: 0.05,
+                };
+                setRegion(newRegion);
+                setMarkerCoords({latitude: lat, longitude: lng});
+              }
+            }}
+            renderRightButton={() => {
+              if (served) {
+                return (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setServed('');
+                      setMarkerCoords(null);
+                    }}
+                    style={{marginTop: 15}}>
+                    <Image
+                      source={images.cross}
+                      style={{height: 14, width: 14, tintColor: 'red'}}
+                    />
+                  </TouchableOpacity>
+                );
+              }
+              return null;
+            }}
           />
+          {error.location_served && (
+            <ErrorBox style={{marginTop: 0}} error={error.location_served} />
+          )}
+          {served && (
+            <View
+              style={{
+                width: '100%',
+                height: 200,
+                overflow: 'hidden',
+                marginTop: 20,
+                borderRadius: 10,
+              }}>
+              <MapView
+                style={{flex: 1}}
+                region={region}
+                onRegionChangeComplete={async newRegion => {
+                  setRegion(newRegion);
+                  setMarkerCoords({
+                    latitude: newRegion.latitude,
+                    longitude: newRegion.longitude,
+                  });
+                  const address = await getAddressFromCoords(
+                    newRegion.latitude,
+                    newRegion.longitude,
+                  );
+                  if (address) {
+                    setServed(address);
+                  }
+                }}>
+                {markerCoords && <Marker coordinate={markerCoords} />}
+              </MapView>
+            </View>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -485,5 +755,29 @@ const styles = StyleSheet.create({
   selectedTextStyle: {
     fontSize: 14,
     color: COLOR.black,
+  },
+  daysContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
+  },
+  dayRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '50%', // 2-column layout
+    marginBottom: 12,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 1.5,
+    borderColor: COLOR.primary,
+    borderRadius: 4,
+    marginRight: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkboxSelected: {
+    backgroundColor: COLOR.primary,
   },
 });

@@ -27,6 +27,12 @@ export const NOTIFICATION_READ = 'read-all?type=is_all_read&id=1';
 export const DELETE_ACCOUNT = 'delete/user';
 export const GET_CATEGORY = 'category';
 export const SUPPORT = 'supports';
+export const GET_APPOINTMENTS = 'appointment/list';
+export const ACCEPT_APPOINTMENTS = 'booking/accepted/';
+export const REJECT_APPOINTMENTS = 'booking/reject/';
+export const COMPLETED_APPOINTMENTS = 'booking/completed/';
+
+
 
 
 

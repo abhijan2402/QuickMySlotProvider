@@ -162,25 +162,13 @@ const AddSubServices = ({navigation, route}) => {
           style={[styles.label, {marginTop: 20}]}>
           Sub Service Image
         </Typography>
-        {image?.path ? (
-          <View style={styles.imgWrapper}>
-            <Image
-              source={{uri: image.path || image.uri || image}}
-              style={styles.previewImg}
-            />
-            <TouchableOpacity
-              style={styles.deleteBtn}
-              onPress={() => setImage(null)}>
-              <Image
-                source={images.cross}
-                style={{height: 12, width: 12}}
-                tintColor={'white'}
-              />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <ImageUpload onPress={() => setShowModal(true)} />
-        )}
+
+        <ImageUpload
+          file={image}
+          setFile={file => setImage(file)}
+          document={false}
+        />
+
         <Typography
           size={12}
           color="#777"

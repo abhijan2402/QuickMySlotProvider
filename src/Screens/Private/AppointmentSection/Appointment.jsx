@@ -1,114 +1,233 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
   TouchableOpacity,
   FlatList,
   Linking,
+  ActivityIndicator,
 } from 'react-native';
 import HomeHeader from '../../../Components/HomeHeader';
 import {COLOR} from '../../../Constants/Colors';
 import ConfirmModal from '../../../Components/UI/ConfirmModel';
 import {Typography} from '../../../Components/UI/Typography';
+import {useIsFocused} from '@react-navigation/native';
+import {GET_WITH_TOKEN, POST_WITH_TOKEN} from '../../../Backend/Api';
+import {
+  ACCEPT_APPOINTMENTS,
+  COMPLETED_APPOINTMENTS,
+  GET_APPOINTMENTS,
+  REJECT_APPOINTMENTS,
+} from '../../../Constants/ApiRoute';
 
 const VendorAppointments = () => {
   const [tab, setTab] = useState('Upcoming');
   const [accept, setAccept] = useState(false);
+  const [appointmentId, setAppointmentId] = useState('');
   const [reject, setReject] = useState(false);
+  const [complete, setComplete] = useState(false);
 
-  const appointments = [
-    {
-      id: '1',
-      customerName: 'Ravi Sharma',
-      customerPhone: '9876543210',
-      customerAddress: '123, MG Road, Jaipur',
-      services: [
-        {name: 'Bridal Makeup', price: '$3000'},
-        {name: 'Hair Styling', price: '$500'},
-      ],
-      date: 'Aug 20, 2025',
-      time: '3:00 PM',
-      duration: '2 hrs',
-      status: 'Upcoming',
-    },
-    {
-      id: '2',
-      customerName: 'Priya Mehta',
-      customerPhone: '9123456780',
-      customerAddress: '22, Malviya Nagar, Delhi',
-      services: [{name: 'Hair Spa', price: '$1200'}],
-      date: 'Aug 15, 2025',
-      time: '1:00 PM',
-      duration: '1 hr',
-      status: 'Past',
-    },
+  const tabs = [
+    {id: 1, title: 'Upcoming', status: 'pending'},
+    {id: 2, title: 'Accepted', status: 'accepted'},
+    {id: 3, title: 'Rejected', status: 'rejected'},
+    {id: 1, title: 'Completed', status: 'completed'},
   ];
+  const [loading, setLoading] = useState(false);
+  const isFocus = useIsFocused();
+  const [appointments, setAppointments] = useState([]);
+  console.log(appointments);
 
-  const filteredAppointments = appointments.filter(item => item.status === tab);
+  useEffect(() => {
+    GetServices();
+  }, [isFocus, tab]);
+
+  const GetServices = () => {
+    setLoading(true);
+    GET_WITH_TOKEN(
+      GET_APPOINTMENTS,
+      success => {
+        setLoading(false);
+        const allAppointments = success?.data || [];
+        let filteredAppointments = [];
+        switch (tab) {
+          case 'Upcoming':
+            filteredAppointments = allAppointments.filter(
+              a => a.status === 'pending',
+            );
+            break;
+          case 'Accepted':
+            filteredAppointments = allAppointments.filter(
+              a => a.status === 'accepted',
+            );
+            break;
+          case 'Rejected':
+            filteredAppointments = allAppointments.filter(
+              a => a.status === 'rejected',
+            );
+            break;
+          case 'Completed':
+            filteredAppointments = allAppointments.filter(
+              a => a.status === 'completed',
+            );
+            break;
+          default:
+            filteredAppointments = allAppointments;
+        }
+
+        setAppointments(filteredAppointments);
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+      },
+      fail => {
+        console.log(fail, 'failfailfail>>');
+        setLoading(false);
+      },
+    );
+  };
+
+  const HandleAccept = () => {
+    setLoading(true);
+    POST_WITH_TOKEN(
+      ACCEPT_APPOINTMENTS + appointmentId,
+      success => {
+        setLoading(false);
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+        GetServices();
+        setAccept(false);
+      },
+      fail => {
+        console.log(fail, 'failfailfail>>');
+        setLoading(false);
+      },
+    );
+  };
+  const HandleReject = () => {
+    setLoading(true);
+    POST_WITH_TOKEN(
+      REJECT_APPOINTMENTS + appointmentId,
+      success => {
+        setLoading(false);
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+        GetServices();
+        setReject(false);
+      },
+      fail => {
+        console.log(fail, 'failfailfail>>');
+        setLoading(false);
+      },
+    );
+  };
+  const HandleComplete = () => {
+    setLoading(true);
+    POST_WITH_TOKEN(
+      COMPLETED_APPOINTMENTS + appointmentId,
+      success => {
+        setLoading(false);
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+        GetServices();
+        setComplete(false);
+      },
+      fail => {
+        console.log(fail, 'failfailfail>>');
+        setLoading(false);
+      },
+    );
+  };
 
   const renderCard = ({item}) => {
-    const totalPrice = item.services.reduce(
-      (sum, s) => sum + parseInt(s.price.replace('$', '')),
-      0,
-    );
+    const scheduleEntries = item?.schedule_time
+      ? Object.entries(item.schedule_time) // [ [time, date], ... ]
+      : [];
 
     return (
       <View style={styles.card}>
+        <Typography style={styles.infoText}>
+          Order Id: {item?.order_id}
+        </Typography>
         {/* Customer Info */}
         <Typography style={styles.sectionTitle}>👤 Customer Details</Typography>
         <Typography style={styles.infoText}>
-          Name: {item.customerName}
+          Name: {item?.customer?.name}
         </Typography>
         <Typography
           style={styles.linkText}
-          onPress={() => Linking.openURL(`tel:${item.customerPhone}`)}
+          onPress={() => Linking.openURL(`tel:${item.customer?.phone_number}`)}
           disabled={false}>
-          📞 {item.customerPhone}
+          📞 {item.customer?.phone_number}
         </Typography>
         <Typography style={styles.infoText}>
-          📍 {item.customerAddress}
+          📍 {item.customer?.exact_location}
         </Typography>
 
         <View style={styles.divider} />
 
         {/* Services */}
         <Typography style={styles.sectionTitle}>💇 Services Booked</Typography>
-        {item.services.map((s, index) => (
-          <Typography key={index} style={styles.infoText}>
-            • {s.name} - {s.price}
-          </Typography>
-        ))}
+        <Typography style={styles.infoText}>
+          • {item?.service?.name} - {item?.service?.price}
+        </Typography>
         <Typography style={styles.totalPrice}>
-          Total: ${totalPrice}
+          Total: ${item?.service?.price}
         </Typography>
 
         <View style={styles.divider} />
 
         {/* Booking Details */}
         <Typography style={styles.sectionTitle}>🗓 Booking Details</Typography>
+        {scheduleEntries.length > 0 ? (
+          scheduleEntries.map(([time, date], index) => (
+            <Typography key={index} style={styles.infoText}>
+              Date & Time: {time} {new Date(date).toLocaleDateString()}  
+            </Typography>
+          ))
+        ) : (
+          <Typography style={styles.infoText}>Date & Time: N/A</Typography>
+        )}
+
         <Typography style={styles.infoText}>
-          Date & Time: {item.date}, {item.time}
-        </Typography>
-        <Typography style={styles.infoText}>
-          Duration: {item.duration}
+          Duration: {item.service?.duration}
         </Typography>
 
         {/* Actions */}
-        {tab === 'Upcoming' && (
+        {tab !== 'Completed' && tab !== 'Rejected' && (
           <View style={styles.actionRow}>
             <TouchableOpacity
               style={styles.acceptBtn}
-              onPress={() => setAccept(true)}>
-              <Typography style={styles.actionText}>Accept</Typography>
+              onPress={() => {
+                if (tab === 'Accepted') {
+                  setComplete(true);
+                } else {
+                  setAccept(true);
+                }
+                setAppointmentId(item?.id);
+              }}>
+              <Typography style={styles.actionText}>
+                {tab === 'Upcoming' ? 'Accept' : 'Mark as complete'}
+              </Typography>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.rejectBtn}
-              onPress={() => setReject(true)}>
+              onPress={() => {
+                setReject(true);
+                setAppointmentId(item?.id);
+              }}>
               <Typography style={styles.actionText}>Reject</Typography>
             </TouchableOpacity>
           </View>
         )}
-        {tab === 'Past' && (
+        {tab === 'Completed' && (
           <TouchableOpacity style={styles.feedbackBtn}>
             <Typography style={styles.feedbackText}>
               ✍️ Give Feedback
@@ -128,32 +247,43 @@ const VendorAppointments = () => {
       />
       {/* Tabs */}
       <View style={styles.tabRow}>
-        {['Upcoming', 'Past'].map(label => (
-          <TouchableOpacity
-            key={label}
-            style={[
-              styles.tabButton,
-              tab === label && {backgroundColor: COLOR.primary},
-            ]}
-            onPress={() => setTab(label)}>
-            <Typography
-              style={[
-                styles.tabText,
-                {color: tab === label ? COLOR.white : COLOR.black},
-              ]}>
-              {label}
-            </Typography>
-          </TouchableOpacity>
-        ))}
+        <FlatList
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          data={tabs}
+          renderItem={({item}) => {
+            return (
+              <TouchableOpacity
+                key={item.id}
+                style={[
+                  styles.tabButton,
+                  tab === item.title && {backgroundColor: COLOR.primary},
+                ]}
+                onPress={() => setTab(item.title)}>
+                <Typography
+                  style={[
+                    styles.tabText,
+                    {color: tab === item.title ? COLOR.white : COLOR.black},
+                  ]}>
+                  {item.title}
+                </Typography>
+              </TouchableOpacity>
+            );
+          }}
+        />
       </View>
 
       {/* List */}
-      <FlatList
-        data={filteredAppointments}
-        keyExtractor={item => item.id}
-        renderItem={renderCard}
-        contentContainerStyle={{paddingBottom: 20}}
-      />
+      {loading ? (
+        <ActivityIndicator size={'large'} color={COLOR.primary} />
+      ) : (
+        <FlatList
+          data={appointments}
+          keyExtractor={item => item.id}
+          renderItem={renderCard}
+          contentContainerStyle={{paddingBottom: 20}}
+        />
+      )}
 
       {/* Confirm Modals */}
       <ConfirmModal
@@ -163,7 +293,8 @@ const VendorAppointments = () => {
         description="Are you sure you want to Accept this Appointment?"
         yesTitle="Yes"
         noTitle="No"
-        onPressYes={() => {}}
+        loading={loading}
+        onPressYes={() => HandleAccept()}
         onPressNo={() => setAccept(false)}
       />
       <ConfirmModal
@@ -173,8 +304,20 @@ const VendorAppointments = () => {
         description="Are you sure you want to Reject this Appointment?"
         yesTitle="Yes"
         noTitle="No"
-        onPressYes={() => {}}
+        loading={loading}
+        onPressYes={() => HandleReject()}
         onPressNo={() => setReject(false)}
+      />
+      <ConfirmModal
+        visible={complete}
+        close={() => setComplete(false)}
+        title="Complete Appointment"
+        description="Are you sure you want to Complete this Appointment?"
+        yesTitle="Yes"
+        loading={loading}
+        noTitle="No"
+        onPressYes={() => HandleComplete()}
+        onPressNo={() => setComplete(false)}
       />
     </View>
   );
@@ -187,7 +330,7 @@ const styles = StyleSheet.create({
   tabRow: {flexDirection: 'row', marginVertical: 15, justifyContent: 'center'},
   tabButton: {
     paddingVertical: 8,
-    paddingHorizontal: 20,
+    paddingHorizontal: 8,
     borderRadius: 20,
     marginHorizontal: 5,
     backgroundColor: '#E0E0E0',

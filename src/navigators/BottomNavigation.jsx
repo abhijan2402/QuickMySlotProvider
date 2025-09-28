@@ -8,19 +8,24 @@ import MainHome from '../Screens/Private/Home/MainHome';
 import Notification from '../Screens/Private/Home/Notification';
 import VendorAppointments from '../Screens/Private/AppointmentSection/Appointment';
 import {Font} from '../Constants/Font';
+import {images} from '../Components/UI/images';
 
 const Tab = createBottomTabNavigator();
 
 const BottomNavigation = () => {
   const insets = useSafeAreaInsets();
+  const image = {
+    Dashboard: images.dashboard,
+    Appointment: images.document,
+    Notification: images.notification,
+    Profile: images.user,
+  };
 
-  const icons = {
-    Dashboard: 'https://cdn-icons-png.flaticon.com/128/1828/1828765.png',
-    Appointment: 'https://cdn-icons-png.flaticon.com/128/1250/1250680.png',
-    Notification: 'https://cdn-icons-png.flaticon.com/128/10502/10502974.png',
-    // [strings.analytics]:
-    //   'https://cdn-icons-png.flaticon.com/128/2099/2099058.png',
-    Profile: 'https://cdn-icons-png.flaticon.com/128/9308/9308008.png',
+  const imageFocused = {
+    Dashboard: images.dashboardFocused,
+    Appointment: images.documentFocused,
+    Notification: images.notificationFocused,
+    Profile: images.userFocused,
   };
 
   return (
@@ -38,15 +43,17 @@ const BottomNavigation = () => {
           height: 60, // Add safe area bottom inset for Android/iOS
         },
         tabBarIcon: ({focused}) => {
-          const iconUri = icons[route.name];
+          const imageOutline = image[route.name];
+          const imageFocus = imageFocused[route.name];
 
           return (
             <Image
-              source={{uri: iconUri}}
+              source={focused ? imageFocus : imageOutline}
               style={{
                 width: 22,
                 height: 22,
                 tintColor: focused ? COLOR.primary : 'gray',
+                marginTop:5
               }}
               resizeMode="contain"
             />
@@ -61,7 +68,7 @@ const BottomNavigation = () => {
               style={{
                 color,
                 fontSize: 10,
-                marginTop: 4,
+                marginTop: 8,
                 textAlign: 'center',
                 fontFamily: Font.medium,
               }}>

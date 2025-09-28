@@ -19,6 +19,7 @@ import {ANALYTICS, DELETE_ACCOUNT} from '../../../Constants/ApiRoute';
 import {useDispatch, useSelector} from 'react-redux';
 import {isAuth, Token, userDetails} from '../../../Redux/action';
 import {Font} from '../../../Constants/Font';
+import { cleanImageUrl } from '../../../Backend/Utility';
 
 const Account = ({navigation}) => {
   const {setUser} = useContext(AuthContext);
@@ -149,7 +150,7 @@ const Account = ({navigation}) => {
         contentContainerStyle={{paddingBottom: 20}}>
         {/* Profile Section */}
         <View style={styles.profileSection}>
-          <Image source={{uri: profileImage}} style={styles.profileImage} />
+          <Image source={{uri: cleanImageUrl(profileImage)}} style={styles.profileImage} />
           <Typography font={Font.semibold} variant="h2" color={COLOR.black}>
             {userdata?.name}
           </Typography>

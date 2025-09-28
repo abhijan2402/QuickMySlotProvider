@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontSize: 14,
     color: COLOR.black,
-    fontFamily: Font.medium,
     fontFamily: Font.semibold,
   },
   inputContainer: {
