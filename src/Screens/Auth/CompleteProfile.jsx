@@ -216,6 +216,7 @@ const CompleteProfile = ({navigation}) => {
             const errorKeyMap = {
               years_of_experience: 'experience',
               business_website: 'website',
+              pan_card:"pan"
             };
             const apiErrors = {};
             Object.keys(error.data.errors).forEach(key => {

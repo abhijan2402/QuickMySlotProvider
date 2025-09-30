@@ -136,6 +136,7 @@ const EditProfile = ({navigation}) => {
       if (userdata?.exact_location) {
         const parts = userdata.exact_location.split(',').map(p => p.trim());
         const len = parts.length;
+console.log(parts,'dadasaewqe');
 
         if (len >= 1) setCountry(parts[len - 1]);
         if (len >= 2) setState(parts[len - 2]);

@@ -91,15 +91,15 @@ const OtpScreen = ({navigation, route}) => {
       VERIFY_OTP,
       body,
       success => {
-        console.log(success, 'successsuccesssuccess-->>>');
+        console.log(success, 'successsuccesssuccessdsrewr-->>>');
         setLoading(false);
         if (success?.user?.steps == 3) {
           dispatch(isAuth(true));
         } else {
-          navigation.navigate('CompleteProfile');
+          navigation.replace('CompleteProfile');
         }
         dispatch(Token(success?.token));
-        dispatch(userDetails(success?.user));
+        dispatch(userDetails({...success?.user, steps: 1}));
       },
       error => {
         console.log(error, 'errorerrorerror>>');
