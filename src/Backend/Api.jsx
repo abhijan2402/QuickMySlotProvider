@@ -2,6 +2,7 @@ import SimpleToast from 'react-native-simple-toast';
 import {createRef} from 'react';
 import axios from 'axios';
 import {store} from '../Redux/store';
+import {Alert} from 'react-native';
 export const toastRef = createRef();
 const errorHandling = {
   validateStatus: function (status) {

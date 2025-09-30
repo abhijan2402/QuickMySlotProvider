@@ -69,8 +69,7 @@ const EditProfile = ({navigation}) => {
   const [isEditing, setIsEditing] = useState(true);
   const {isKeyboardVisible} = useKeyboard();
   const userdata = useSelector(store => store.userDetails);
-  console.log(userdata,'userdatauserdatauserdatauserdata');
-  
+  console.log(userdata, 'userdatauserdatauserdatauserdata');
   const [profileImage, setProfileImage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState({});
@@ -101,47 +100,88 @@ const EditProfile = ({navigation}) => {
 
   useEffect(() => {
     if (isFocus) {
-      getCategory();
-      setPhone(userdata?.phone_number);
-      setWebsite(userdata?.website || userdata?.business_website);
-      setProfileImage({path: userdata?.image});
-      setCity(userdata?.city || '')
-      setFirstName(userdata?.name || '');
-      setEmail(userdata?.email || '');
-      setAddress(userdata?.exact_location || '');
-      setBuisness(userdata?.business_name || '');
-      setServed(userdata?.location_area_served || '');
-      setCompany(userdata?.company_name || '');
-      setExperience(
-        userdata?.years_of_experience
-          ? userdata.years_of_experience.toString()
-          : '',
-      );
-      setStartTime(
-        userdata?.daily_start_time
-          ? moment(userdata.daily_start_time, 'HH:mm').toDate()
-          : '',
-      );
-      setEndTime(
-        userdata?.daily_end_time
-          ? moment(userdata.daily_end_time, 'HH:mm').toDate()
-          : '',
-      );
-      if (userdata?.working_days?.length) {
-        const formattedDays = userdata.working_days.map(
-          d => d.charAt(0).toUpperCase() + d.slice(1),
-        );
-        setSelectedDays(formattedDays);
-      }
-      if (userdata?.exact_location) {
-        const parts = userdata.exact_location.split(',').map(p => p.trim());
-        const len = parts.length;
+      const initLocation = async () => {
+        const lat = userdata?.lat;
+        const lng = userdata?.long;
 
-        if (len >= 1) setCountry(parts[len - 1]);
-        if (len >= 2) setState(parts[len - 2]);
-        if (len >= 3) setCity(parts[len - 3]);
-        setPinCode('');
-      }
+        if (lat && lng) {
+          setRegion({
+            latitude: Number(lat),
+            longitude: Number(lng),
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05,
+          });
+          setMarkerCoords({
+            latitude: Number(lat),
+            longitude: Number(lng),
+          });
+          const fullAddress = await getAddressFromCoords(lat, lng);
+          if (fullAddress) {
+            setAddress(fullAddress);
+          }
+          fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${Google_Key}`,
+          )
+            .then(res => res.json())
+            .then(res => {
+              if (res?.results?.length) {
+                const components = res.results[0].address_components;
+                let city = '',
+                  state = '',
+                  country = '',
+                  zip = '';
+
+                components.forEach(c => {
+                  if (c.types.includes('locality')) city = c.long_name;
+                  if (c.types.includes('administrative_area_level_1'))
+                    state = c.long_name;
+                  if (c.types.includes('country')) country = c.long_name;
+                  if (c.types.includes('postal_code')) zip = c.long_name;
+                });
+
+                if (city) setCity(city);
+                if (state) setState(state);
+                if (country) setCountry(country);
+                if (zip) setPinCode(zip);
+              }
+            });
+        }
+
+        // ✅ Keep remaining initializations
+        getCategory();
+        setPhone(userdata?.phone_number);
+        setWebsite(userdata?.website || userdata?.business_website);
+        setProfileImage({path: userdata?.image});
+        setFirstName(userdata?.name || '');
+        setEmail(userdata?.email || '');
+        setAddress(userdata?.exact_location || '');
+        setBuisness(userdata?.business_name || '');
+        setServed(userdata?.location_area_served || '');
+        setCompany(userdata?.company_name || '');
+        setExperience(
+          userdata?.years_of_experience
+            ? userdata.years_of_experience.toString()
+            : '',
+        );
+        setStartTime(
+          userdata?.daily_start_time
+            ? moment(userdata.daily_start_time, 'HH:mm').toDate()
+            : '',
+        );
+        setEndTime(
+          userdata?.daily_end_time
+            ? moment(userdata.daily_end_time, 'HH:mm').toDate()
+            : '',
+        );
+        if (userdata?.working_days?.length) {
+          const formattedDays = userdata.working_days.map(
+            d => d.charAt(0).toUpperCase() + d.slice(1),
+          );
+          setSelectedDays(formattedDays);
+        }
+      };
+
+      initLocation();
     }
   }, [isFocus]);
 
@@ -206,7 +246,6 @@ const EditProfile = ({navigation}) => {
       pinCode: validators.checkRequire('Pin Code', pinCode),
       buisness: validators.checkRequire('Buisness Name', buisness),
       location_served: validators.checkRequire('Location Area Served', served),
-      category: validators.checkRequire('Service Category', category),
       experience: validators.checkRequire('Experience', experience),
       start: validators.checkRequire('Start Time', startTime),
       end: validators.checkRequire('End Time', endTime),
@@ -229,12 +268,14 @@ const EditProfile = ({navigation}) => {
       formData.append('zip_code', pinCode);
       formData.append('company_name', company);
       formData.append('category_id', userdata?.service_category);
-      formData.append('website', '');
+      formData.append('website', website);
       formData.append('business_name', buisness);
       formData.append('years_of_experience', Number(experience));
       formData.append('location_area_served', served);
       formData.append('daily_end_time', moment(endTime).format('HH:mm'));
       formData.append('daily_start_time', moment(startTime).format('HH:mm'));
+      formData.append('lat', markerCoords?.latitude || region.latitude);
+      formData.append('long', markerCoords?.longitude || region.longitude);
       selectedDays.map((item, index) => {
         formData.append(`working_days[${index}]`, item.toLowerCase());
       });
@@ -378,7 +419,7 @@ const EditProfile = ({navigation}) => {
             error={error.phone}
           />
           <GoogleAutoLocaton
-            label="exact_location"
+            label="Exact location"
             value={address}
             placeholder="Enter your exact_location"
             onPress={(data, details) => {
@@ -389,6 +430,17 @@ const EditProfile = ({navigation}) => {
                 details?.formatted_address ||
                 details?.name;
               setAddress(loc);
+              if (details?.geometry?.location) {
+                const {lat, lng} = details.geometry.location;
+                const newRegion = {
+                  latitude: lat,
+                  longitude: lng,
+                  latitudeDelta: 0.05,
+                  longitudeDelta: 0.05,
+                };
+                setRegion(newRegion);
+                setMarkerCoords({latitude: lat, longitude: lng});
+              }
 
               if (details?.address_components?.length) {
                 let city = '';
@@ -424,6 +476,36 @@ const EditProfile = ({navigation}) => {
           {error.exact_location && (
             <ErrorBox style={{marginTop: 0}} error={error.exact_location} />
           )}
+          {address && (
+            <View
+              style={{
+                width: '100%',
+                height: 200,
+                overflow: 'hidden',
+                marginTop: 20,
+                borderRadius: 10,
+              }}>
+              <MapView
+                style={{flex: 1}}
+                region={region}
+                onRegionChangeComplete={async newRegion => {
+                  setRegion(newRegion);
+                  setMarkerCoords({
+                    latitude: newRegion.latitude,
+                    longitude: newRegion.longitude,
+                  });
+                  const address = await getAddressFromCoords(
+                    newRegion.latitude,
+                    newRegion.longitude,
+                  );
+                  if (address) {
+                    setAddress(address);
+                  }
+                }}>
+                {markerCoords && <Marker coordinate={markerCoords} />}
+              </MapView>
+            </View>
+          )}
           <Input
             label="City"
             placeholder="Enter Your City"
@@ -451,25 +533,7 @@ const EditProfile = ({navigation}) => {
             editable={isEditing}
             error={error.country}
           />
-          <Typography size={14} font={Font.semibold} style={[{marginTop: 18}]}>
-            Service Category
-          </Typography>
-          <Dropdown
-            style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            data={categoryList}
-            disable={!isEditing}
-            maxHeight={150}
-            labelField="label"
-            valueField="value"
-            placeholder="Select Service Category Type"
-            value={category}
-            onChange={item => setCategory(item.value)}
-          />
-          {error.category && (
-            <ErrorBox error={error.category} style={{marginBottom: 20}} />
-          )}
+
           <Input
             label="Pin Code"
             placeholder="Enter Your Pin Code"
@@ -573,82 +637,15 @@ const EditProfile = ({navigation}) => {
             editable={isEditing}
             error={error.buisness}
           />
-          <GoogleAutoLocaton
+          <Input
             label="location area served"
+            placeholder="Enter Your location area served"
             value={served}
-            placeholder="Enter your location area served"
-            onPress={(data, details) => {
-              console.log('DATA==>', data);
-              console.log('DETAILS==>', details);
-              const loc =
-                data?.description ||
-                details?.formatted_address ||
-                details?.name;
-              setServed(loc);
-              if (details?.geometry?.location) {
-                const {lat, lng} = details.geometry.location;
-                const newRegion = {
-                  latitude: lat,
-                  longitude: lng,
-                  latitudeDelta: 0.05,
-                  longitudeDelta: 0.05,
-                };
-                setRegion(newRegion);
-                setMarkerCoords({latitude: lat, longitude: lng});
-              }
-            }}
-            renderRightButton={() => {
-              if (served) {
-                return (
-                  <TouchableOpacity
-                    onPress={() => {
-                      setServed('');
-                      setMarkerCoords(null);
-                    }}
-                    style={{marginTop: 15}}>
-                    <Image
-                      source={images.cross}
-                      style={{height: 14, width: 14, tintColor: 'red'}}
-                    />
-                  </TouchableOpacity>
-                );
-              }
-              return null;
-            }}
+            style={{borderColor: COLOR.primary}}
+            onChangeText={setServed}
+            editable={isEditing}
+            error={error.location_served}
           />
-          {error.location_served && (
-            <ErrorBox style={{marginTop: 0}} error={error.location_served} />
-          )}
-          {served && (
-            <View
-              style={{
-                width: '100%',
-                height: 200,
-                overflow: 'hidden',
-                marginTop: 20,
-                borderRadius: 10,
-              }}>
-              <MapView
-                style={{flex: 1}}
-                region={region}
-                onRegionChangeComplete={async newRegion => {
-                  setRegion(newRegion);
-                  setMarkerCoords({
-                    latitude: newRegion.latitude,
-                    longitude: newRegion.longitude,
-                  });
-                  const address = await getAddressFromCoords(
-                    newRegion.latitude,
-                    newRegion.longitude,
-                  );
-                  if (address) {
-                    setServed(address);
-                  }
-                }}>
-                {markerCoords && <Marker coordinate={markerCoords} />}
-              </MapView>
-            </View>
-          )}
         </ScrollView>
       </KeyboardAvoidingView>
 

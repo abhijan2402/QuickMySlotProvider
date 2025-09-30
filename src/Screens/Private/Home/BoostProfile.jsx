@@ -9,16 +9,36 @@ import {
 import {COLOR} from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import Button from '../../../Components/UI/Button';
-import {Typography} from '../../../Components/UI/Typography'; // ✅ import Typography
+import {Typography} from '../../../Components/UI/Typography';
 import {useIsFocused} from '@react-navigation/native';
-import {SUBSCRIPTION} from '../../../Constants/ApiRoute';
-import {GET_WITH_TOKEN} from '../../../Backend/Api';
+import {
+  GET_CURRENT_MEMBERSHIP,
+  MEMBERSHIP_CREATE_ORDER,
+  MEMBERSHIP_VERIFY_PAYMENT,
+  SUBSCRIPTION,
+} from '../../../Constants/ApiRoute';
+import {GET_WITH_TOKEN, POST_FORM_DATA} from '../../../Backend/Api';
 import {Font} from '../../../Constants/Font';
+import {ToastMsg} from '../../../Backend/Utility';
+import RazorpayCheckout from 'react-native-razorpay';
+import {useSelector} from 'react-redux';
 
 const BoostProfile = ({navigation}) => {
   const isFocus = useIsFocused();
   const [loading, setLoading] = useState(false);
   const [subscription, setSubscription] = useState([]);
+  const [paymentLoading, setPaymentLoading] = useState(false);
+  const [selected, setSelected] = useState();
+  console.log(selected);
+  const [currentPlan, setCurrentPlan] = useState();
+
+  const userdata = useSelector(store => store.userDetails);
+  const razorpayConfig = {
+    key_id: 'rzp_test_RL1gmdHRZxYSlx',
+    currency: 'INR',
+    name: 'QuickMySlot',
+    description: 'Membership Subscription',
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -29,11 +49,6 @@ const BoostProfile = ({navigation}) => {
           console.log(success, 'successsuccesssuccess-->>>');
           setLoading(false);
           setSubscription(success.data);
-
-          // 👉 Auto select the first plan
-          if (success.data?.length > 0) {
-            setSelected(success.data[0]);
-          }
         },
         error => {
           console.log(error, 'errorerrorerror>>');
@@ -44,10 +59,171 @@ const BoostProfile = ({navigation}) => {
           setLoading(false);
         },
       );
+      GetMembership();
     }
   }, [isFocus]);
+  const GetMembership = () => {
+    setLoading(true);
+    GET_WITH_TOKEN(
+      GET_CURRENT_MEMBERSHIP,
+      success => {
+        console.log(success, 'successsuccesssuccess-->>>');
+        setLoading(false);
+        setSelected(success?.subscription?.subscription);
+        setCurrentPlan(success?.subscription);
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+      },
+      fail => {
+        console.log(fail, 'errorerrorerror>>');
+        setLoading(false);
+      },
+    );
+  };
 
-  const [selected, setSelected] = useState(subscription[0]);
+  const createRazorpayOrder = async subscription_id => {
+    try {
+      const formData = new FormData();
+      formData.append('subscription_id', subscription_id);
+      formData.append('role', 'vendor');
+
+      const orderResponse = await new Promise((resolve, reject) => {
+        POST_FORM_DATA(
+          MEMBERSHIP_CREATE_ORDER,
+          formData,
+          success => {
+            console.log('Order creation success:', success);
+            resolve(success);
+          },
+          error => {
+            console.log('Order creation error:', JSON.stringify(error));
+            reject(error);
+          },
+          fail => {
+            console.log('Order creation fail:', fail);
+            reject(fail);
+          },
+        );
+      });
+
+      return orderResponse;
+    } catch (error) {
+      console.log('Order creation exception:', error);
+      throw new Error('Failed to create order: ' + error.message);
+    }
+  };
+
+  const verifyPayment = (paymentData, plan) => {
+    console.log(plan, 'plan in verify payment');
+    const formData = new FormData();
+    formData.append('subscription_id', plan?.id);
+    formData.append('razorpay_signature', paymentData?.razorpay_signature);
+    formData.append('razorpay_order_id', paymentData?.razorpay_order_id);
+    formData.append('razorpay_payment_id', paymentData?.razorpay_payment_id);
+    POST_FORM_DATA(
+      MEMBERSHIP_VERIFY_PAYMENT,
+      formData,
+      success => {
+        setPaymentLoading(false);
+        ToastMsg('Membership subscription successful!');
+      },
+      error => {
+        console.log(error, 'Membership verification error>>');
+
+        setPaymentLoading(false);
+        ToastMsg('Payment verification failed. Please contact support.');
+      },
+      fail => {
+        setPaymentLoading(false);
+        ToastMsg('Network error. Please try again.');
+      },
+    );
+  };
+
+  const initiateRazorpayPayment = async plan => {
+    console.log(plan, 'kkkkkk');
+
+    setPaymentLoading(true);
+    try {
+      // Step 1: Create Razorpay order on your backend
+      const orderData = await createRazorpayOrder(plan?.id);
+
+      // Check the response structure
+      const orderId =
+        orderData?.order_id || orderData?.data?.order_id || orderData?.data?.id;
+      console.log(orderId, 'llllllllllllhjg');
+
+      if (!orderId) {
+        console.log('Order data received:', orderData);
+        throw new Error(
+          'Failed to create payment order - no order ID received',
+        );
+      }
+
+      // Convert price to paise (Razorpay expects amount in smallest currency unit)
+      const amountInPaise = Math.round(parseFloat(plan.price) * 100);
+
+      // Step 2: Initialize Razorpay checkout
+      const options = {
+        description: `Membership: ${plan.subscription_name}`,
+        image: 'https://your-app-logo.png', // Your app logo
+        currency: razorpayConfig.currency,
+        key: razorpayConfig.key_id,
+        amount: amountInPaise,
+        name: razorpayConfig.name,
+        order_id: orderId,
+        prefill: {
+          email: userdata?.email || 'user@example.com',
+          contact: userdata?.phone_number || '9999999999',
+          name: userdata?.name || 'User',
+        },
+        theme: {color: COLOR.primary},
+      };
+
+      console.log('Razorpay options:', options);
+
+      // Step 3: Open Razorpay checkout
+      RazorpayCheckout.open(options)
+        .then(data => {
+          // Payment successful
+          console.log('Payment Success:', data);
+
+          // Step 4: Verify payment on your backend
+          verifyPayment(
+            {
+              razorpay_payment_id: data.razorpay_payment_id,
+              razorpay_order_id: data.razorpay_order_id,
+              razorpay_signature: data.razorpay_signature,
+            },
+            plan,
+          );
+        })
+        .catch(error => {
+          setPaymentLoading(false);
+          console.log('Razorpay Payment Error:', error);
+
+          // Handle different error cases
+          if (error.code === 2) {
+            // Payment cancelled by user
+            ToastMsg('Payment was cancelled');
+          } else if (error.code === 0) {
+            // Network error
+            ToastMsg('Network error. Please check your connection.');
+          } else {
+            // Other errors
+            ToastMsg(error.description || 'Payment failed. Please try again.');
+          }
+        });
+    } catch (error) {
+      setPaymentLoading(false);
+      console.log('Razorpay Init Error:', error);
+      ToastMsg(
+        error.message || 'Failed to initialize payment. Please try again.',
+      );
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -152,7 +328,18 @@ const BoostProfile = ({navigation}) => {
 
       {/* Checkout Button */}
       <View style={{position: 'absolute', left: 20, right: 20, bottom: 10}}>
-        <Button title={'Checkout'} onPress={() => navigation.goBack()} />
+        <Button
+          title={'Checkout'}
+          onPress={() => {
+            const samePlan = selected?.id === currentPlan?.subscription?.id;
+            if (samePlan) {
+              ToastMsg('You are already subscribed to this plan');
+            } else {
+              initiateRazorpayPayment(selected);
+            }
+          }}
+          loading={paymentLoading}
+        />
       </View>
     </View>
   );

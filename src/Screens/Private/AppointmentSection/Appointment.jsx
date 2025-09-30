@@ -19,6 +19,7 @@ import {
   GET_APPOINTMENTS,
   REJECT_APPOINTMENTS,
 } from '../../../Constants/ApiRoute';
+import EmptyView from '../../../Components/UI/EmptyView';
 
 const VendorAppointments = () => {
   const [tab, setTab] = useState('Upcoming');
@@ -189,7 +190,7 @@ const VendorAppointments = () => {
         {scheduleEntries.length > 0 ? (
           scheduleEntries.map(([time, date], index) => (
             <Typography key={index} style={styles.infoText}>
-              Date & Time: {time} {new Date(date).toLocaleDateString()}  
+              Date & Time: {time} {new Date(date).toLocaleDateString()}
             </Typography>
           ))
         ) : (
@@ -282,6 +283,9 @@ const VendorAppointments = () => {
           keyExtractor={item => item.id}
           renderItem={renderCard}
           contentContainerStyle={{paddingBottom: 20}}
+          ListEmptyComponent={() => {
+            return <EmptyView title="No Data Found" />;
+          }}
         />
       )}
 

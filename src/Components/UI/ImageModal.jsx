@@ -179,7 +179,7 @@ const ImageModal = ({
         <View
           style={[
             styles.modalContent,
-            {height: documents ? windowWidth / 1.6 : windowWidth / 2},
+            {height: documents ? 250 : 200},
           ]}>
           <View style={styles.modalHeader}>
             <Typography size={20} font={Font.semibold}>

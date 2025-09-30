@@ -31,6 +31,12 @@ export const GET_APPOINTMENTS = 'appointment/list';
 export const ACCEPT_APPOINTMENTS = 'booking/accepted/';
 export const REJECT_APPOINTMENTS = 'booking/reject/';
 export const COMPLETED_APPOINTMENTS = 'booking/completed/';
+export const WALLET_VERIFY = 'wallet/verify';
+export const MEMBERSHIP_VERIFY_PAYMENT = 'subscription/verify-payment';
+export const MEMBERSHIP_CREATE_ORDER = 'subscription/create-order';
+export const GET_CURRENT_MEMBERSHIP = 'subscription/current';
+
+
 
 
 

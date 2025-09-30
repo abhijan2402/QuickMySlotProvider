@@ -84,7 +84,7 @@ const ImageUpload = ({
             style={styles.documentPreview}
             onPress={() => handleFilePreview(file)}>
             <Image
-              source={isPdfFile(file) ? images.doc : images.doc}
+              source={isPdfFile(file) ? images.document : images.document}
               style={styles.documentIcon}
             />
             <View style={styles.documentInfo}>
