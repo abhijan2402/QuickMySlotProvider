@@ -96,7 +96,7 @@ const OtpScreen = ({navigation, route}) => {
         if (success?.user?.steps == 3) {
           dispatch(isAuth(true));
         } else {
-          navigation.navigate('CompleteProfile');
+          navigation.replace('CompleteProfile');
         }
         dispatch(Token(success?.token));
         dispatch(userDetails(success?.user));
