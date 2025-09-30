@@ -69,8 +69,8 @@ const EditProfile = ({navigation}) => {
   const [isEditing, setIsEditing] = useState(true);
   const {isKeyboardVisible} = useKeyboard();
   const userdata = useSelector(store => store.userDetails);
-  console.log(userdata,'userdatauserdatauserdatauserdata');
-  
+  console.log(userdata, 'userdatauserdatauserdatauserdata');
+
   const [profileImage, setProfileImage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState({});
@@ -105,7 +105,7 @@ const EditProfile = ({navigation}) => {
       setPhone(userdata?.phone_number);
       setWebsite(userdata?.website || userdata?.business_website);
       setProfileImage({path: userdata?.image});
-      setCity(userdata?.city || '')
+      setCity(userdata?.city || '');
       setFirstName(userdata?.name || '');
       setEmail(userdata?.email || '');
       setAddress(userdata?.exact_location || '');
@@ -136,12 +136,9 @@ const EditProfile = ({navigation}) => {
       if (userdata?.exact_location) {
         const parts = userdata.exact_location.split(',').map(p => p.trim());
         const len = parts.length;
-console.log(parts,'dadasaewqe');
-
         if (len >= 1) setCountry(parts[len - 1]);
         if (len >= 2) setState(parts[len - 2]);
         if (len >= 3) setCity(parts[len - 3]);
-        setPinCode('');
       }
     }
   }, [isFocus]);
