@@ -284,6 +284,9 @@ const styles = StyleSheet.create({
   logo: {
     width: 290,
     height: 200,
-    // marginTop: windowHeight * 0.1,
+    marginTop: windowHeight * 0.05,
+    marginBottom: 10,
+    resizeMode: 'contain',
+    alignSelf: 'center',
   },
 });
