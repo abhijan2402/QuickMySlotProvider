@@ -20,6 +20,8 @@ import {userDetails} from '../../../Redux/action';
 import {Font} from '../../../Constants/Font';
 import {windowWidth} from '../../../Constants/Dimensions';
 import {cleanImageUrl} from '../../../Backend/Utility';
+import {images} from '../../../Components/UI/images';
+import AppointmentCard from '../../../Components/UI/AppointmentCard';
 
 const MainHome = ({navigation}) => {
   const {width} = Dimensions.get('window');
@@ -31,13 +33,11 @@ const MainHome = ({navigation}) => {
   const userdata = useSelector(store => store.userDetails);
   const [loading, setLoading] = useState();
   const [Appointment, setAppointments] = useState([]);
-  console.log(Appointment,'kkkkkkk');
-  
 
   useEffect(() => {
     if (isFocus) {
       fetchUserProfile();
-      GetServices()
+      GetServices();
     }
   }, [isFocus]);
 
@@ -45,9 +45,13 @@ const MainHome = ({navigation}) => {
     setLoading(true);
     GET_WITH_TOKEN(
       GET_APPOINTMENTS,
-      success => {        
+      success => {
         setLoading(false);
-        setAppointments(success?.data);
+        const allAppointments = success?.data || [];
+        const filteredAppointments = allAppointments.filter(
+          a => a.status === 'pending',
+        );
+        setAppointments(filteredAppointments);
       },
       error => {
         console.log(error, 'errorerrorerror>>');
@@ -131,23 +135,19 @@ const MainHome = ({navigation}) => {
           paddingHorizontal: 20,
         }}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('EditProfile');
-            }}>
+          <View>
             <Image
-              source={{
-                uri: 'https://cdn-icons-png.flaticon.com/128/535/535239.png',
-              }}
-              style={{height: 30, width: 30}}
+              source={images.location}
+              style={{height: 18, width: 18}}
+              tintColor={COLOR.primary}
             />
-          </TouchableOpacity>
+          </View>
           <Typography
             size={16}
             font={Font.semibold}
-            color={COLOR.black}
+            color={COLOR.primary}
             numberOfLines={1}
-            style={{marginLeft: 10, width: windowWidth * 0.6}}>
+            style={{marginLeft: 8, width: windowWidth * 0.6}}>
             {userdata?.exact_location}
           </Typography>
         </View>
@@ -292,34 +292,41 @@ const MainHome = ({navigation}) => {
         </View>
 
         {/* Upcoming Booking Section */}
-        <View style={styles.bookingContainer}>
-          <Typography style={styles.sectionTitle}>Upcoming Booking</Typography>
-          <View style={styles.bookingCard}>
-            <View style={styles.bookingRow}>
-              <Image
-                source={{
-                  uri: 'https://cdn-icons-png.flaticon.com/128/3641/3641838.png',
-                }}
-                style={styles.customerImg}
-              />
-              <View style={{flex: 1, marginLeft: 12}}>
-                <Typography style={styles.customerName}>Jane Smith</Typography>
-                <Typography style={styles.bookingDetail}>
-                  Service: Hair Styling
-                </Typography>
-                <Typography style={styles.bookingDetail}>
-                  Time: 18 Aug, 3:00 PM - 4:00 PM
-                </Typography>
-                <Typography style={styles.bookingPrice}>₹1200</Typography>
-              </View>
-            </View>
-            <TouchableOpacity style={styles.viewButton}>
-              <Typography style={styles.viewButtonText}>
-                View Details
+        {Appointment.length > 0 && (
+          <View style={styles.bookingContainer}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Typography style={styles.sectionTitle}>
+                Upcoming Booking
               </Typography>
-            </TouchableOpacity>
+              <Typography
+                style={styles.sectionTitle}
+                disabled={false}
+                onPress={() => navigation.navigate('Appointment')}>
+                View More
+              </Typography>
+            </View>
+            <FlatList
+              data={Appointment.slice(0, 3)}
+              renderItem={({item}) => {
+                const scheduleEntries = item?.schedule_time
+                  ? Object.entries(item.schedule_time)
+                  : [];
+                return (
+                  <AppointmentCard
+                    tab={'Upcoming'}
+                    item={item}
+                    onSuccess={() => GetServices()}
+                  />
+                );
+              }}
+            />
           </View>
-        </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -376,6 +383,8 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowRadius: 4,
     elevation: 2,
+    marginBottom: 10,
+    margin: 1,
   },
   bookingRow: {
     flexDirection: 'row',

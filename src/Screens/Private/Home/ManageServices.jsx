@@ -35,6 +35,7 @@ const ManageServices = ({navigation}) => {
   const [deleteSubService, setDeleteSubService] = useState(false);
   const [deleteServiceID, setDeleteServiceID] = useState();
   const [deleteSubServiceID, setDeleteSubServiceID] = useState();
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     if (isFocus || tab) {
@@ -126,6 +127,8 @@ const ManageServices = ({navigation}) => {
       );
     }
   };
+  const [showAllDates, setShowAllDates] = useState(false);
+
   const Services = ({item}) => {
     return (
       <View style={styles.serviceCard}>
@@ -321,51 +324,77 @@ const ManageServices = ({navigation}) => {
               </Typography>
 
               {/* Group times by date */}
-              {Object.entries(
-                Object.entries(item.available_schedule).reduce(
-                  (acc, [time, date]) => {
-                    if (!acc[date]) acc[date] = [];
-                    acc[date].push(time);
-                    return acc;
-                  },
-                  {},
-                ),
-              ).map(([date, times], idx) => (
-                <View
-                  key={idx}
-                  style={{
-                    marginBottom: 6,
-                    borderBottomWidth: 0.5,
-                    borderColor: COLOR.lightGrey,
-                    paddingBottom: 4,
-                  }}>
-                  <Typography
-                    size={12}
-                    font={Font.semibold}
-                    color={COLOR.darkGrey}
-                    style={{marginBottom: 3}}>
-                    {date}
-                  </Typography>
-                  <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-                    {times.map((time, i) => (
-                      <Typography
-                        key={i}
-                        size={12}
-                        color="#004aad"
+              {(() => {
+                const grouped = Object.entries(
+                  Object.entries(item.available_schedule).reduce(
+                    (acc, [time, date]) => {
+                      if (!acc[date]) acc[date] = [];
+                      acc[date].push(time);
+                      return acc;
+                    },
+                    {},
+                  ),
+                );
+
+                const visibleDates = showAllDates
+                  ? grouped
+                  : grouped.slice(0, 2);
+                const hasMoreDates = grouped.length > 2;
+
+                return (
+                  <>
+                    {visibleDates.map(([date, times], idx) => (
+                      <View
+                        key={idx}
                         style={{
-                          marginRight: 10,
-                          backgroundColor: '#e6f0ff',
-                          paddingHorizontal: 6,
-                          marginTop: 5,
-                          borderRadius: 4,
-                          marginBottom: 4,
+                          marginBottom: 6,
+                          borderBottomWidth: 0.5,
+                          borderColor: COLOR.lightGrey,
+                          paddingBottom: 4,
                         }}>
-                        {time}
-                      </Typography>
+                        <Typography
+                          size={12}
+                          font={Font.semibold}
+                          color={COLOR.darkGrey}
+                          style={{marginBottom: 3}}>
+                          {date}
+                        </Typography>
+
+                        <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                          {times.map((time, i) => (
+                            <Typography
+                              key={i}
+                              size={12}
+                              color="#004aad"
+                              style={{
+                                marginRight: 10,
+                                backgroundColor: '#e6f0ff',
+                                paddingHorizontal: 6,
+                                marginTop: 5,
+                                borderRadius: 4,
+                                marginBottom: 4,
+                              }}>
+                              {time}
+                            </Typography>
+                          ))}
+                        </View>
+                      </View>
                     ))}
-                  </View>
-                </View>
-              ))}
+
+                    {hasMoreDates && (
+                      <TouchableOpacity
+                        onPress={() => setShowAllDates(!showAllDates)}>
+                        <Typography
+                          size={12}
+                          color="#004aad"
+                          style={{marginTop: 4}}>
+                          {showAllDates ? 'Show less' : 'Show more'}
+                        </Typography>
+                      </TouchableOpacity>
+                    )}
+                  </>
+                );
+              })()}
             </View>
           )}
       </View>
@@ -500,6 +529,7 @@ const ManageServices = ({navigation}) => {
                 <SubServices item={item} />
               );
             }}
+            showsVerticalScrollIndicator={false}
             ListEmptyComponent={() => {
               return (
                 <EmptyView

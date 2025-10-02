@@ -143,7 +143,6 @@ const BoostProfile = ({navigation}) => {
   };
 
   const initiateRazorpayPayment = async plan => {
-    console.log(plan, 'kkkkkk');
 
     setPaymentLoading(true);
     try {

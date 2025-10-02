@@ -17,19 +17,27 @@ const ImageUpload = ({
   document = true,
   onChangeFile = () => {},
 }) => {
-  // const [file, setFile] = useState(externalFile || null);
+  console.log(file,'5686464646656');
+  
   const [showModal, setShowModal] = useState(false);
 
-  // check if file is image
-  const isImageFile = f =>
-    f?.type?.startsWith('image/') || /\.(jpg|jpeg|png)$/i.test(f?.name || '');
+  // check if file is image using only path
+  const isImageFile = f => {
+    const path = f?.path || f?.uri || '';
+    return /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(path);
+  };
 
-  // check if file is PDF
-  const isPdfFile = f =>
-    f?.type === 'application/pdf' || /\.pdf$/i.test(f?.name || '');
+  // check if file is PDF using only path
+  const isPdfFile = f => {
+    const path = f?.path || f?.uri || '';
+    return /\.pdf$/i.test(path);
+  };
 
-  // get file name
-  const getFileName = f => f?.name || f?.uri?.split('/').pop() || 'Untitled';
+  // get file name from path
+  const getFileName = f => {
+    const path = f?.path || f?.uri || '';
+    return path.split('/').pop() || 'Untitled';
+  };
 
   // get file size in KB / MB
   const getFileSize = f => {
@@ -41,9 +49,10 @@ const ImageUpload = ({
 
   // preview doc (for PDFs / docs, open in browser or viewer)
   const handleFilePreview = async f => {
-    if (f?.uri) {
+    const uri = f?.uri || f?.path;
+    if (uri) {
       try {
-        await Linking.openURL(f.uri);
+        await Linking.openURL(uri);
       } catch (err) {
         console.log('Preview error:', err);
       }
@@ -55,10 +64,11 @@ const ImageUpload = ({
     if (!file) return null;
 
     if (isImageFile(file)) {
+      const imageUri = file.uri || file.path;
       return (
         <View style={styles.fileWrapper}>
           <Image
-            source={{uri: file.uri || file.path}}
+            source={{uri: imageUri}}
             style={styles.previewImg}
           />
           <TouchableOpacity
@@ -175,15 +185,18 @@ const ImageUpload = ({
         break;
 
       default:
-        // Default handling
+        // Default handling - prioritize path
+        const path = fileData.path || fileData.uri;
+        const name = fileData.name || fileData.filename || path?.split('/').pop() || `file_${Date.now()}`;
+        
         normalized = {
           ...normalized,
-          uri: fileData.uri || fileData.path,
-          name: fileData.name || fileData.filename || `file_${Date.now()}`,
-          type: fileData.type || fileData.mime || 'application/octet-stream',
+          uri: path,
+          name: name,
+          type: fileData.type || 'application/octet-stream',
           mime: fileData.mime || fileData.type || 'application/octet-stream',
-          path: fileData.path || fileData.uri,
-          filename: fileData.filename || fileData.name || `file_${Date.now()}`,
+          path: path,
+          filename: name,
           size: fileData.size || 0,
         };
     }
@@ -191,6 +204,7 @@ const ImageUpload = ({
     console.log('Normalized file:', normalized);
     return normalized;
   };
+
   return (
     <>
       {file ? (

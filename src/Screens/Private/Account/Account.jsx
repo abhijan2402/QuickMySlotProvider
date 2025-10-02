@@ -15,7 +15,11 @@ import {COLOR} from '../../../Constants/Colors';
 import {Typography} from '../../../Components/UI/Typography';
 import {useIsFocused} from '@react-navigation/native';
 import {GET_WITH_TOKEN, POST_WITH_TOKEN} from '../../../Backend/Api';
-import {ANALYTICS, DELETE_ACCOUNT, GET_CURRENT_MEMBERSHIP} from '../../../Constants/ApiRoute';
+import {
+  ANALYTICS,
+  DELETE_ACCOUNT,
+  GET_CURRENT_MEMBERSHIP,
+} from '../../../Constants/ApiRoute';
 import {useDispatch, useSelector} from 'react-redux';
 import {isAuth, Token, userDetails} from '../../../Redux/action';
 import {Font} from '../../../Constants/Font';
@@ -33,14 +37,14 @@ const Account = ({navigation}) => {
   const token = useSelector(store => store.Token);
   console.log(token, 'tokenuuuuuuu---->>>');
   const dispatch = useDispatch();
-  const [membership, setMembership] = useState()
+  const [membership, setMembership] = useState();
 
   useEffect(() => {
-    if(isFocus){
-      GetMembership()
+    if (isFocus) {
+      GetMembership();
     }
-  },[isFocus])
-  
+  }, [isFocus]);
+
   const GetMembership = () => {
     setLoading(true);
     GET_WITH_TOKEN(
@@ -48,7 +52,7 @@ const Account = ({navigation}) => {
       success => {
         console.log(success, 'successsuccesssuccess-->>>');
         setLoading(false);
-        setMembership(success?.subscription)
+        setMembership(success?.subscription);
       },
       error => {
         console.log(error, 'errorerrorerror>>');
@@ -59,7 +63,7 @@ const Account = ({navigation}) => {
         setLoading(false);
       },
     );
-  }
+  };
   const handleDeleteAccount = () => {
     setLoading(true);
     POST_WITH_TOKEN(
@@ -103,7 +107,7 @@ const Account = ({navigation}) => {
       navigate: 'EditProfile',
     },
     {
-      id: 7,
+      id: 2,
       title: 'QuickMySlot Wallet',
       icon: 'https://cdn-icons-png.flaticon.com/128/60/60484.png',
       navigate: 'Wallet',
@@ -191,19 +195,42 @@ const Account = ({navigation}) => {
 
         {/* Plan Card */}
         <View style={styles.tabContainer}>
-          <View style={styles.planCard}>
-            <Text style={styles.planTitle}>⭐ Current Plan</Text>
-            <Text style={styles.planName}>{membership?.subscription?.subscription_name}</Text>{' '}
-            <Text style={styles.planDesc}>
-              {membership?.subscription?.description}
-            </Text>
-            <Text style={styles.planPrice}>₹{membership?.subscription?.price}</Text>{' '}
-            <TouchableOpacity
-              style={styles.upgradeBtn}
-              onPress={() => navigation.navigate('BoostProfile')}>
-              <Text style={styles.upgradeText}>Upgrade Your Plan</Text>
-            </TouchableOpacity>
+          <View style={styles.tabContainer}>
+            {membership?.subscription ? (
+              <View style={styles.planCard}>
+                <Text style={styles.planTitle}>⭐ Current Plan</Text>
+                <Text style={styles.planName}>
+                  {membership.subscription.subscription_name}
+                </Text>
+                <Text style={styles.planDesc}>
+                  {membership.subscription.description}
+                </Text>
+                <Text style={styles.planPrice}>
+                  ₹{membership.subscription.price}
+                </Text>
+
+                <TouchableOpacity
+                  style={styles.upgradeBtn}
+                  onPress={() => navigation.navigate('BoostProfile')}>
+                  <Text style={styles.upgradeText}>Upgrade Your Plan</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.planCard}>
+                <Text style={styles.planTitle}>🚀 Boost Your Profile</Text>
+                <Text style={styles.planDesc}>
+                  Stand out and get more visibility! Purchase a plan to boost
+                  your profile.
+                </Text>
+                <TouchableOpacity
+                  style={styles.upgradeBtn}
+                  onPress={() => navigation.navigate('BoostProfile')}>
+                  <Text style={styles.upgradeText}>Purchase Plan</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
+
           {/* Tabs */}
           {tabs.map(item => (
             <TouchableOpacity
