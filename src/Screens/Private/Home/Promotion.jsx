@@ -99,7 +99,8 @@ const Promotion = ({navigation}) => {
           <View style={styles.headerRow}>
             {/* Amount + Type */}
             <Typography style={styles.title}>
-              ₹{item.amount} {item.type ? `(${item.type})` : ''}
+              {item.type === 'percentage' ? '' : '₹'}
+              {item.amount} {item.type ? `(${item.type})` : ''}
             </Typography>
 
             {/* Edit + Delete */}
@@ -138,6 +139,10 @@ const Promotion = ({navigation}) => {
           <Typography
             style={[styles.status, {color: item.isActive ? 'green' : 'red'}]}>
             {item.isActive ? 'Active' : 'Inactive'}
+          </Typography>
+          <Typography
+            style={[styles.status, {color: item.is_highlighted ? 'green' : 'red'}]}>
+            {item.is_highlighted ? 'HighLighted' : 'Not HighLighted'}
           </Typography>
         </View>
       </View>
