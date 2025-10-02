@@ -91,8 +91,8 @@ const Wallet = ({navigation}) => {
         <Typography
           size={16}
           font={Font.semibold}
-          color={item.type === 'credit' ? 'green' : 'red'}>
-          {item.type === 'credit' ? '+ ' : '- '}₹{item.amount}
+          color={'green'}>
+          {'+ '}₹{item.amount}
         </Typography>
       </TouchableOpacity>
     </View>

@@ -14,12 +14,12 @@ import {FlatList} from 'react-native';
 import {Typography} from '../../../Components/UI/Typography';
 import {useIsFocused} from '@react-navigation/native';
 import {GET_WITH_TOKEN} from '../../../Backend/Api';
-import {GET_PROFILE} from '../../../Constants/ApiRoute';
+import {GET_APPOINTMENTS, GET_PROFILE} from '../../../Constants/ApiRoute';
 import {useDispatch, useSelector} from 'react-redux';
 import {userDetails} from '../../../Redux/action';
 import {Font} from '../../../Constants/Font';
-import { windowWidth } from '../../../Constants/Dimensions';
-import { cleanImageUrl } from '../../../Backend/Utility';
+import {windowWidth} from '../../../Constants/Dimensions';
+import {cleanImageUrl} from '../../../Backend/Utility';
 
 const MainHome = ({navigation}) => {
   const {width} = Dimensions.get('window');
@@ -29,12 +29,36 @@ const MainHome = ({navigation}) => {
   const isFocus = useIsFocused();
   const dispatch = useDispatch();
   const userdata = useSelector(store => store.userDetails);
+  const [loading, setLoading] = useState();
+  const [Appointment, setAppointments] = useState([]);
+  console.log(Appointment,'kkkkkkk');
+  
 
   useEffect(() => {
     if (isFocus) {
       fetchUserProfile();
+      GetServices()
     }
   }, [isFocus]);
+
+  const GetServices = () => {
+    setLoading(true);
+    GET_WITH_TOKEN(
+      GET_APPOINTMENTS,
+      success => {        
+        setLoading(false);
+        setAppointments(success?.data);
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+      },
+      fail => {
+        console.log(fail, 'failfailfail>>');
+        setLoading(false);
+      },
+    );
+  };
 
   global.fetchUserProfile = () => {
     GET_WITH_TOKEN(
@@ -123,7 +147,7 @@ const MainHome = ({navigation}) => {
             font={Font.semibold}
             color={COLOR.black}
             numberOfLines={1}
-            style={{marginLeft: 10,width: windowWidth * 0.6}}>
+            style={{marginLeft: 10, width: windowWidth * 0.6}}>
             {userdata?.exact_location}
           </Typography>
         </View>

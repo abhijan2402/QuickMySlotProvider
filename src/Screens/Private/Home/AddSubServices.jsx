@@ -42,14 +42,14 @@ const AddSubServices = ({navigation, route}) => {
   const [error, setError] = useState({});
   const isFocus = useIsFocused();
   const [image, setImage] = useState(null);
-  console.log(image?.path, 'dasdasdkdsjasodhuyoeuqiwdjaed');
+  console.log(image, 'dasdasdkdsjasodhuyoeuqiwdjaed');
 
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     if (isFocus) {
       setSubServices(data?.name);
-      setImage({path: data?.image_url});
+      setImage(data?.image ? {path: data?.image} : null);
     }
   }, [isFocus]);
 

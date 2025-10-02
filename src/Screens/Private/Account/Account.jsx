@@ -14,12 +14,12 @@ import {AuthContext} from '../../../Backend/AuthContent';
 import {COLOR} from '../../../Constants/Colors';
 import {Typography} from '../../../Components/UI/Typography';
 import {useIsFocused} from '@react-navigation/native';
-import {POST_WITH_TOKEN} from '../../../Backend/Api';
-import {ANALYTICS, DELETE_ACCOUNT} from '../../../Constants/ApiRoute';
+import {GET_WITH_TOKEN, POST_WITH_TOKEN} from '../../../Backend/Api';
+import {ANALYTICS, DELETE_ACCOUNT, GET_CURRENT_MEMBERSHIP} from '../../../Constants/ApiRoute';
 import {useDispatch, useSelector} from 'react-redux';
 import {isAuth, Token, userDetails} from '../../../Redux/action';
 import {Font} from '../../../Constants/Font';
-import { cleanImageUrl } from '../../../Backend/Utility';
+import {cleanImageUrl} from '../../../Backend/Utility';
 
 const Account = ({navigation}) => {
   const {setUser} = useContext(AuthContext);
@@ -32,15 +32,43 @@ const Account = ({navigation}) => {
   console.log(userdata, 'PPPPPPPPPPPP---->>>');
   const token = useSelector(store => store.Token);
   console.log(token, 'tokenuuuuuuu---->>>');
-
   const dispatch = useDispatch();
+  const [membership, setMembership] = useState()
+
+  useEffect(() => {
+    if(isFocus){
+      GetMembership()
+    }
+  },[isFocus])
+  
+  const GetMembership = () => {
+    setLoading(true);
+    GET_WITH_TOKEN(
+      GET_CURRENT_MEMBERSHIP,
+      success => {
+        console.log(success, 'successsuccesssuccess-->>>');
+        setLoading(false);
+        setMembership(success?.subscription)
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+      },
+      fail => {
+        console.log(fail, 'errorerrorerror>>');
+        setLoading(false);
+      },
+    );
+  }
   const handleDeleteAccount = () => {
     setLoading(true);
     POST_WITH_TOKEN(
       DELETE_ACCOUNT,
+      {},
       success => {
         console.log(success, 'successsuccesssuccess-->>>');
         setLoading(false);
+        handleLogout();
       },
       error => {
         console.log(error, 'errorerrorerror>>');
@@ -149,7 +177,10 @@ const Account = ({navigation}) => {
         contentContainerStyle={{paddingBottom: 20}}>
         {/* Profile Section */}
         <View style={styles.profileSection}>
-          <Image source={{uri: cleanImageUrl(profileImage)}} style={styles.profileImage} />
+          <Image
+            source={{uri: cleanImageUrl(profileImage)}}
+            style={styles.profileImage}
+          />
           <Typography font={Font.semibold} variant="h2" color={COLOR.black}>
             {userdata?.name}
           </Typography>
@@ -162,11 +193,11 @@ const Account = ({navigation}) => {
         <View style={styles.tabContainer}>
           <View style={styles.planCard}>
             <Text style={styles.planTitle}>⭐ Current Plan</Text>
-            <Text style={styles.planName}>Basic Visibility Boost</Text>{' '}
+            <Text style={styles.planName}>{membership?.subscription?.subscription_name}</Text>{' '}
             <Text style={styles.planDesc}>
-              Appear higher in search results for 7 days.
+              {membership?.subscription?.description}
             </Text>
-            <Text style={styles.planPrice}>₹25.00</Text>{' '}
+            <Text style={styles.planPrice}>₹{membership?.subscription?.price}</Text>{' '}
             <TouchableOpacity
               style={styles.upgradeBtn}
               onPress={() => navigation.navigate('BoostProfile')}>

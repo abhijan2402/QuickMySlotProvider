@@ -169,6 +169,8 @@ const CompleteProfile = ({navigation}) => {
       formData.append('gstin_number', gst);
       formData.append('business_website', website);
       formData.append('service_category', category);
+      formData.append('lat', markerCoords?.latitude || region.latitude);
+      formData.append('long', markerCoords?.longitude || region.longitude);
 
       if (image?.PhotoVerifi) {
         formData.append('photo_verification', {
@@ -216,7 +218,7 @@ const CompleteProfile = ({navigation}) => {
             const errorKeyMap = {
               years_of_experience: 'experience',
               business_website: 'website',
-              pan_card:"pan"
+              pan_card: 'pan',
             };
             const apiErrors = {};
             Object.keys(error.data.errors).forEach(key => {
