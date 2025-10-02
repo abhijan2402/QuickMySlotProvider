@@ -20,4 +20,5 @@ export const images = {
   dashboardFocused: require('../../assets/Images/dashboardFocused.png'),
   notificationFocused: require('../../assets/Images/notificationFocused.png'),
   documentFocused: require('../../assets/Images/documentFocused.png'),
+  location: require('../../assets/Images/location-pin.png'),
 };

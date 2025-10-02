@@ -48,6 +48,10 @@ const AddService = ({route, navigation}) => {
   const [discount, setDiscount] = useState(false);
   const [service, setService] = useState('');
   const [serviceData, setServiceData] = useState([]);
+  const updatedServiceData =
+    serviceData && serviceData.length > 0
+      ? serviceData
+      : [{label: '+ Add Sub Service', value: 'add_sub_service'}];
   const [peak, setPeak] = useState(false);
   const genderData = [
     {value: 'male', label: 'Male'},
@@ -77,6 +81,8 @@ const AddService = ({route, navigation}) => {
   console.log(data, 'dsauyiwequyi778877787');
   const isEditing = route?.params?.isEditing;
   const [image, setImage] = useState(null);
+  console.log(image);
+
   const [showModal, setShowModal] = useState(false);
   const [errors, setErrors] = useState({});
   console.log(errors);
@@ -199,8 +205,9 @@ const AddService = ({route, navigation}) => {
     let validationErrors = {
       serviceName: validators.checkRequire('Service Name', serviceName),
       description: validators.checkRequire('Description', description),
-      // category: validators.checkRequire('Category', category),
+      service: validators.checkRequire('Service', service),
       price: validators.checkRequire('Price', price),
+      gender: validators.checkRequire('Gender', gender),
       duration: validators.checkRequire('Duration', duration),
       image: validators.checkRequire('Service Image', image),
     };
@@ -279,7 +286,6 @@ const AddService = ({route, navigation}) => {
       });
     });
     console.log(formData, 'formDataformDataformDataformData');
-    alert(!isEditing ? SERVICE : UPDATE_SERVICE + data?.id);
     POST_FORM_DATA(
       !isEditing ? SERVICE : UPDATE_SERVICE + data?.id,
       formData,
@@ -412,17 +418,22 @@ const AddService = ({route, navigation}) => {
           value={gender}
           onChange={v => setGender(v)}
           placeholder="Select Gender"
-          error={errors.gender}
         />
+        {errors.gender && <ErrorBox error={errors.gender} />}
 
         <DropdownCommon
           label="Service"
-          data={serviceData}
+          data={updatedServiceData}
           value={service}
-          onChange={v => setService(v)}
-          placeholder="Select Gender"
-          error={errors.gender}
+          onChange={item => {
+            if (item.value == 'add_sub_service') {
+              navigation.navigate('AddSubServices');
+            } else {
+              setService(item);
+            }
+          }}
         />
+        {errors.service && <ErrorBox error={errors.service} />}
 
         {/* Duration */}
         <Input

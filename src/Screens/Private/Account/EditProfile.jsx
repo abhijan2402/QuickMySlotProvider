@@ -353,41 +353,6 @@ const EditProfile = ({navigation}) => {
           keyboardShouldPersistTaps="handled"
           style={{flex: 1, paddingHorizontal: 5}}
           contentContainerStyle={styles.container}>
-          {/* 🚀 Promo Card */}
-          {/* <View style={styles.card}>
-            <Typography
-              size={18}
-              fontWeight="700"
-              color="#333"
-              style={styles.sectionTitle}>
-              🚀 Promote Your Business
-            </Typography>
-            <View style={styles.promoBox}>
-              <Typography
-                size={16}
-                fontWeight="600"
-                color="#0057FF"
-                style={styles.promoTitle}>
-                Boost Your Profile
-              </Typography>
-              <Typography
-                size={14}
-                color="#555"
-                textAlign="center"
-                style={styles.promoText}>
-                Increase visibility and attract more customers by appearing
-                {'\n'}
-                higher in search results.
-              </Typography>
-              <TouchableOpacity
-                style={styles.boostBtn}
-                onPress={() => navigation.navigate('BoostProfile')}>
-                <Typography size={15} fontWeight="600" color="#fff">
-                  View Plans
-                </Typography>
-              </TouchableOpacity>
-            </View>
-          </View> */}
           {/* Inputs with Error */}
           <Input
             label="Name"
