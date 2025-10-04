@@ -22,6 +22,7 @@ import {windowWidth} from '../../../Constants/Dimensions';
 import {cleanImageUrl} from '../../../Backend/Utility';
 import {images} from '../../../Components/UI/images';
 import AppointmentCard from '../../../Components/UI/AppointmentCard';
+import EmptyView from '../../../Components/UI/EmptyView';
 
 const MainHome = ({navigation}) => {
   const {width} = Dimensions.get('window');
@@ -292,7 +293,6 @@ const MainHome = ({navigation}) => {
         </View>
 
         {/* Upcoming Booking Section */}
-        {Appointment.length > 0 && (
           <View style={styles.bookingContainer}>
             <View
               style={{
@@ -303,12 +303,12 @@ const MainHome = ({navigation}) => {
               <Typography style={styles.sectionTitle}>
                 Upcoming Booking
               </Typography>
-              <Typography
+             { Appointment.length > 0 && <Typography
                 style={styles.sectionTitle}
                 disabled={false}
                 onPress={() => navigation.navigate('Appointment')}>
                 View More
-              </Typography>
+              </Typography>}
             </View>
             <FlatList
               data={Appointment.slice(0, 3)}
@@ -324,9 +324,13 @@ const MainHome = ({navigation}) => {
                   />
                 );
               }}
+              ListEmptyComponent={() => {
+                return (
+                  <EmptyView title='No Appointment Yet' />
+                )
+              }}
             />
           </View>
-        )}
       </ScrollView>
     </View>
   );

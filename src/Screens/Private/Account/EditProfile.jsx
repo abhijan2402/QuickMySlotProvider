@@ -151,7 +151,7 @@ const EditProfile = ({navigation}) => {
         getCategory();
         setPhone(userdata?.phone_number);
         setWebsite(userdata?.website || userdata?.business_website);
-        setProfileImage({path: userdata?.image});
+        setProfileImage({path: cleanImageUrl(userdata?.image)});
         setFirstName(userdata?.name || '');
         setEmail(userdata?.email || '');
         setAddress(userdata?.exact_location || '');
@@ -325,7 +325,7 @@ const EditProfile = ({navigation}) => {
       <View style={styles.profileSection}>
         <Image
           source={{
-            uri: cleanImageUrl(profileImage?.path),
+            uri: profileImage?.path || profileImage?.uri,
           }}
           style={styles.profileImage}
         />

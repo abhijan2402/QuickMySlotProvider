@@ -49,7 +49,7 @@ const AddSubServices = ({navigation, route}) => {
   useEffect(() => {
     if (isFocus) {
       setSubServices(data?.name);
-      setImage(data?.image ? {path: data?.image} : null);
+      setImage(data?.image_url ? {path: data?.image_url} : null);
     }
   }, [isFocus]);
 

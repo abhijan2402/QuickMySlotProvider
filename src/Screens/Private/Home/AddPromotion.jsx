@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import Input from '../../../Components/Input';
 import {COLOR} from '../../../Constants/Colors';
@@ -24,6 +25,7 @@ import SwitchButton from '../../../Components/UI/SwitchButton';
 import {Typography} from '../../../Components/UI/Typography';
 import {useIsFocused} from '@react-navigation/native';
 import {Font} from '../../../Constants/Font';
+import {images} from '../../../Components/UI/images';
 
 const AddPromotion = ({navigation, route}) => {
   const [error, setError] = useState({});
@@ -37,10 +39,11 @@ const AddPromotion = ({navigation, route}) => {
   const [endDate, setEndDate] = useState('');
   const {isKeyboardVisible} = useKeyboard();
   const [loading, setLoading] = useState(false);
-  const [isActive, setIsActive] = useState(false);
   const data = route?.params?.data;
   console.log(data);
   const isEditing = route?.params?.isEditing;
+  const [isActive, setIsActive] = useState(false);
+  const [isMembership, setIsMembership] = useState(false);
 
   const isFocus = useIsFocused();
 
@@ -50,6 +53,7 @@ const AddPromotion = ({navigation, route}) => {
       setDiscount(data?.amount);
       setDescription(data?.description);
       setIsActive(data?.isActive);
+      setIsMembership(data?.is_highlighted);
       setDiscountType(data?.type);
       setStartDate(data?.start_on ? new Date(data.start_on) : '');
       setEndDate(data?.expired_on ? new Date(data.expired_on) : '');
@@ -57,26 +61,34 @@ const AddPromotion = ({navigation, route}) => {
   }, [isFocus]);
 
   const discountOptions = [
-    {label: 'Flat', value: 'flat'},
+    {id: 1, label: 'Flat', value: 'flat'},
+    {id: 2, label: 'Percentage', value: 'percentage'},
   ];
 
   const formatDate = date => {
     if (!date) return '';
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); 
-    const day = String(date.getDate()).padStart(2, '0'); 
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
 
   const handleAddPromotion = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     let validationErrors = {
       promoCode: validators.checkRequire('Promotion code', promoCode),
       discountType: validators.checkRequire('Discount Type', discountType),
       discount: validators.checkNumber('Discount value', discount),
-      startDate: validators.checkRequire('Start date', startDate),
+      startDate: !startDate
+        ? 'Start date is required.'
+        : startDate < today
+        ? 'Start date cannot be in the past.'
+        : '',
       endDate: !endDate
         ? 'End date is required.'
-        : endDate <= startDate
+        : endDate < startDate
         ? 'End date must be after start date.'
         : '',
       description: validators.checkRequire('Description', description),
@@ -100,6 +112,8 @@ const AddPromotion = ({navigation, route}) => {
       formData.append('expired_on', formatDate(endDate));
       formData.append('description', description);
       formData.append('isActive', isActive ? 1 : 0);
+      formData.append('is_highlighted', isMembership ? 1 : 0);
+
       console.log('FormData ====>', formData);
       if (isEditing) {
         POST_FORM_DATA(
@@ -169,7 +183,6 @@ const AddPromotion = ({navigation, route}) => {
             style={styles.input}
             error={error.promoCode}
             maxLength={8}
-
           />
           <View style={{alignSelf: 'center', width: '100%', marginTop: 20}}>
             <Text style={{marginBottom: 5, fontSize: 14, fontWeight: '500'}}>
@@ -249,15 +262,68 @@ const AddPromotion = ({navigation, route}) => {
             multiline={true}
             error={error.description}
           />
-          <View
-            style={{flexDirection: 'row', alignItems: 'center', marginTop: 15}}>
-            <Typography size={18} font={Font.medium} style={{marginRight: 5}}>
-              IsActive
-            </Typography>
-            <SwitchButton
-              value={isActive}
-              onValueChange={() => setIsActive(!isActive)}
-            />
+          <View style={{marginTop: 15}}>
+            {/* Is Active Checkbox */}
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 10,
+              }}
+              onPress={() => setIsActive(!isActive)}>
+              <View
+                style={{
+                  height: 20,
+                  width: 20,
+                  borderWidth: 1,
+                  borderColor: COLOR.primary,
+                  backgroundColor: isActive ? COLOR.primary : COLOR.white,
+                  marginRight: 8,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 4,
+                }}>
+                {isActive && (
+                  <Image
+                    source={images.check}
+                    style={{height: 12, width: 12}}
+                    tintColor={COLOR.white}
+                  />
+                )}
+              </View>
+              <Typography size={18} font={Font.medium}>
+                Is Active
+              </Typography>
+            </TouchableOpacity>
+
+            {/* Is Membership Checkbox */}
+            <TouchableOpacity
+              style={{flexDirection: 'row', alignItems: 'center'}}
+              onPress={() => setIsMembership(!isMembership)}>
+              <View
+                style={{
+                  height: 20,
+                  width: 20,
+                  borderWidth: 1,
+                  borderColor: COLOR.primary,
+                  backgroundColor: isMembership ? COLOR.primary : COLOR.white,
+                  marginRight: 8,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 4,
+                }}>
+                {isMembership && (
+                  <Image
+                    source={images.check}
+                    style={{height: 12, width: 12}}
+                    tintColor={COLOR.white}
+                  />
+                )}
+              </View>
+              <Typography size={18} font={Font.medium}>
+                Is HighLighted
+              </Typography>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -271,7 +337,11 @@ const AddPromotion = ({navigation, route}) => {
         modal
         open={openStartPicker || openEndPicker}
         date={startDate || new Date()}
-        minimumDate={openStartPicker ? startDate : new Date()}
+        minimumDate={
+          openStartPicker
+            ? new Date() // start date can't be today or earlier
+            : startDate || new Date() // end date must be after start
+        }
         mode="date"
         onConfirm={date => {
           if (openStartPicker) {
