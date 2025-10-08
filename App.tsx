@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import MainNavigation from './src/navigators/MainNavigation';
@@ -9,19 +9,25 @@ import AddService from './src/Screens/Private/Home/AddService';
 import AddBank from './src/Screens/Private/Account/AddBank';
 import BankDetails from './src/Screens/Private/Account/BankDetails';
 import 'react-native-get-random-values';
+import SplashScreen from 'react-native-splash-screen';
 
 
 const App = () => {
+  useEffect(() => {
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 2000);
+  }, []);
   return (
     <Provider store={store}>
-    <AuthProvider>
-      <View style={styles.safeArea}>
-        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-        <NavigationContainer>
-          <MainNavigation />
-        </NavigationContainer>
-      </View>
-    </AuthProvider>
+      <AuthProvider>
+        <View style={styles.safeArea}>
+          <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+          <NavigationContainer>
+            <MainNavigation />
+          </NavigationContainer>
+        </View>
+      </AuthProvider>
     </Provider>
   );
 };
