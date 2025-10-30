@@ -23,7 +23,7 @@ import LottieView from 'lottie-react-native';
 import {windowHeight, windowWidth} from '../../../Constants/Dimensions';
 import {useIsFocused} from '@react-navigation/native';
 import {GET_WITH_TOKEN} from '../../../Backend/Api';
-import {GET_PROFILE} from '../../../Constants/ApiRoute';
+import {BID_LIST, GET_PROFILE} from '../../../Constants/ApiRoute';
 import {userDetails} from '../../../Redux/action';
 import {useDispatch} from 'react-redux';
 
@@ -188,6 +188,7 @@ const Home = ({navigation}) => {
 
   const [bannerIndex, setBannerIndex] = useState(0);
   const bannerRef = useRef(null);
+
   const [multiFilter, setMultiFilter] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState([
     'Family',
@@ -307,9 +308,7 @@ const Home = ({navigation}) => {
     GET_WITH_TOKEN(
       GET_PROFILE,
       success => {
-        console.log(success, 'successsuccesssuccess-->>>');
         setLoading(false);
-        alert('treus');
         dispatch(userDetails(success?.data));
       },
       error => {
@@ -321,6 +320,8 @@ const Home = ({navigation}) => {
       },
     );
   };
+
+
 
   return (
     <SafeAreaView style={styles.container}>

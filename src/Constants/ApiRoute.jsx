@@ -35,6 +35,8 @@ export const WALLET_VERIFY = 'wallet/verify';
 export const MEMBERSHIP_VERIFY_PAYMENT = 'subscription/verify-payment';
 export const MEMBERSHIP_CREATE_ORDER = 'subscription/create-order';
 export const GET_CURRENT_MEMBERSHIP = 'subscription/current';
+export const BID_LIST = 'bids-list';
+export const ADD_UPDATE_BID = 'bid-entries'
 
 
 

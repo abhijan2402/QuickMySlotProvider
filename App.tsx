@@ -51,7 +51,9 @@ const App = () => {
     }, 2000);
   }, []);
   return (
-    <Provider store={store}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
+
+        <Provider store={store}>
       <AuthProvider>
         <View style={styles.safeArea}>
           <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
@@ -61,6 +63,7 @@ const App = () => {
         </View>
       </AuthProvider>
     </Provider>
+    </SafeAreaView>
   );
 };
 

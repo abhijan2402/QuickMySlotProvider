@@ -112,16 +112,16 @@ const Login = ({navigation}) => {
           />
 
           {/* Divider with text */}
-          <View style={styles.dividerContainer}>
+          {/* <View style={styles.dividerContainer}>
             <View style={styles.divider} />
             <Typography size={14} color="#888" font={Font.medium}>
               Or
             </Typography>
             <View style={styles.divider} />
-          </View>
+          </View> */}
 
           {/* Google Login Button */}
-          <GoogleAuthButton onLoginSuccess={handleLoginSuccess} />
+          {/* <GoogleAuthButton onLoginSuccess={handleLoginSuccess} /> */}
 
           {/* Register Section (if needed) */}
           {/* 

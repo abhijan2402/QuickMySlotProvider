@@ -6,6 +6,9 @@ import {
   ScrollView,
   Linking,
   Dimensions,
+  Modal,
+  TextInput,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {COLOR} from '../../../Constants/Colors';
@@ -13,8 +16,8 @@ import HomeHeader from '../../../Components/HomeHeader';
 import {FlatList} from 'react-native';
 import {Typography} from '../../../Components/UI/Typography';
 import {useIsFocused} from '@react-navigation/native';
-import {GET_WITH_TOKEN} from '../../../Backend/Api';
-import {GET_APPOINTMENTS, GET_PROFILE} from '../../../Constants/ApiRoute';
+import {GET_WITH_TOKEN, POST_FORM_DATA} from '../../../Backend/Api';
+import {ADD_UPDATE_BID, BID_LIST, GET_APPOINTMENTS, GET_PROFILE} from '../../../Constants/ApiRoute';
 import {useDispatch, useSelector} from 'react-redux';
 import {userDetails} from '../../../Redux/action';
 import {Font} from '../../../Constants/Font';
@@ -23,22 +26,96 @@ import {cleanImageUrl} from '../../../Backend/Utility';
 import {images} from '../../../Components/UI/images';
 import AppointmentCard from '../../../Components/UI/AppointmentCard';
 import EmptyView from '../../../Components/UI/EmptyView';
+import moment from 'moment';
+import Button from '../../../Components/UI/Button';
 
 const MainHome = ({navigation}) => {
   const {width} = Dimensions.get('window');
-  const AUTO_SCROLL_INTERVAL = 3000; // 3 seconds
+  const AUTO_SCROLL_INTERVAL = 3000; 
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const isFocus = useIsFocused();
-  const dispatch = useDispatch();
   const userdata = useSelector(store => store.userDetails);
   const [loading, setLoading] = useState();
   const [Appointment, setAppointments] = useState([]);
+  const [bidList , setBidList] = useState([]);
+  const [buttonLoading , setButtonLoading] = useState(false);
+
+
+   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [bidValue, setBidValue] = useState('');
+
+  const handleOpenModal = (item) => {
+    setSelectedItem(item);
+    setBidValue(item?.won_entry?.amount ? String(item.won_entry.amount) : '');
+    setIsModalVisible(true);
+  };
+
+
+ const handleUpdateBid = () => {
+  const bid = parseFloat(bidValue);
+  const wallet = parseFloat(userdata?.wallet || 0);
+
+  if (!bid || isNaN(bid)) {
+    Alert.alert('Invalid Bid', 'Please enter a valid bid amount.');
+    return;
+  }
+
+  if (bid > wallet) {
+    Alert.alert(
+      'Insufficient Balance',
+      `Your bid amount ₹${bid} exceeds your wallet balance of ₹${wallet}.`
+    );
+    return;
+  }
+
+  console.log('Updated bid for:', selectedItem?.title, 'Value:', bid);
+
+  const formData = new FormData();
+  formData.append('bid_id', selectedItem?.id);
+  formData.append('amount', bid);
+
+  setButtonLoading(true);
+  POST_FORM_DATA(
+    ADD_UPDATE_BID,
+    formData,
+    success => {
+      setButtonLoading(false);
+      Alert.alert(
+        'Success',
+        selectedItem?.won_entry ? 'Bid updated successfully!' : 'Bid placed successfully!'
+      );
+      fetchBidList();
+    },
+    error => {
+      setButtonLoading(false);
+      console.log(error, 'errorerrorerror>>');
+      Alert.alert('Error', 'Failed to place/update bid. Please try again.');
+      fetchBidList();
+    },
+    fail => {
+      setButtonLoading(false);
+      console.log(fail, 'failfailfail>>');
+      Alert.alert('Error', 'Failed to place/update bid. Please try again.');
+      fetchBidList();
+    },
+  );
+
+
+  setIsModalVisible(false);
+  setSelectedItem(null);
+  setBidValue('');
+};
+
+
 
   useEffect(() => {
     if (isFocus) {
       fetchUserProfile();
       GetServices();
+      fetchBidList();
+
     }
   }, [isFocus]);
 
@@ -69,7 +146,6 @@ const MainHome = ({navigation}) => {
     GET_WITH_TOKEN(
       GET_PROFILE,
       success => {
-        console.log(success, 'GET_PROFILE-->>>');
       },
       error => {
         console.log(error, 'errorerrorerror>>');
@@ -77,6 +153,25 @@ const MainHome = ({navigation}) => {
       fail => {},
     );
   };
+
+    const fetchBidList = () => {
+      GET_WITH_TOKEN(
+        BID_LIST,
+        success => {
+          setLoading(false);
+          const response = success?.data?.data;
+          const filteredBids = response?.filter((e) => e?.category?.id == userdata?.service_category);
+          setBidList(filteredBids || [])
+        },
+        error => {
+          console.log(error, 'errorerrorerror>>');
+          setLoading(false);
+        },
+        fail => {
+          setLoading(false);
+        },
+      );
+    };
 
   const banners = [
     {
@@ -124,6 +219,66 @@ const MainHome = ({navigation}) => {
       </TouchableOpacity>
     );
   };
+
+  const renderBidItem = ({item}) => {
+    return (
+      <>
+        <TouchableOpacity 
+          activeOpacity={0.99}
+          disabled
+          onPress={() => {
+            navigation.navigate('EditProfile');
+          }}
+          style={[styles.card , {alignItems:'flex-start'}]}>
+          <Image
+            source={{
+              uri: cleanImageUrl(item?.category?.image),
+            }}
+            style={styles.cardIcon}
+          />
+          <View style={{marginLeft: 10, flex: 1}}>
+            <Typography style={[styles.cardTitle , {color: COLOR.primary, marginBottom:0}]}>
+              {item.title}
+            </Typography>
+            <Typography style={[styles.cardSub , {paddingVertical:2, color: COLOR.black}]}>
+              Category : {item?.category?.name || ''}
+            </Typography>
+            <Typography style={[styles.cardSub , {paddingVertical:2, color: COLOR.black}]}>
+              Starts : {moment(item?.bid_date).format('DD MMM YYYY')} at {item?.start_time || ''}
+            </Typography>
+
+            <Typography style={[styles.cardSub , {paddingVertical:2, color: COLOR.black}]}>
+              Ends : {moment(item?.bid_end_date).format('DD MMM YYYY')} at {item?.end_time || ''}
+            </Typography>
+
+             <Typography style={[styles.cardSub , {paddingVertical:2, color: COLOR.black}]}>
+              Top Bidder : {item?.current_bid_amount ? `₹ ${item?.current_bid_amount}` : 'No Bids Yet'}
+            </Typography>
+
+            <Typography style={[styles.cardSub , {paddingVertical:2, color: COLOR.black}]}>
+              Your Bid : {item?.won_entry?.amount ? `₹ ${item?.won_entry?.amount}` : 'No Bids Yet'}
+            </Typography>
+
+            <Button
+              title={item?.won_entry == null ? "Place Bid" : "Update Bid"}
+              onPress={() => handleOpenModal(item)}
+              containerStyle={{alignSelf: 'flex-start', marginTop: 10,height:40,width:120}}
+              titleSize={12}
+            />
+
+
+          </View>
+        </TouchableOpacity>
+
+        {item?.is_won && <View style={{backgroundColor:COLOR.primary,width:'90%',alignSelf:'center', borderBottomLeftRadius:12, borderBottomRightRadius:12, marginTop:-10}}>
+              <Typography style={[styles.cardSub , {paddingVertical:8, color: COLOR.white, alignSelf:'center', fontFamily:Font.semibold}]}>
+                You Have Won The BID!
+            </Typography>
+        </View>}
+      </>
+    )
+
+  }
 
   return (
     <View style={styles.container}>
@@ -173,6 +328,8 @@ const MainHome = ({navigation}) => {
           />
         </TouchableOpacity>
       </View>
+
+  
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 30}}>
@@ -240,6 +397,18 @@ const MainHome = ({navigation}) => {
             />
           ))}
         </View>
+
+            <View style={{marginBottom:40}}>
+        <FlatList
+          data={bidList}
+          renderItem={renderBidItem}
+          keyExtractor={item => item.id}
+          showsVerticalScrollIndicator={false}
+
+        />
+      </View>   
+      
+ 
 
         {/* Grid Menu */}
         <View style={styles.grid}>
@@ -332,6 +501,58 @@ const MainHome = ({navigation}) => {
             />
           </View>
       </ScrollView>
+
+
+       <Modal
+        visible={isModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setIsModalVisible(false)}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Typography style={{fontSize: 16, fontFamily: Font.bold, marginBottom: 10}}>
+              {selectedItem?.won_entry ? 'Update Your Bid' : 'Place a New Bid'}
+            </Typography>
+            <Typography style={{marginBottom: 6}}>
+              Item: {selectedItem?.title}
+            </Typography>
+
+            <Typography style={{marginBottom: 6}}>
+              Wallet Balance: ₹ {userdata?.wallet || 0}
+            </Typography>
+            <Typography style={{marginBottom: 6}}>
+              Current Top Bid: ₹ {selectedItem?.current_bid_amount || 0}
+            </Typography>
+
+            <TextInput
+              placeholder="Enter your bid"
+              keyboardType="numeric"
+              value={bidValue}
+              onChangeText={setBidValue}
+              style={styles.input}
+            />
+
+            <Button
+              title={selectedItem?.won_entry ? 'Update Bid' : 'Submit Bid'}
+              onPress={handleUpdateBid}
+              containerStyle={{marginTop: 15, height: 45, width: '100%'}}
+              loading={buttonLoading}
+            />
+
+            <Button
+              title="Cancel"
+              onPress={() => setIsModalVisible(false)}
+              containerStyle={{
+                marginTop: 10,
+                height: 40,
+                width: '100%',
+                backgroundColor: COLOR.grey,
+              }}
+              titleStyle={{color: COLOR.black}}
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -489,5 +710,24 @@ const styles = StyleSheet.create({
   },
   inactiveDot: {
     backgroundColor: '#ccc',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '85%',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 20,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: COLOR.gray,
+    borderRadius: 8,
+    padding: 10,
+    width: '100%',
   },
 });

@@ -199,7 +199,7 @@ const ImageModal = ({
                 height: documents || document ? 280 : deleteImage ? 220 : 200,
               },
             ]}>
-            <TouchableOpacity style={styles.checkView} onPress={OpenCamera}>
+            {/* <TouchableOpacity style={styles.checkView} onPress={OpenCamera}>
               <View style={styles.iconContainer}>
                 <Image
                   style={styles.icon}
@@ -209,7 +209,7 @@ const ImageModal = ({
               <Typography size={15} style={{marginLeft: 15}}>
                 Capture Photo
               </Typography>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity style={styles.checkView} onPress={OpenGallery}>
               <View style={styles.iconContainer}>
