@@ -37,8 +37,11 @@ export const MEMBERSHIP_CREATE_ORDER = 'subscription/create-order';
 export const GET_CURRENT_MEMBERSHIP = 'subscription/current';
 export const BID_LIST = 'bids-list';
 export const ADD_UPDATE_BID = 'bid-entries'
+export const GET_BOOKING_DETAILS = 'customer/booking/';
+export const CANCEL_BOOKING = 'customer/booking-remove/';
 
 
+export const VENDOR_BANNER = 'customer/home'
 
 
 

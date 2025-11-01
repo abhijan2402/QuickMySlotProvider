@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -8,12 +8,14 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import HomeHeader from '../../../Components/HomeHeader';
-import {COLOR} from '../../../Constants/Colors';
-import {Typography} from '../../../Components/UI/Typography';
-import {useIsFocused} from '@react-navigation/native';
-import {GET_WITH_TOKEN} from '../../../Backend/Api';
-import {GET_NOTIFICATION, NOTIFICATION_READ} from '../../../Constants/ApiRoute';
+import { COLOR } from '../../../Constants/Colors';
+import { Typography } from '../../../Components/UI/Typography';
+import { useIsFocused } from '@react-navigation/native';
+import { GET_WITH_TOKEN } from '../../../Backend/Api';
+import { GET_NOTIFICATION, NOTIFICATION_READ } from '../../../Constants/ApiRoute';
 import EmptyView from '../../../Components/UI/EmptyView';
+import { Font } from '../../../Constants/Font';
+import moment from 'moment';
 
 const NotificationsScreen = () => {
   const [notifications, setNotification] = useState([]);
@@ -26,6 +28,7 @@ const NotificationsScreen = () => {
       GET_WITH_TOKEN(
         GET_NOTIFICATION,
         success => {
+          setNotification(success?.data)
           console.log(success, 'successsuccesssuccess-->>>');
           setLoading(false);
         },
@@ -71,42 +74,44 @@ const NotificationsScreen = () => {
         <ActivityIndicator
           size="large"
           color="#007bff"
-          style={{marginTop: 20}}
+          style={{ marginTop: 20 }}
         />
       ) : (
         <ScrollView
-          contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 10}}>
+          contentContainerStyle={{ paddingVertical: 10, paddingHorizontal: 10 }}>
           <FlatList
             data={notifications}
-            renderItem={({item}) => {
+            renderItem={({ item }) => {
               return (
                 <View key={item.id} style={styles.card}>
-                  <View style={styles.cardLeft}>
-                    <Image source={{uri: item.icon}} style={styles.icon} />
-                  </View>
+                  {/* <View style={styles.cardLeft}>
+                    <Image source={{ uri: item.icon }} style={styles.icon} />
+                  </View> */}
                   <View style={styles.cardRight}>
                     <View style={styles.cardHeader}>
                       <Typography
                         size={14}
-                        fontWeight="600"
+                        font={Font.semibold}
                         color={COLOR.black}>
                         {item.title}
                       </Typography>
-                      <Typography
-                        size={12}
-                        fontWeight="600"
+                      {/* <Typography
+                        size={13}
+                        font={Font.medium}
                         color={item.statusColor}>
                         {item.status}
-                      </Typography>
+                      </Typography> */}
                     </View>
                     <Typography
                       size={12}
                       color="#555"
-                      style={{marginVertical: 4}}>
+                      font={Font.semibold}
+
+                      style={{ marginVertical: 4 }}>
                       {item.message}
                     </Typography>
-                    <Typography size={11} color="#888">
-                      {item.time}
+                    <Typography size={11} font={Font.medium} color="#888">
+                      {moment(item.created_at).format("DD MMM, YYYY")}
                     </Typography>
                   </View>
                 </View>
@@ -139,11 +144,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     shadowColor: '#000',
     shadowOpacity: 0.05,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowRadius: 5,
-    elevation: 1,
+    elevation: 3,
     borderWidth: 1,
     borderColor: '#eee',
+    paddingVertical: 5
   },
   cardLeft: {
     marginRight: 10,

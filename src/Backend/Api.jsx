@@ -1,8 +1,8 @@
 import SimpleToast from 'react-native-simple-toast';
-import {createRef} from 'react';
+import { createRef } from 'react';
 import axios from 'axios';
-import {store} from '../Redux/store';
-import {Alert} from 'react-native';
+import { store } from '../Redux/store';
+import { Alert } from 'react-native';
 export const toastRef = createRef();
 const errorHandling = {
   validateStatus: function (status) {
@@ -33,8 +33,8 @@ const responseBack = (data, msg, status) => {
 
 export const GET = async (
   route,
-  onSuccess = () => {},
-  onError = () => {},
+  onSuccess = () => { },
+  onError = () => { },
   headers = {},
   onFail = () => {
     SimpleToast.show('Check Network, Try Again.', SimpleToast.SHORT);
@@ -67,22 +67,25 @@ export const GET = async (
         onError(err);
       });
   } catch (error) {
-    onFail({data: null, msg: 'Network Error', status: 'error'});
-    return {data: null, msg: 'Network Error', status: 'error'};
+    onFail({ data: null, msg: 'Network Error', status: 'error' });
+    return { data: null, msg: 'Network Error', status: 'error' };
   }
 };
 export const GET_WITH_TOKEN = async (
   route,
-  onSuccess = () => {},
-  onError = () => {},
+  onSuccess = () => { },
+  onError = () => { },
   onFail = () => {
     SimpleToast.show('Check Network, Try Again.', SimpleToast.SHORT);
   },
   headers = {},
-  status = () => {},
+  status = () => { },
 ) => {
   const tokenVal = store.getState().Token;
   try {
+    console.log(`${API}${route}`, "URLLLLLL");
+    console.log(tokenVal, "TOKENNNNNN");
+
     await axios({
       method: 'get',
       url: `${API}${route}`,
@@ -113,15 +116,15 @@ export const GET_WITH_TOKEN = async (
       });
     return;
   } catch (error) {
-    onFail({data: null, msg: 'Network Error', status: 'error', error});
-    return {data: null, msg: 'Network Error', status: 'error'};
+    onFail({ data: null, msg: 'Network Error', status: 'error', error });
+    return { data: null, msg: 'Network Error', status: 'error' };
   }
 };
 export const POST = async (
   route,
   body = {},
-  onSuccess = () => {},
-  onError = () => {},
+  onSuccess = () => { },
+  onError = () => { },
   onFail = () => {
     SimpleToast.show('Check Network, Try Again.', SimpleToast.SHORT);
   },
@@ -151,15 +154,15 @@ export const POST = async (
         onError(err);
       });
   } catch (error) {
-    onFail({data: null, msg: 'Network Error', status: 'error'});
-    return {data: null, msg: 'Network Error', status: 'error'};
+    onFail({ data: null, msg: 'Network Error', status: 'error' });
+    return { data: null, msg: 'Network Error', status: 'error' };
   }
 };
 export const POST_FORM_DATA = async (
   route,
   body,
-  onSuccess = () => {},
-  onError = () => {},
+  onSuccess = () => { },
+  onError = () => { },
   onFail = () => {
     SimpleToast.show('Check Network, Try Again.', SimpleToast.SHORT);
   },
@@ -194,15 +197,15 @@ export const POST_FORM_DATA = async (
         onError(err);
       });
   } catch (error) {
-    onFail({data: null, msg: 'Network Error', status: 'error'});
-    return {data: null, msg: 'Network Error', status: 'error'};
+    onFail({ data: null, msg: 'Network Error', status: 'error' });
+    return { data: null, msg: 'Network Error', status: 'error' };
   }
 };
 export const POST_WITH_TOKEN = async (
   route,
   body = {},
-  onSuccess = () => {},
-  onError = () => {},
+  onSuccess = () => { },
+  onError = () => { },
   onFail = () => {
     SimpleToast.show('Check Network, Try Again.', SimpleToast.SHORT);
   },
@@ -234,15 +237,15 @@ export const POST_WITH_TOKEN = async (
         onError(err);
       });
   } catch (error) {
-    onFail({data: null, msg: 'Network Error', status: 'error'});
-    return {data: null, msg: 'Network Error', status: 'error'};
+    onFail({ data: null, msg: 'Network Error', status: 'error' });
+    return { data: null, msg: 'Network Error', status: 'error' };
   }
 };
 export const PUT = async (
   route,
   body = {},
-  onSuccess = () => {},
-  onError = () => {},
+  onSuccess = () => { },
+  onError = () => { },
   onFail = () => {
     SimpleToast.show('Check Network, Try Again.', SimpleToast.SHORT);
   },
@@ -271,15 +274,15 @@ export const PUT = async (
         onError(err);
       });
   } catch (error) {
-    onFail({data: null, msg: 'Network Error', status: 'error'});
-    return {data: null, msg: 'Network Error', status: 'error'};
+    onFail({ data: null, msg: 'Network Error', status: 'error' });
+    return { data: null, msg: 'Network Error', status: 'error' };
   }
 };
 export const DELETE_WITH_TOKEN = async (
   route,
   body = {},
-  onSuccess = () => {},
-  onError = () => {},
+  onSuccess = () => { },
+  onError = () => { },
   onFail = () => {
     SimpleToast.show('Check Network, Try Again.', SimpleToast.SHORT);
   },
@@ -312,15 +315,15 @@ export const DELETE_WITH_TOKEN = async (
         onError(err);
       });
   } catch (error) {
-    onFail({data: null, msg: 'Network Error', status: 'error', error});
-    return {data: null, msg: 'Network Error', status: 'error'};
+    onFail({ data: null, msg: 'Network Error', status: 'error', error });
+    return { data: null, msg: 'Network Error', status: 'error' };
   }
 };
 export const PUT_FORM_DATA = async (
   route,
   body,
-  onSuccess = () => {},
-  onError = () => {},
+  onSuccess = () => { },
+  onError = () => { },
   onFail = () => {
     SimpleToast.show('Check Network, Try Again.', SimpleToast.SHORT);
   },
@@ -352,15 +355,15 @@ export const PUT_FORM_DATA = async (
         onError(err);
       });
   } catch (error) {
-    onFail({data: null, msg: 'Network Error', status: 'error'});
-    return {data: null, msg: 'Network Error', status: 'error'};
+    onFail({ data: null, msg: 'Network Error', status: 'error' });
+    return { data: null, msg: 'Network Error', status: 'error' };
   }
 };
 export const PUT_WITH_TOKEN = async (
   route,
   body = {},
-  onSuccess = () => {},
-  onError = () => {},
+  onSuccess = () => { },
+  onError = () => { },
   onFail = () => {
     SimpleToast.show('Check Network, Try Again.', SimpleToast.SHORT);
   },
@@ -391,8 +394,8 @@ export const PUT_WITH_TOKEN = async (
         onError(err);
       });
   } catch (error) {
-    onFail({data: null, msg: 'Network Error', status: 'error'});
-    return {data: null, msg: 'Network Error', status: 'error'};
+    onFail({ data: null, msg: 'Network Error', status: 'error' });
+    return { data: null, msg: 'Network Error', status: 'error' };
   }
 };
 export function onErrorFound(res, onError) {

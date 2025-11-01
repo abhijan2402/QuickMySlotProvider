@@ -8,23 +8,23 @@ import {
   ScrollView,
   Text,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import HomeHeader from '../../../Components/HomeHeader';
-import {COLOR} from '../../../Constants/Colors';
-import {Typography} from '../../../Components/UI/Typography';
+import { COLOR } from '../../../Constants/Colors';
+import { Typography } from '../../../Components/UI/Typography';
 import ImageModal from '../../../Components/UI/ImageModal';
 import ImageUpload from '../../../Components/UI/ImageUpload';
-import {images} from '../../../Components/UI/images';
-import {windowWidth} from '../../../Constants/Dimensions';
+import { images } from '../../../Components/UI/images';
+import { windowWidth } from '../../../Constants/Dimensions';
 import Input from '../../../Components/Input';
 import Button from '../../../Components/UI/Button';
-import {ErrorBox} from '../../../Components/UI/ErrorBox';
-import {validators} from '../../../Backend/Validator';
+import { ErrorBox } from '../../../Components/UI/ErrorBox';
+import { validators } from '../../../Backend/Validator';
 import useKeyboard from '../../../Constants/Utility';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {ToastMsg} from '../../../Backend/Utility';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { ToastMsg } from '../../../Backend/Utility';
 import DropdownCommon from '../../../Components/UI/DropdownCommon';
-import {Font} from '../../../Constants/Font';
+import { Font } from '../../../Constants/Font';
 import DatePickerModal from '../../../Components/UI/DatePicker';
 import {
   ADD_SUB_SERVICES,
@@ -32,13 +32,13 @@ import {
   SERVICE,
   UPDATE_SERVICE,
 } from '../../../Constants/ApiRoute';
-import {GET_WITH_TOKEN, POST_FORM_DATA} from '../../../Backend/Api';
-import {useIsFocused} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
+import { GET_WITH_TOKEN, POST_FORM_DATA } from '../../../Backend/Api';
+import { useIsFocused } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 import moment from 'moment';
 import AvailabilityManagement from './AvailabilityManagement';
 
-const AddService = ({route, navigation}) => {
+const AddService = ({ route, navigation }) => {
   const [serviceName, setServiceName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState();
@@ -51,12 +51,12 @@ const AddService = ({route, navigation}) => {
   const updatedServiceData =
     serviceData && serviceData.length > 0
       ? serviceData
-      : [{label: '+ Add Sub Service', value: 'add_sub_service'}];
+      : [{ label: '+ Add Sub Service', value: 'add_sub_service' }];
   const [peak, setPeak] = useState(false);
   const genderData = [
-    {value: 'male', label: 'Male'},
-    {value: 'female', label: 'Female'},
-    {value: 'other', label: 'Other'},
+    { value: 'male', label: 'Male' },
+    { value: 'female', label: 'Female' },
+    { value: 'other', label: 'Other' },
   ];
   const [addons, setAddons] = useState([
     {
@@ -76,7 +76,7 @@ const AddService = ({route, navigation}) => {
 
   const [gender, setGender] = useState('');
   const [loading, setLoading] = useState(false);
-  const {isKeyboardVisible} = useKeyboard();
+  const { isKeyboardVisible } = useKeyboard();
   const data = route?.params?.data;
   console.log(data, 'dsauyiwequyi778877787');
   const isEditing = route?.params?.isEditing;
@@ -99,28 +99,28 @@ const AddService = ({route, navigation}) => {
       setDescription(data?.description);
       setPrice(data?.price);
       setDuration(data?.duration);
-      setImage(data?.image ? {path: data?.image} : null);
+      setImage(data?.image ? { path: data?.image } : null);
       const genderTemp = genderData.find(v => v?.value == data?.gender);
       setGender(genderTemp);
       const parsedAddons = data?.addons
         ? Object.entries(data.addons).map(([name, price], index) => ({
-            id: index + 1,
-            name,
-            price: price.toString(),
-          }))
-        : [{id: 1, name: '', price: ''}];
+          id: index + 1,
+          name,
+          price: price.toString(),
+        }))
+        : [{ id: 1, name: '', price: '' }];
       setAddons(parsedAddons);
       const parsedPeakHours = data?.peak_hours
         ? Object.entries(data.peak_hours).map(([timeRange, price], index) => {
-            const [startTime, endTime] = timeRange.split('-');
-            return {
-              id: index + 1,
-              startTime: moment(startTime, 'HH:mm').toDate(),
-              endTime: moment(endTime, 'HH:mm').toDate(),
-              price: price.toString(),
-            };
-          })
-        : [{id: 1, startTime: '', endTime: '', price: ''}];
+          const [startTime, endTime] = timeRange.split('-');
+          return {
+            id: index + 1,
+            startTime: moment(startTime, 'HH:mm').toDate(),
+            endTime: moment(endTime, 'HH:mm').toDate(),
+            price: price.toString(),
+          };
+        })
+        : [{ id: 1, startTime: '', endTime: '', price: '' }];
       setPeakHours(parsedPeakHours);
     }
 
@@ -204,7 +204,7 @@ const AddService = ({route, navigation}) => {
   const validateForm = () => {
     let validationErrors = {
       serviceName: validators.checkRequire('Service Name', serviceName),
-      description: validators.checkRequire('Description', description),
+      // description: validators.checkRequire('Description', description),
       service: validators.checkRequire('Service', service),
       price: validators.checkRequire('Price', price),
       gender: validators.checkRequire('Gender', gender),
@@ -309,7 +309,7 @@ const AddService = ({route, navigation}) => {
   };
 
   const addAddon = () => {
-    setAddons([...addons, {id: Date.now(), name: '', price: ''}]);
+    setAddons([...addons, { id: Date.now(), name: '', price: '' }]);
   };
 
   const removeAddon = id => {
@@ -321,7 +321,7 @@ const AddService = ({route, navigation}) => {
   const updateAddon = (id, field, value) => {
     setAddons(
       addons.map(addon =>
-        addon.id === id ? {...addon, [field]: value} : addon,
+        addon.id === id ? { ...addon, [field]: value } : addon,
       ),
     );
   };
@@ -329,7 +329,7 @@ const AddService = ({route, navigation}) => {
   const addPeakHour = () => {
     setPeakHours([
       ...peakHours,
-      {id: Date.now(), startTime: '', endTime: '', price: ''},
+      { id: Date.now(), startTime: '', endTime: '', price: '' },
     ]);
   };
 
@@ -342,7 +342,7 @@ const AddService = ({route, navigation}) => {
   const updatePeakHour = (id, field, value) => {
     setPeakHours(
       peakHours.map(peakHour =>
-        peakHour.id === id ? {...peakHour, [field]: value} : peakHour,
+        peakHour.id === id ? { ...peakHour, [field]: value } : peakHour,
       ),
     );
   };
@@ -365,6 +365,20 @@ const AddService = ({route, navigation}) => {
         showsVerticalScrollIndicator={false}
         style={styles.content}
         contentContainerStyle={styles.scrollContent}>
+
+        <DropdownCommon
+          label="Service"
+          data={updatedServiceData}
+          value={service}
+          onChange={item => {
+            if (item.value == 'add_sub_service') {
+              navigation.navigate('AddSubServices');
+            } else {
+              setService(item);
+            }
+          }}
+        />
+        {errors.service && <ErrorBox error={errors.service} />}
         {/* Service Name */}
         <Input
           label="Service Name"
@@ -421,19 +435,6 @@ const AddService = ({route, navigation}) => {
         />
         {errors.gender && <ErrorBox error={errors.gender} />}
 
-        <DropdownCommon
-          label="Service"
-          data={updatedServiceData}
-          value={service}
-          onChange={item => {
-            if (item.value == 'add_sub_service') {
-              navigation.navigate('AddSubServices');
-            } else {
-              setService(item);
-            }
-          }}
-        />
-        {errors.service && <ErrorBox error={errors.service} />}
 
         {/* Duration */}
         <Input
@@ -451,7 +452,7 @@ const AddService = ({route, navigation}) => {
           // fontWeight="600"
           font={Font.semibold}
           color="#333"
-          style={[styles.label, {marginTop: 20}]}>
+          style={[styles.label, { marginTop: 20 }]}>
           Service Image
         </Typography>
 
@@ -465,7 +466,7 @@ const AddService = ({route, navigation}) => {
           size={12}
           color="#777"
           font={Font.semibold}
-          style={[styles.note, {marginBottom: 0}]}>
+          style={[styles.note, { marginBottom: 0 }]}>
           Max file size: 2MB. JPG, PNG allowed.
         </Typography>
         {/* show error below image */}
@@ -486,7 +487,7 @@ const AddService = ({route, navigation}) => {
                 placeholder="Addon name"
                 value={addon.name}
                 onChangeText={text => updateAddon(addon.id, 'name', text)}
-                mainStyle={{width: '40%', marginTop: 0}}
+                mainStyle={{ width: '40%', marginTop: 0 }}
                 error={errors[`addonName_${index}`]}
               />
               <Input
@@ -494,13 +495,13 @@ const AddService = ({route, navigation}) => {
                 value={addon.price}
                 onChangeText={text => updateAddon(addon.id, 'price', text)}
                 keyboardType="decimal-pad"
-                mainStyle={{width: '40%', marginTop: 0}}
+                mainStyle={{ width: '40%', marginTop: 0 }}
                 error={errors[`addonPrice_${index}`]}
               />
               <TouchableOpacity
                 disabled={index == 0}
                 onPress={() => removeAddon(addon.id)}
-                style={[styles.removeButton, {marginTop: 15}]}>
+                style={[styles.removeButton, { marginTop: 15 }]}>
                 {index != 0 && (
                   <Image source={images.close} style={styles.removeIcon} />
                 )}
@@ -533,9 +534,9 @@ const AddService = ({route, navigation}) => {
                   <Image source={images.close} style={styles.removeIcon} />
                 </TouchableOpacity>
               )}
-              <View style={{flexDirection: 'row', marginBottom: 10}}>
+              <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                 <DatePickerModal
-                  containerStyle={{width: '30%'}}
+                  containerStyle={{ width: '30%' }}
                   mode={'time'}
                   value={peakHour.startTime}
                   onChange={time =>
@@ -545,7 +546,7 @@ const AddService = ({route, navigation}) => {
                 />
                 <Typography style={styles.timeSeparator}>to</Typography>
                 <DatePickerModal
-                  containerStyle={{width: '30%'}}
+                  containerStyle={{ width: '30%' }}
                   mode={'time'}
                   value={peakHour.endTime}
                   onChange={time => handleTimeChange(peakHour.id, 'end', time)}
@@ -558,9 +559,9 @@ const AddService = ({route, navigation}) => {
                     updatePeakHour(peakHour.id, 'price', text)
                   }
                   keyboardType="decimal-pad"
-                  mainStyle={{width: '30%', marginTop: 0, marginStart: 10}}
+                  mainStyle={{ width: '30%', marginTop: 0, marginStart: 10 }}
                   error={errors[`peakPrice_${index}`]}
-                  style={{height: 48, fontFamily: Font.medium}}
+                  style={{ height: 48, fontFamily: Font.medium }}
                 />
               </View>
             </View>
@@ -575,10 +576,10 @@ const AddService = ({route, navigation}) => {
           </Typography>
         </View>
 
-        <AvailabilityManagement
+        {/* <AvailabilityManagement
           onChange={setAvailability}
           initialAvailability={availability}
-        />
+        /> */}
       </KeyboardAwareScrollView>
 
       {/* Add Button */}
@@ -605,16 +606,16 @@ const AddService = ({route, navigation}) => {
 export default AddService;
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#fff'},
-  content: {flex: 1},
-  scrollContent: {paddingHorizontal: 15, paddingBottom: 20},
+  container: { flex: 1, backgroundColor: '#fff' },
+  content: { flex: 1 },
+  scrollContent: { paddingHorizontal: 15, paddingBottom: 20 },
   label: {
     marginBottom: 5,
     fontFamily: Font.medium,
     fontSize: 14,
     color: COLOR.black,
   },
-  note: {marginBottom: 15, marginTop: 5},
+  note: { marginBottom: 15, marginTop: 5 },
   imgWrapper: {
     position: 'relative',
     alignSelf: 'flex-start',
@@ -686,6 +687,7 @@ const styles = StyleSheet.create({
   timeSeparator: {
     marginHorizontal: 5,
     fontFamily: Font.medium,
+    marginTop: 15
   },
   subNote: {
     marginTop: 5,

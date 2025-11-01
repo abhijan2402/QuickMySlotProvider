@@ -1,6 +1,6 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BottomNavigation from './BottomNavigation';
-import {View} from 'react-native';
+import { View } from 'react-native';
 import Cms from '../Components/Cms';
 import AddService from '../Screens/Private/Home/AddService';
 import EditProfile from '../Screens/Private/Account/EditProfile';
@@ -26,6 +26,7 @@ import AvailabilityManagement from '../Screens/Private/Home/AvailabilityManageme
 import BookingConfirmation from '../Screens/Private/Home/BookingConfirmation';
 import AddAmount from '../Screens/Private/Account/AddAmount';
 import AddSubServices from '../Screens/Private/Home/AddSubServices';
+import AppointmentDetail from '../Screens/Private/AppointmentSection/AppointmentDetail';
 const Stack = createNativeStackNavigator();
 
 const RootNavigation = () => {
@@ -68,6 +69,8 @@ const RootNavigation = () => {
         />
         <Stack.Screen name="AddAmount" component={AddAmount} />
         <Stack.Screen name="AddSubServices" component={AddSubServices} />
+        <Stack.Screen name="AppointmentDetail" component={AppointmentDetail} />
+
       </Stack.Navigator>
       {/* <View style={{marginBottom: 50}}></View> */}
     </>

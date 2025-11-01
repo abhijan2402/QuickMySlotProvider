@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,17 +7,17 @@ import {
   ActivityIndicator,
   Image,
 } from 'react-native';
-import {COLOR} from '../../../Constants/Colors';
-import {windowWidth} from '../../../Constants/Dimensions';
+import { COLOR } from '../../../Constants/Colors';
+import { windowWidth } from '../../../Constants/Dimensions';
 import HomeHeader from '../../../Components/HomeHeader';
 import ConfirmModal from '../../../Components/UI/ConfirmModel';
-import {Typography} from '../../../Components/UI/Typography';
-import {useIsFocused} from '@react-navigation/native';
-import {GET_WITH_TOKEN, POST_WITH_TOKEN} from '../../../Backend/Api';
-import {ADD_BANK, DELETE_BANK} from '../../../Constants/ApiRoute';
-import {Font} from '../../../Constants/Font';
+import { Typography } from '../../../Components/UI/Typography';
+import { useIsFocused } from '@react-navigation/native';
+import { GET_WITH_TOKEN, POST_WITH_TOKEN } from '../../../Backend/Api';
+import { ADD_BANK, DELETE_BANK } from '../../../Constants/ApiRoute';
+import { Font } from '../../../Constants/Font';
 
-const BankDetails = ({navigation}) => {
+const BankDetails = ({ navigation }) => {
   const [selectedBankId, setSelectedBankId] = useState(null);
   const [deletes, setDelete] = useState(false);
   const [bankList, setBankList] = useState([]);
@@ -72,110 +72,149 @@ const BankDetails = ({navigation}) => {
     );
   };
 
-  const renderBankCard = ({item}) => (
-    <TouchableOpacity
-      style={[styles.card, selectedBankId === item.id && styles.cardSelected]}
-      activeOpacity={0.9}
-      onPress={() => toggleSelect(item.id)}>
-      {/* Bank Name + Checkbox */}
-      <View style={styles.headerRow}>
-        <Typography
-          size={14} // 🔹 Smaller font
-          font={Font.bold}
-          color={COLOR.primary || '#333'}>
-          {item.bank_name}
-        </Typography>
-        <TouchableOpacity
-          style={[
-            styles.checkbox,
-            selectedBankId === item.id && styles.checkboxSelected,
-          ]}
-          onPress={() => toggleSelect(item.id)}>
-          {selectedBankId === item.id && (
+  const renderBankCard = ({ item }) => {
+    console.log(item, "ITEMMMMMMMM");
+
+    return (
+      <TouchableOpacity
+        style={[styles.card, selectedBankId === item.id && styles.cardSelected]}
+        activeOpacity={0.9}
+        onPress={() => toggleSelect(item.id)}>
+
+        {/* 🔹 Header: Bank Name + Checkbox */}
+        <View style={styles.headerRow}>
+          <Typography
+            size={14}
+            font={Font.bold}
+            color={COLOR.primary || '#333'}>
+            {item.bank_name}
+          </Typography>
+
+          <TouchableOpacity
+            style={[
+              styles.checkbox,
+              selectedBankId === item.id && styles.checkboxSelected,
+            ]}
+            onPress={() => toggleSelect(item.id)}>
+            {selectedBankId === item.id && (
+              <Image
+                source={{
+                  uri: 'https://cdn-icons-png.flaticon.com/512/190/190411.png',
+                }}
+                style={{ width: 12, height: 12, tintColor: '#fff' }}
+              />
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {/* 🔹 Account Number */}
+        <View style={styles.detailRow}>
+          <Typography size={12} font={Font.medium} color="#444">
+            Account No:
+          </Typography>
+          <Typography
+            size={12}
+            font={Font.regular}
+            color="#666"
+            textAlign="right"
+            style={{ width: windowWidth * 0.55 }}>
+            {item.account_number}
+          </Typography>
+        </View>
+
+        {/* 🔹 IFSC Code */}
+        <View style={styles.detailRow}>
+          <Typography size={12} font={Font.medium} color="#444">
+            IFSC Code:
+          </Typography>
+          <Typography
+            size={12}
+            font={Font.regular}
+            color="#666"
+            textAlign="right"
+            style={{ width: windowWidth * 0.55 }}>
+            {item.ifsc_code}
+          </Typography>
+        </View>
+
+        {/* 🔹 Account Type */}
+        <View style={styles.detailRow}>
+          <Typography size={12} font={Font.medium} color="#444">
+            Account Type:
+          </Typography>
+          <Typography size={12} font={Font.regular} color="#666">
+            {item.bank_type}
+          </Typography>
+        </View>
+
+        {/* 🔹 PAN */}
+        {item.pan ? (
+          <View style={styles.detailRow}>
+            <Typography size={12} font={Font.medium} color="#444">
+              PAN:
+            </Typography>
+            <Typography size={12} font={Font.regular} color="#666">
+              {item.pan}
+            </Typography>
+          </View>
+        ) : null}
+
+        {/* 🔹 Address */}
+        {(item.street1 || item.street2 || item.city || item.state || item.postal_code) ? (
+          <View style={{ marginTop: 6 }}>
+            <Typography size={12} font={Font.medium} color="#444">
+              Address:
+            </Typography>
+            <Typography size={12} font={Font.regular} color="#666" style={{ marginTop: 2 }}>
+              {[
+                item.street1,
+                item.street2,
+                item.city,
+                item.state,
+                item.postal_code,
+              ]
+                .filter(Boolean)
+                .join(', ')}
+            </Typography>
+          </View>
+        ) : null}
+
+        {/* 🔹 Actions (Edit / Delete) */}
+        <View style={styles.buttonRow}>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() =>
+              navigation.navigate('AddBank', {
+                data: item,
+                isEditing: true,
+              })
+            }>
             <Image
               source={{
-                uri: 'https://cdn-icons-png.flaticon.com/512/190/190411.png',
+                uri: 'https://cdn-icons-png.flaticon.com/512/1159/1159633.png',
               }}
-              style={{width: 12, height: 12, tintColor: '#fff'}}
+              style={styles.actionIcon}
             />
-          )}
-        </TouchableOpacity>
-      </View>
+          </TouchableOpacity>
 
-      {/* Account Number */}
-      <View style={styles.detailRow}>
-        <Typography size={12} font={Font.medium} color="#444">
-          Account No:
-        </Typography>
-        <Typography
-          size={12}
-          font={Font.regular}
-          color="#666"
-          textAlign={'right'}
-          style={{width: windowWidth * 0.55}}>
-          {item.account_number}
-        </Typography>
-      </View>
+          <TouchableOpacity
+            style={[styles.iconButton, { backgroundColor: '#F44336' }]}
+            onPress={() => {
+              setDelete(true);
+              setDeleteId(item?.id);
+            }}>
+            <Image
+              source={{
+                uri: 'https://cdn-icons-png.flaticon.com/512/484/484662.png',
+              }}
+              style={[styles.actionIcon, { tintColor: '#fff' }]}
+            />
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
+    )
+  };
 
-      {/* IFSC Code */}
-      <View style={styles.detailRow}>
-        <Typography size={12} font={Font.medium} color="#444">
-          IFSC Code:
-        </Typography>
-        <Typography
-          size={12}
-          font={Font.regular}
-          color="#666"
-          textAlign={'right'}
-          style={{width: windowWidth * 0.55}}>
-          {item.ifsc_code}
-        </Typography>
-      </View>
-
-      {/* Account Type */}
-      <View style={styles.detailRow}>
-        <Typography size={12} font={Font.medium} color="#444">
-          Account Type:
-        </Typography>
-        <Typography size={12} font={Font.regular} color="#666">
-          {item.bank_type}
-        </Typography>
-      </View>
-
-      {/* Actions */}
-      <View style={styles.buttonRow}>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() =>
-            navigation.navigate('AddBank', {
-              data: item,
-              isEditing: true,
-            })
-          }>
-          <Image
-            source={{
-              uri: 'https://cdn-icons-png.flaticon.com/512/1159/1159633.png',
-            }}
-            style={styles.actionIcon}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.iconButton, {backgroundColor: '#F44336'}]}
-          onPress={() => {
-            setDelete(true);
-            setDeleteId(item?.id);
-          }}>
-          <Image
-            source={{
-              uri: 'https://cdn-icons-png.flaticon.com/512/484/484662.png',
-            }}
-            style={[styles.actionIcon, {tintColor: '#fff'}]}
-          />
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
-  );
 
   return (
     <View style={styles.container}>
@@ -188,16 +227,16 @@ const BankDetails = ({navigation}) => {
         <ActivityIndicator
           size="large"
           color={COLOR.primary}
-          style={{marginTop: 20}}
+          style={{ marginTop: 20 }}
         />
       ) : (
         <FlatList
           data={bankList}
           keyExtractor={item => item.id.toString()}
           renderItem={renderBankCard}
-          contentContainerStyle={{paddingBottom: 20, marginTop: 20}}
+          contentContainerStyle={{ paddingBottom: 20, marginTop: 20 }}
           ListEmptyComponent={() => (
-            <View style={{alignItems: 'center', marginTop: 20}}>
+            <View style={{ alignItems: 'center', marginTop: 20 }}>
               <Typography size={14} font={Font.semibold} color={COLOR.black}>
                 No Bank Added Yet
               </Typography>
@@ -248,7 +287,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     alignSelf: 'center',
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 5,
     elevation: 2,
@@ -284,7 +323,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12,
     shadowRadius: 3,
     elevation: 2,

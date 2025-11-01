@@ -10,41 +10,43 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import {COLOR} from '../../../Constants/Colors';
+import React, { useEffect, useRef, useState } from 'react';
+import { COLOR } from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
-import {FlatList} from 'react-native';
-import {Typography} from '../../../Components/UI/Typography';
-import {useIsFocused} from '@react-navigation/native';
-import {GET_WITH_TOKEN, POST_FORM_DATA} from '../../../Backend/Api';
-import {ADD_UPDATE_BID, BID_LIST, GET_APPOINTMENTS, GET_PROFILE} from '../../../Constants/ApiRoute';
-import {useDispatch, useSelector} from 'react-redux';
-import {userDetails} from '../../../Redux/action';
-import {Font} from '../../../Constants/Font';
-import {windowWidth} from '../../../Constants/Dimensions';
-import {cleanImageUrl} from '../../../Backend/Utility';
-import {images} from '../../../Components/UI/images';
+import { FlatList } from 'react-native';
+import { Typography } from '../../../Components/UI/Typography';
+import { useIsFocused } from '@react-navigation/native';
+import { GET, GET_WITH_TOKEN, POST_FORM_DATA } from '../../../Backend/Api';
+import { ADD_UPDATE_BID, BID_LIST, GET_APPOINTMENTS, GET_PROFILE, VENDOR_BANNER } from '../../../Constants/ApiRoute';
+import { useDispatch, useSelector } from 'react-redux';
+import { userDetails } from '../../../Redux/action';
+import { Font } from '../../../Constants/Font';
+import { windowWidth } from '../../../Constants/Dimensions';
+import { cleanImageUrl } from '../../../Backend/Utility';
+import { images } from '../../../Components/UI/images';
 import AppointmentCard from '../../../Components/UI/AppointmentCard';
 import EmptyView from '../../../Components/UI/EmptyView';
 import moment from 'moment';
 import Button from '../../../Components/UI/Button';
 
-const MainHome = ({navigation}) => {
-  const {width} = Dimensions.get('window');
-  const AUTO_SCROLL_INTERVAL = 3000; 
+const MainHome = ({ navigation }) => {
+  const { width } = Dimensions.get('window');
+  const AUTO_SCROLL_INTERVAL = 3000;
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const isFocus = useIsFocused();
   const userdata = useSelector(store => store.userDetails);
   const [loading, setLoading] = useState();
   const [Appointment, setAppointments] = useState([]);
-  const [bidList , setBidList] = useState([]);
-  const [buttonLoading , setButtonLoading] = useState(false);
+  const [bidList, setBidList] = useState([]);
+  const [buttonLoading, setButtonLoading] = useState(false);
 
 
-   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [bidValue, setBidValue] = useState('');
+
+  const [banner, setBanner] = useState([])
 
   const handleOpenModal = (item) => {
     setSelectedItem(item);
@@ -53,60 +55,59 @@ const MainHome = ({navigation}) => {
   };
 
 
- const handleUpdateBid = () => {
-  const bid = parseFloat(bidValue);
-  const wallet = parseFloat(userdata?.wallet || 0);
+  const handleUpdateBid = () => {
+    const bid = parseFloat(bidValue);
+    const wallet = parseFloat(userdata?.wallet || 0);
 
-  if (!bid || isNaN(bid)) {
-    Alert.alert('Invalid Bid', 'Please enter a valid bid amount.');
-    return;
-  }
+    if (!bid || isNaN(bid)) {
+      Alert.alert('Invalid Bid', 'Please enter a valid bid amount.');
+      return;
+    }
 
-  if (bid > wallet) {
-    Alert.alert(
-      'Insufficient Balance',
-      `Your bid amount ₹${bid} exceeds your wallet balance of ₹${wallet}.`
-    );
-    return;
-  }
-
-  console.log('Updated bid for:', selectedItem?.title, 'Value:', bid);
-
-  const formData = new FormData();
-  formData.append('bid_id', selectedItem?.id);
-  formData.append('amount', bid);
-
-  setButtonLoading(true);
-  POST_FORM_DATA(
-    ADD_UPDATE_BID,
-    formData,
-    success => {
-      setButtonLoading(false);
+    if (bid > wallet) {
       Alert.alert(
-        'Success',
-        selectedItem?.won_entry ? 'Bid updated successfully!' : 'Bid placed successfully!'
+        'Insufficient Balance',
+        `Your bid amount ₹${bid} exceeds your wallet balance of ₹${wallet}.`
       );
-      fetchBidList();
-    },
-    error => {
-      setButtonLoading(false);
-      console.log(error, 'errorerrorerror>>');
-      Alert.alert('Error', 'Failed to place/update bid. Please try again.');
-      fetchBidList();
-    },
-    fail => {
-      setButtonLoading(false);
-      console.log(fail, 'failfailfail>>');
-      Alert.alert('Error', 'Failed to place/update bid. Please try again.');
-      fetchBidList();
-    },
-  );
+      return;
+    }
 
 
-  setIsModalVisible(false);
-  setSelectedItem(null);
-  setBidValue('');
-};
+    const formData = new FormData();
+    formData.append('bid_id', selectedItem?.id);
+    formData.append('amount', bid);
+
+    setButtonLoading(true);
+    POST_FORM_DATA(
+      ADD_UPDATE_BID,
+      formData,
+      success => {
+        setButtonLoading(false);
+        Alert.alert(
+          'Success',
+          selectedItem?.won_entry ? 'Bid updated successfully!' : 'Bid placed successfully!'
+        );
+        fetchBidList();
+      },
+      error => {
+        setButtonLoading(false);
+        console.log(error, 'errorerrorerror>>');
+        Alert.alert('Error', 'Failed to place/update bid. Please try again.');
+        fetchBidList();
+      },
+      fail => {
+        setButtonLoading(false);
+        console.log(fail, 'failfailfail>>');
+        Alert.alert('Error', 'Failed to place/update bid. Please try again.');
+        fetchBidList();
+      },
+    );
+
+
+    setIsModalVisible(false);
+    setSelectedItem(null);
+    setBidValue('');
+  };
 
 
 
@@ -114,6 +115,7 @@ const MainHome = ({navigation}) => {
     if (isFocus) {
       fetchUserProfile();
       GetServices();
+      GetBanner()
       fetchBidList();
 
     }
@@ -142,6 +144,33 @@ const MainHome = ({navigation}) => {
     );
   };
 
+
+
+  const GetBanner = () => {
+    setLoading(true);
+    GET(
+      VENDOR_BANNER,
+      success => {
+        setLoading(false);
+        // console.log(success?.data?.banners, "SUCCESSSSS___BANNNWE");
+        if (success?.data?.banners?.length > 0) {
+          const VendorBanners = success?.data?.banners?.filter((i) => i?.type == "vendor")
+          console.log(VendorBanners, "VEND__KOOOOO");
+          setBanner(VendorBanners)
+        }
+
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+      },
+      fail => {
+        console.log(fail, 'failfailfail>>');
+        setLoading(false);
+      },
+    );
+  };
+
   global.fetchUserProfile = () => {
     GET_WITH_TOKEN(
       GET_PROFILE,
@@ -150,119 +179,104 @@ const MainHome = ({navigation}) => {
       error => {
         console.log(error, 'errorerrorerror>>');
       },
-      fail => {},
+      fail => { },
     );
   };
 
-    const fetchBidList = () => {
-      GET_WITH_TOKEN(
-        BID_LIST,
-        success => {
-          setLoading(false);
-          const response = success?.data?.data;
-          const filteredBids = response?.filter((e) => e?.category?.id == userdata?.service_category);
-          setBidList(filteredBids || [])
-        },
-        error => {
-          console.log(error, 'errorerrorerror>>');
-          setLoading(false);
-        },
-        fail => {
-          setLoading(false);
-        },
-      );
-    };
-
-  const banners = [
-    {
-      id: '1',
-      image:
-        'https://img.freepik.com/premium-vector/beauty-salon-banner-template_23-2148614461.jpg',
-      link: 'https://quick-my-slot-prov-web.vercel.app/',
-    },
-    {
-      id: '2',
-      image:
-        'https://img.freepik.com/free-vector/spa-beauty-salon-horizontal-banners-set_1284-9915.jpg',
-      link: 'https://example.com/another-banner',
-    },
-    {
-      id: '3',
-      image:
-        'https://img.freepik.com/free-vector/barbershop-banner-template_23-2148614473.jpg',
-      link: 'https://example.com/yet-another-banner',
-    },
-  ];
-
-  // Auto-scroll logic
+  const fetchBidList = () => {
+    GET_WITH_TOKEN(
+      BID_LIST,
+      success => {
+        setLoading(false);
+        const response = success?.data?.data;
+        const filteredBids = response?.filter((e) => e?.category?.id == userdata?.service_category);
+        setBidList(filteredBids || [])
+      },
+      error => {
+        console.log(error, 'errorerrorerror>>');
+        setLoading(false);
+      },
+      fail => {
+        setLoading(false);
+      },
+    );
+  };
   useEffect(() => {
+    if (!banner || banner.length === 0) return; // wait until banners load
+
     const interval = setInterval(() => {
-      const nextIndex = (currentIndex + 1) % banners.length;
-      flatListRef.current?.scrollToIndex({index: nextIndex, animated: true});
-      setCurrentIndex(nextIndex);
+      setCurrentIndex(prevIndex => {
+        const nextIndex = (prevIndex + 1) % banner.length;
+        flatListRef.current?.scrollToIndex({
+          index: nextIndex,
+          animated: true,
+        });
+        return nextIndex;
+      });
     }, AUTO_SCROLL_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [currentIndex]);
+  }, [banner]);
 
-  const renderItem = ({item}) => {
+  const renderItem = ({ item }) => {
     return (
       <TouchableOpacity
         activeOpacity={0.8}
         style={[styles.bannerWrapper]}
-        onPress={() => Linking.openURL(item.link)}>
+      // onPress={() => Linking.openURL(item.link)}
+      >
         <Image
-          source={{uri: item?.image}}
-          style={[styles.bannerImage, {width: width - 40}]}
-          resizeMode="cover"
+          source={{ uri: item?.image }}
+          style={[styles.bannerImage, { width: width - 40 }]}
+          resizeMode="stretch"
         />
       </TouchableOpacity>
     );
   };
 
-  const renderBidItem = ({item}) => {
+  const renderBidItem = ({ item }) => {
     return (
       <>
-        <TouchableOpacity 
+        <TouchableOpacity
           activeOpacity={0.99}
           disabled
           onPress={() => {
             navigation.navigate('EditProfile');
           }}
-          style={[styles.card , {alignItems:'flex-start'}]}>
+          style={[styles.card, { alignItems: 'flex-start' }]}>
           <Image
             source={{
               uri: cleanImageUrl(item?.category?.image),
             }}
             style={styles.cardIcon}
           />
-          <View style={{marginLeft: 10, flex: 1}}>
-            <Typography style={[styles.cardTitle , {color: COLOR.primary, marginBottom:0}]}>
+          <View style={{ marginLeft: 10, flex: 1 }}>
+            <Typography style={[styles.cardTitle, { color: COLOR.primary, marginBottom: 0 }]}>
               {item.title}
             </Typography>
-            <Typography style={[styles.cardSub , {paddingVertical:2, color: COLOR.black}]}>
+            <Typography style={[styles.cardSub, { paddingVertical: 2, color: COLOR.black }]}>
               Category : {item?.category?.name || ''}
             </Typography>
-            <Typography style={[styles.cardSub , {paddingVertical:2, color: COLOR.black}]}>
+            <Typography style={[styles.cardSub, { paddingVertical: 2, color: COLOR.black }]}>
               Starts : {moment(item?.bid_date).format('DD MMM YYYY')} at {item?.start_time || ''}
             </Typography>
 
-            <Typography style={[styles.cardSub , {paddingVertical:2, color: COLOR.black}]}>
+            <Typography style={[styles.cardSub, { paddingVertical: 2, color: COLOR.black }]}>
               Ends : {moment(item?.bid_end_date).format('DD MMM YYYY')} at {item?.end_time || ''}
             </Typography>
 
-             <Typography style={[styles.cardSub , {paddingVertical:2, color: COLOR.black}]}>
+            <Typography style={[styles.cardSub, { paddingVertical: 2, color: COLOR.black }]}>
               Top Bidder : {item?.current_bid_amount ? `₹ ${item?.current_bid_amount}` : 'No Bids Yet'}
             </Typography>
 
-            <Typography style={[styles.cardSub , {paddingVertical:2, color: COLOR.black}]}>
+            <Typography style={[styles.cardSub, { paddingVertical: 2, color: COLOR.black }]}>
               Your Bid : {item?.won_entry?.amount ? `₹ ${item?.won_entry?.amount}` : 'No Bids Yet'}
             </Typography>
 
             <Button
               title={item?.won_entry == null ? "Place Bid" : "Update Bid"}
               onPress={() => handleOpenModal(item)}
-              containerStyle={{alignSelf: 'flex-start', marginTop: 10,height:40,width:120}}
+              containerStyle={{ alignSelf: 'flex-start', marginTop: 10, height: 40, width: 120 }}
               titleSize={12}
             />
 
@@ -270,10 +284,10 @@ const MainHome = ({navigation}) => {
           </View>
         </TouchableOpacity>
 
-        {item?.is_won && <View style={{backgroundColor:COLOR.primary,width:'90%',alignSelf:'center', borderBottomLeftRadius:12, borderBottomRightRadius:12, marginTop:-10}}>
-              <Typography style={[styles.cardSub , {paddingVertical:8, color: COLOR.white, alignSelf:'center', fontFamily:Font.semibold}]}>
-                You Have Won The BID!
-            </Typography>
+        {item?.is_won && <View style={{ backgroundColor: COLOR.primary, width: '90%', alignSelf: 'center', borderBottomLeftRadius: 12, borderBottomRightRadius: 12, marginTop: -10 }}>
+          <Typography style={[styles.cardSub, { paddingVertical: 8, color: COLOR.white, alignSelf: 'center', fontFamily: Font.semibold }]}>
+            You Have Won The BID!
+          </Typography>
         </View>}
       </>
     )
@@ -290,11 +304,11 @@ const MainHome = ({navigation}) => {
           marginTop: 20,
           paddingHorizontal: 20,
         }}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <View>
             <Image
               source={images.location}
-              style={{height: 18, width: 18}}
+              style={{ height: 18, width: 18 }}
               tintColor={COLOR.primary}
             />
           </View>
@@ -303,7 +317,7 @@ const MainHome = ({navigation}) => {
             font={Font.semibold}
             color={COLOR.primary}
             numberOfLines={1}
-            style={{marginLeft: 8, width: windowWidth * 0.6}}>
+            style={{ marginLeft: 8, width: windowWidth * 0.6 }}>
             {userdata?.exact_location}
           </Typography>
         </View>
@@ -323,16 +337,16 @@ const MainHome = ({navigation}) => {
             source={{
               uri: 'https://cdn-icons-png.flaticon.com/128/10502/10502974.png',
             }}
-            style={{height: 18, width: 18}}
+            style={{ height: 18, width: 18 }}
             tintColor={COLOR.white}
           />
         </TouchableOpacity>
       </View>
 
-  
+
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: 30}}>
+        contentContainerStyle={{ paddingBottom: 30 }}>
         {/* Salon Card */}
         <TouchableOpacity
           activeOpacity={0.99}
@@ -346,7 +360,7 @@ const MainHome = ({navigation}) => {
             }}
             style={styles.cardIcon}
           />
-          <View style={{marginLeft: 10, flex: 1}}>
+          <View style={{ marginLeft: 10, flex: 1 }}>
             <Typography style={styles.cardTitle}>
               {userdata?.business_name ||
                 'Please provide your business Information'}
@@ -370,7 +384,7 @@ const MainHome = ({navigation}) => {
           }}>
           <FlatList
             ref={flatListRef}
-            data={banners}
+            data={banner}
             scrollEnabled={false}
             renderItem={renderItem}
             keyExtractor={item => item.id}
@@ -387,7 +401,7 @@ const MainHome = ({navigation}) => {
 
         {/* Dots */}
         <View style={styles.dotsContainer}>
-          {banners.map((_, index) => (
+          {banner.map((_, index) => (
             <View
               key={index}
               style={[
@@ -398,17 +412,17 @@ const MainHome = ({navigation}) => {
           ))}
         </View>
 
-            <View style={{marginBottom:40}}>
-        <FlatList
-          data={bidList}
-          renderItem={renderBidItem}
-          keyExtractor={item => item.id}
-          showsVerticalScrollIndicator={false}
+        <View style={{ marginBottom: 40 }}>
+          <FlatList
+            data={bidList}
+            renderItem={renderBidItem}
+            keyExtractor={item => item.id}
+            showsVerticalScrollIndicator={false}
 
-        />
-      </View>   
-      
- 
+          />
+        </View>
+
+
 
         {/* Grid Menu */}
         <View style={styles.grid}>
@@ -462,65 +476,68 @@ const MainHome = ({navigation}) => {
         </View>
 
         {/* Upcoming Booking Section */}
-          <View style={styles.bookingContainer}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-              <Typography style={styles.sectionTitle}>
-                Upcoming Booking
-              </Typography>
-             { Appointment.length > 0 && <Typography
-                style={styles.sectionTitle}
-                disabled={false}
-                onPress={() => navigation.navigate('Appointment')}>
-                View More
-              </Typography>}
-            </View>
-            <FlatList
-              data={Appointment.slice(0, 3)}
-              renderItem={({item}) => {
-                const scheduleEntries = item?.schedule_time
-                  ? Object.entries(item.schedule_time)
-                  : [];
-                return (
-                  <AppointmentCard
-                    tab={'Upcoming'}
-                    item={item}
-                    onSuccess={() => GetServices()}
-                  />
-                );
-              }}
-              ListEmptyComponent={() => {
-                return (
-                  <EmptyView title='No Appointment Yet' />
-                )
-              }}
-            />
+        <View style={styles.bookingContainer}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <Typography style={styles.sectionTitle}>
+              Upcoming Booking
+            </Typography>
+            {Appointment.length > 0 && <Typography
+              style={styles.sectionTitle}
+              disabled={false}
+              onPress={() => navigation.navigate('Appointment')}>
+              View More
+            </Typography>}
           </View>
+          <FlatList
+            data={Appointment.slice(0, 3)}
+            renderItem={({ item }) => {
+              const scheduleEntries = item?.schedule_time
+                ? Object.entries(item.schedule_time)
+                : [];
+              return (
+                <AppointmentCard
+                  tab={'Upcoming'}
+                  item={item}
+                  onSuccess={() => GetServices()}
+                  onPress={() =>
+                    navigation.navigate('AppointmentDetail', { appointment: item })
+                  }
+                />
+              );
+            }}
+            ListEmptyComponent={() => {
+              return (
+                <EmptyView title='No Appointment Yet' />
+              )
+            }}
+          />
+        </View>
       </ScrollView>
 
 
-       <Modal
+      <Modal
         visible={isModalVisible}
         transparent
         animationType="slide"
         onRequestClose={() => setIsModalVisible(false)}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Typography style={{fontSize: 16, fontFamily: Font.bold, marginBottom: 10}}>
+            <Typography style={{ fontSize: 16, fontFamily: Font.bold, marginBottom: 10 }}>
               {selectedItem?.won_entry ? 'Update Your Bid' : 'Place a New Bid'}
             </Typography>
-            <Typography style={{marginBottom: 6}}>
+            <Typography style={{ marginBottom: 6 }}>
               Item: {selectedItem?.title}
             </Typography>
 
-            <Typography style={{marginBottom: 6}}>
+            <Typography style={{ marginBottom: 6 }}>
               Wallet Balance: ₹ {userdata?.wallet || 0}
             </Typography>
-            <Typography style={{marginBottom: 6}}>
+            <Typography style={{ marginBottom: 6 }}>
               Current Top Bid: ₹ {selectedItem?.current_bid_amount || 0}
             </Typography>
 
@@ -535,7 +552,7 @@ const MainHome = ({navigation}) => {
             <Button
               title={selectedItem?.won_entry ? 'Update Bid' : 'Submit Bid'}
               onPress={handleUpdateBid}
-              containerStyle={{marginTop: 15, height: 45, width: '100%'}}
+              containerStyle={{ marginTop: 15, height: 45, width: '100%' }}
               loading={buttonLoading}
             />
 
@@ -548,7 +565,7 @@ const MainHome = ({navigation}) => {
                 width: '100%',
                 backgroundColor: COLOR.grey,
               }}
-              titleStyle={{color: COLOR.black}}
+              titleStyle={{ color: COLOR.black }}
             />
           </View>
         </View>
@@ -605,7 +622,7 @@ const styles = StyleSheet.create({
     padding: 15,
     shadowColor: '#000',
     shadowOpacity: 0.05,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 2,
     marginBottom: 10,
@@ -655,7 +672,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
+    paddingHorizontal: 20
   },
   gridItem: {
     width: '48%',
@@ -690,7 +707,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    // marginTop: 10,
     backgroundColor: 'rgba(0,0,0,0.05)',
     paddingVertical: 6,
     alignSelf: 'center',

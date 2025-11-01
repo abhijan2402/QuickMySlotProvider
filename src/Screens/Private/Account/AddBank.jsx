@@ -1,51 +1,63 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
-  TouchableOpacity,
   Text,
-  ScrollView,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import Input from '../../../Components/Input';
-import {COLOR} from '../../../Constants/Colors';
+import { COLOR } from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
-import {Dropdown} from 'react-native-element-dropdown';
-import {validators} from '../../../Backend/Validator';
-import {isValidForm} from '../../../Backend/Utility';
-import {ErrorBox} from '../../../Components/UI/ErrorBox';
+import { Dropdown } from 'react-native-element-dropdown';
+import { validators } from '../../../Backend/Validator';
+import { isValidForm } from '../../../Backend/Utility';
+import { ErrorBox } from '../../../Components/UI/ErrorBox';
 import useKeyboard from '../../../Constants/Utility';
 import Button from '../../../Components/UI/Button';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {ADD_BANK, UPDATE_BANK} from '../../../Constants/ApiRoute';
-import {POST_FORM_DATA, POST_WITH_TOKEN} from '../../../Backend/Api';
-import {useIsFocused} from '@react-navigation/native';
-import {Font} from '../../../Constants/Font';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { ADD_BANK, UPDATE_BANK } from '../../../Constants/ApiRoute';
+import { POST_FORM_DATA } from '../../../Backend/Api';
+import { useIsFocused } from '@react-navigation/native';
+import { Font } from '../../../Constants/Font';
 
-const AddBank = ({navigation, route}) => {
+const AddBank = ({ navigation, route }) => {
   const [bankName, setBankName] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [ifscCode, setIfscCode] = useState('');
   const [bankType, setBankType] = useState(null);
-  const {isKeyboardVisible} = useKeyboard();
-  const [loading, setLoading] = useState(false);
-  const data = route?.params?.data;
-  console.log(data);
-  const isEditing = route?.params?.isEditing;
+  const [pan, setPan] = useState('');
+  const [street1, setStreet1] = useState('');
+  const [street2, setStreet2] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+
   const [error, setError] = useState({});
-  const bankTypeOptions = [
-    {label: 'Saving', value: 'saving'},
-    {label: 'Current', value: 'current'},
-  ];
+  const [loading, setLoading] = useState(false);
+  const { isKeyboardVisible } = useKeyboard();
   const isFocus = useIsFocused();
 
+  const data = route?.params?.data;
+  const isEditing = route?.params?.isEditing;
+
+  const bankTypeOptions = [
+    { label: 'Saving', value: 'saving' },
+    { label: 'Current', value: 'current' },
+  ];
+
   useEffect(() => {
-    if (isFocus) {
-      setAccountNumber(data?.account_number);
-      setBankName(data?.bank_name);
-      setIfscCode(data?.ifsc_code);
-      setBankType(data?.bank_type);
+    if (isFocus && data) {
+      setAccountNumber(data?.account_number || '');
+      setBankName(data?.bank_name || '');
+      setIfscCode(data?.ifsc_code || '');
+      setBankType(data?.bank_type || null);
+      setPan(data?.pan || '');
+      setStreet1(data?.street1 || '');
+      setStreet2(data?.street2 || '');
+      setCity(data?.city || '');
+      setState(data?.state || '');
+      setPostalCode(data?.postal_code || '');
     }
   }, [isFocus]);
 
@@ -55,6 +67,11 @@ const AddBank = ({navigation, route}) => {
       accountNumber: validators.checkNumber('Account Number', accountNumber),
       ifscCode: validators.checkRequire('IFSC Code', ifscCode),
       bankType: validators.checkRequire('Bank Type', bankType),
+      pan: validators.checkRequire('PAN', pan),
+      street1: validators.checkRequire('Street 1', street1),
+      city: validators.checkRequire('City', city),
+      state: validators.checkRequire('State', state),
+      postalCode: validators.checkNumber('Postal Code', postalCode),
     };
 
     setError(validationErrors);
@@ -66,58 +83,45 @@ const AddBank = ({navigation, route}) => {
       formData.append('account_number', accountNumber);
       formData.append('ifsc_code', ifscCode);
       formData.append('bank_type', bankType);
-      console.log('FormData ====>', formData);
-      if (isEditing) {
-        POST_FORM_DATA(
-          UPDATE_BANK + data?.id,
-          formData,
-          success => {
-            console.log(success, 'successsuccesssuccess-->>>');
-            setLoading(false);
-            navigation.goBack();
-          },
-          error => {
-            console.log(error, 'errorerrorerror>>');
-            setLoading(false);
-          },
-          fail => {
-            console.log(fail, 'errorerrorerror>>');
+      formData.append('pan', pan);
+      formData.append('street1', street1);
+      formData.append('street2', street2);
+      formData.append('city', city);
+      formData.append('state', state);
+      formData.append('postal_code', postalCode);
+      console.log(formData, "DATATTATTTATA");
 
-            setLoading(false);
-          },
-        );
-      } else {
-        POST_FORM_DATA(
-          ADD_BANK,
-          formData,
-          success => {
-            console.log(success, 'successsuccesssuccess-->>>');
-            setLoading(false);
-            navigation.goBack();
-          },
-          error => {
-            console.log(error, 'errorerrorerror>>');
-            setLoading(false);
-          },
-          fail => {
-            console.log(fail, 'errorerrorerror>>');
+      const url = isEditing ? UPDATE_BANK + data?.id : ADD_BANK;
 
-            setLoading(false);
-          },
-        );
-      }
+      POST_FORM_DATA(
+        url,
+        formData,
+        success => {
+          console.log(success, '✅ Success');
+          setLoading(false);
+          navigation.goBack();
+        },
+        err => {
+          console.log(err, '❌ Error');
+          setLoading(false);
+        },
+        fail => {
+          console.log(fail, '⚠️ Fail');
+          setLoading(false);
+        },
+      );
     }
   };
 
   return (
     <KeyboardAvoidingView
-      style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 15}}
+      style={{ flex: 1, backgroundColor: 'white', paddingHorizontal: 15 }}
       behavior={
         Platform.OS === 'ios'
           ? 'padding'
           : isKeyboardVisible
-          ? 'height'
-          : undefined
+            ? 'height'
+            : undefined
       }
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 40}>
       <HomeHeader
@@ -127,14 +131,15 @@ const AddBank = ({navigation, route}) => {
       />
 
       <KeyboardAwareScrollView
-        style={{paddingHorizontal: 5}}
+        showsVerticalScrollIndicator={false}
+        style={{ paddingHorizontal: 5 }}
         contentContainerStyle={styles.container}>
         <Input
           label="Bank Name"
           placeholder="Enter bank name"
           value={bankName}
           onChangeText={setBankName}
-          style={{borderColor: COLOR.primary}}
+          style={{ borderColor: COLOR.primary }}
           error={error.bankName}
         />
 
@@ -143,9 +148,9 @@ const AddBank = ({navigation, route}) => {
           placeholder="Enter account number"
           value={accountNumber}
           onChangeText={setAccountNumber}
-          style={{borderColor: COLOR.primary}}
+          style={{ borderColor: COLOR.primary }}
           error={error.accountNumber}
-          keyboardType='numeric'
+          keyboardType="numeric"
         />
 
         <Input
@@ -153,11 +158,11 @@ const AddBank = ({navigation, route}) => {
           placeholder="Enter IFSC code"
           value={ifscCode}
           onChangeText={setIfscCode}
-          style={{borderColor: COLOR.primary}}
+          style={{ borderColor: COLOR.primary }}
           error={error.ifscCode}
         />
 
-        <Text style={[styles.label, {marginTop: 18}]}>Bank Type</Text>
+        <Text style={[styles.label, { marginTop: 18 }]}>Bank Type</Text>
         <Dropdown
           style={styles.dropdown}
           placeholderStyle={styles.placeholderStyle}
@@ -171,6 +176,60 @@ const AddBank = ({navigation, route}) => {
           onChange={item => setBankType(item.value)}
         />
         {error.bankType && <ErrorBox error={error.bankType} />}
+
+        <Input
+          label="PAN"
+          placeholder="Enter PAN number"
+          value={pan}
+          onChangeText={setPan}
+          style={{ borderColor: COLOR.primary }}
+          error={error.pan}
+        />
+
+        <Input
+          label="Street 1"
+          placeholder="Enter address line 1"
+          value={street1}
+          onChangeText={setStreet1}
+          style={{ borderColor: COLOR.primary }}
+          error={error.street1}
+        />
+
+        <Input
+          label="Street 2"
+          placeholder="Enter address line 2 (optional)"
+          value={street2}
+          onChangeText={setStreet2}
+          style={{ borderColor: COLOR.primary }}
+        />
+
+        <Input
+          label="City"
+          placeholder="Enter city"
+          value={city}
+          onChangeText={setCity}
+          style={{ borderColor: COLOR.primary }}
+          error={error.city}
+        />
+
+        <Input
+          label="State"
+          placeholder="Enter state"
+          value={state}
+          onChangeText={setState}
+          style={{ borderColor: COLOR.primary }}
+          error={error.state}
+        />
+
+        <Input
+          label="Postal Code"
+          placeholder="Enter postal code"
+          value={postalCode}
+          onChangeText={setPostalCode}
+          style={{ borderColor: COLOR.primary }}
+          error={error.postalCode}
+          keyboardType="numeric"
+        />
       </KeyboardAwareScrollView>
 
       <Button
@@ -213,20 +272,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLOR.black,
     fontFamily: Font.semibold,
-  },
-  button: {
-    marginTop: 20,
-    backgroundColor: COLOR.primary,
-    paddingVertical: 14,
-    borderRadius: 10,
-    width: '90%',
-    alignSelf: 'center',
-    marginBottom: 10,
-  },
-  buttonText: {
-    color: COLOR.white,
-    fontSize: 16,
-    textAlign: 'center',
-    fontWeight: '600',
   },
 });

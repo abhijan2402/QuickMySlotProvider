@@ -1,16 +1,16 @@
-import {Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
 import ConfirmModal from './ConfirmModel';
-import {POST_WITH_TOKEN} from '../../Backend/Api';
+import { POST_WITH_TOKEN } from '../../Backend/Api';
 import {
   ACCEPT_APPOINTMENTS,
   COMPLETED_APPOINTMENTS,
   REJECT_APPOINTMENTS,
 } from '../../Constants/ApiRoute';
-import {COLOR} from '../../Constants/Colors';
-import {Typography} from './Typography';
+import { COLOR } from '../../Constants/Colors';
+import { Typography } from './Typography';
 
-const AppointmentCard = ({item, tab, onSuccess}) => {
+const AppointmentCard = ({ item, tab, onSuccess, onPress, navigation }) => {
   const [accept, setAccept] = useState(false);
   const [appointmentId, setAppointmentId] = useState('');
   const [reject, setReject] = useState(false);
@@ -79,9 +79,9 @@ const AppointmentCard = ({item, tab, onSuccess}) => {
     );
   };
   return (
-    <View style={styles.card}>
+    <TouchableOpacity onPress={onPress} style={styles.card}>
       <Typography style={styles.infoText}>
-        Order Id: {item?.order_id}
+        Order Id: QMS{item?.id}
       </Typography>
       {/* Customer Info */}
       <Typography style={styles.sectionTitle}>👤 Customer Details</Typography>
@@ -94,38 +94,83 @@ const AppointmentCard = ({item, tab, onSuccess}) => {
         disabled={false}>
         📞 {item.customer?.phone_number}
       </Typography>
-      <Typography style={styles.infoText}>
+      {/* <Typography style={styles.infoText}>
         📍 {item.customer?.exact_location}
-      </Typography>
+      </Typography> */}
 
       <View style={styles.divider} />
 
       {/* Services */}
       <Typography style={styles.sectionTitle}>💇 Services Booked</Typography>
-      <Typography style={styles.infoText}>
-        • {item?.service?.name} - {item?.service?.price}
-      </Typography>
-      <Typography style={styles.totalPrice}>
-        Total: ₹{item?.service?.price}
-      </Typography>
+      {
+        item?.services?.map((i, index) => (
+          <>
+            <Typography style={styles.infoText}>
+              • {i?.name} - {i?.price}
+            </Typography>
 
-      <View style={styles.divider} />
-
-      {/* Booking Details */}
-      <Typography style={styles.sectionTitle}>🗓 Booking Details</Typography>
-      {scheduleEntries.length > 0 ? (
-        scheduleEntries.map(([time, date], index) => (
-          <Typography key={index} style={styles.infoText}>
-            Date & Time: {time} {new Date(date).toLocaleDateString()}
-          </Typography>
+          </>
         ))
-      ) : (
-        <Typography style={styles.infoText}>Date & Time: N/A</Typography>
-      )}
+      }
+      {/* <Typography style={styles.totalPrice}>
+        Total: ₹{item?.subtotal}
+      </Typography> */}
+      {/* <View style={styles.divider} /> */}
+      {/* <Typography
+        style={{
+          fontSize: 16,
+          fontWeight: '700',
+          color: '#000',
+          marginBottom: 8,
+        }}>
+        🗓 Booking Details
+      </Typography> */}
+      {/* {scheduleEntries.length > 0 ? (
+        <View>
+          <Typography
+            style={{
+              fontSize: 14,
+              fontWeight: '600',
+              color: '#444',
+              marginBottom: 6,
+            }}>
+            {new Date(scheduleEntries[0][1]).toLocaleDateString()}
+          </Typography>
 
-      <Typography style={styles.infoText}>
-        Duration: {item.service?.duration}
-      </Typography>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
+            {scheduleEntries.map(([time], index) => (
+              <View
+                key={index}
+                style={{
+                  backgroundColor: '#E8F0FE',
+                  paddingVertical: 6,
+                  paddingHorizontal: 12,
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: '#C5D1F0',
+                  marginRight: 8,
+                  marginBottom: 6,
+                }}>
+                <Typography
+                  style={{
+                    fontSize: 13,
+                    color: '#1A73E8',
+                    fontWeight: '500',
+                  }}>
+                  {time}
+                </Typography>
+              </View>
+            ))}
+          </View>
+        </View>
+      ) : (
+        <Typography style={{ fontSize: 13, color: '#777' }}>
+          Date & Time: N/A
+        </Typography>
+      )} */}
+
+
+
 
       {/* Actions */}
       {tab !== 'Completed' && tab !== 'Rejected' && (
@@ -192,7 +237,7 @@ const AppointmentCard = ({item, tab, onSuccess}) => {
         onPressYes={() => HandleComplete()}
         onPressNo={() => setComplete(false)}
       />
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -212,12 +257,12 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
     marginHorizontal: 5,
   },
-  sectionTitle: {fontSize: 14, fontWeight: '700', marginBottom: 8},
-  infoText: {fontSize: 13, color: '#333', marginBottom: 5},
+  sectionTitle: { fontSize: 14, fontWeight: '700', marginBottom: 8 },
+  infoText: { fontSize: 13, color: '#333', marginBottom: 5 },
   linkText: {
-    fontSize: 13,
+    fontSize: 14,
     color: COLOR.primary,
-    textDecorationLine: 'underline',
+    // textDecorationLine: 'underline',
     marginBottom: 5,
   },
   totalPrice: {
@@ -252,7 +297,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
   },
-  actionText: {color: COLOR.white, fontWeight: '600'},
+  actionText: { color: COLOR.white, fontWeight: '600' },
   feedbackBtn: {
     marginTop: 12,
     paddingVertical: 10,
@@ -261,5 +306,5 @@ const styles = StyleSheet.create({
     borderColor: COLOR.primary,
     alignItems: 'center',
   },
-  feedbackText: {color: COLOR.primary, fontWeight: '600'},
+  feedbackText: { color: COLOR.primary, fontWeight: '600' },
 });

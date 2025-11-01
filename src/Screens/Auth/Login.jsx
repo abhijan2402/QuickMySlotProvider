@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -7,20 +7,20 @@ import {
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {windowHeight, windowWidth} from '../../Constants/Dimensions';
-import {COLOR} from '../../Constants/Colors';
-import {validators} from '../../Backend/Validator';
-import {isValidForm} from '../../Backend/Utility';
+import { windowHeight, windowWidth } from '../../Constants/Dimensions';
+import { COLOR } from '../../Constants/Colors';
+import { validators } from '../../Backend/Validator';
+import { isValidForm } from '../../Backend/Utility';
 import Button from '../../Components/UI/Button';
 import GoogleAuthButton from '../../Components/UI/GoogleAuthButton';
-import {POST} from '../../Backend/Api';
-import {SIGN_UP} from '../../Constants/ApiRoute';
-import {ScrollView} from 'react-native';
+import { POST } from '../../Backend/Api';
+import { SIGN_UP } from '../../Constants/ApiRoute';
+import { ScrollView } from 'react-native';
 import Input from '../../Components/Input';
-import {Typography} from '../../Components/UI/Typography';
-import {Font} from '../../Constants/Font';
+import { Typography } from '../../Components/UI/Typography';
+import { Font } from '../../Constants/Font';
 
-const Login = ({navigation}) => {
+const Login = ({ navigation }) => {
   const [number, setNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -62,17 +62,17 @@ const Login = ({navigation}) => {
     );
   };
 
-  const handleLoginSuccess = user => {};
+  const handleLoginSuccess = user => { };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-      style={{flex: 1, paddingHorizontal: 20, backgroundColor: COLOR.white}}>
-      <ScrollView style={{flex: 1}}>
+      style={{ flex: 1, paddingHorizontal: 20, backgroundColor: COLOR.white }}>
+      <ScrollView style={{ flex: 1 }}>
         <LinearGradient
           colors={[COLOR.white, COLOR.white]}
-          start={{x: 0, y: 0}}
-          end={{x: 0, y: 1}}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
           style={styles.container}>
           {/* Logo */}
           <Image
@@ -87,7 +87,7 @@ const Login = ({navigation}) => {
             textAlign="center"
             font={Font.medium}
             lineHeight={28}
-            style={{width: windowWidth / 1.2, marginTop: 10}}>
+            style={{ width: windowWidth / 1.2, marginTop: 10 }}>
             Get Bookings, Expand Business with QuickSlot
           </Typography>
 
@@ -100,13 +100,13 @@ const Login = ({navigation}) => {
             error={error.mobile}
             text={'+ 91'}
             leftIcon={true}
-            style={{marginLeft: 5, fontFamily: Font.semibold}}
+            style={{ marginLeft: 5, fontFamily: Font.semibold }}
           />
 
           {/* Continue Button */}
           <Button
             loading={loading}
-            containerStyle={{marginTop: 30, width: '100%'}}
+            containerStyle={{ marginTop: 30, width: '100%' }}
             title={'Continue'}
             onPress={onSubmit}
           />
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 3,

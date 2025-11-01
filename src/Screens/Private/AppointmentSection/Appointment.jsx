@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,11 +8,11 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import HomeHeader from '../../../Components/HomeHeader';
-import {COLOR} from '../../../Constants/Colors';
+import { COLOR } from '../../../Constants/Colors';
 import ConfirmModal from '../../../Components/UI/ConfirmModel';
-import {Typography} from '../../../Components/UI/Typography';
-import {useIsFocused} from '@react-navigation/native';
-import {GET_WITH_TOKEN, POST_WITH_TOKEN} from '../../../Backend/Api';
+import { Typography } from '../../../Components/UI/Typography';
+import { useIsFocused } from '@react-navigation/native';
+import { GET_WITH_TOKEN, POST_WITH_TOKEN } from '../../../Backend/Api';
 import {
   ACCEPT_APPOINTMENTS,
   COMPLETED_APPOINTMENTS,
@@ -22,14 +22,14 @@ import {
 import EmptyView from '../../../Components/UI/EmptyView';
 import AppointmentCard from '../../../Components/UI/AppointmentCard';
 
-const VendorAppointments = () => {
+const VendorAppointments = ({ navigation }) => {
   const [tab, setTab] = useState('Upcoming');
 
   const tabs = [
-    {id: 1, title: 'Upcoming', status: 'pending'},
-    {id: 2, title: 'Accepted', status: 'accepted'},
-    {id: 3, title: 'Rejected', status: 'rejected'},
-    {id: 1, title: 'Completed', status: 'completed'},
+    { id: 1, title: 'Upcoming', status: 'pending' },
+    { id: 2, title: 'Accepted', status: 'accepted' },
+    { id: 3, title: 'Rejected', status: 'rejected' },
+    { id: 1, title: 'Completed', status: 'completed' },
   ];
   const [loading, setLoading] = useState(false);
   const isFocus = useIsFocused();
@@ -47,6 +47,8 @@ const VendorAppointments = () => {
       success => {
         setLoading(false);
         const allAppointments = success?.data || [];
+        // console.log(allAppointments, "ALLLLL__APPP");
+
         let filteredAppointments = [];
         switch (tab) {
           case 'Upcoming':
@@ -99,19 +101,19 @@ const VendorAppointments = () => {
           horizontal={true}
           showsHorizontalScrollIndicator={false}
           data={tabs}
-          renderItem={({item}) => {
+          renderItem={({ item }) => {
             return (
               <TouchableOpacity
                 key={item.id}
                 style={[
                   styles.tabButton,
-                  tab === item.title && {backgroundColor: COLOR.primary},
+                  tab === item.title && { backgroundColor: COLOR.primary },
                 ]}
                 onPress={() => setTab(item.title)}>
                 <Typography
                   style={[
                     styles.tabText,
-                    {color: tab === item.title ? COLOR.white : COLOR.black},
+                    { color: tab === item.title ? COLOR.white : COLOR.black },
                   ]}>
                   {item.title}
                 </Typography>
@@ -129,14 +131,18 @@ const VendorAppointments = () => {
           data={appointments}
           keyExtractor={item => item.id}
           showsVerticalScrollIndicator={false}
-          renderItem={({item}) => {
+          renderItem={({ item }) => {
             return (
-              <AppointmentCard onSuccess ={()=>{
-                GetServices()
-              }} item={item} tab={tab} />
+              <AppointmentCard
+                onPress={() =>
+                  navigation.navigate('AppointmentDetail', { appointment: item })
+                }
+                onSuccess={() => {
+                  GetServices()
+                }} item={item} tab={tab} />
             )
           }}
-          contentContainerStyle={{paddingBottom: 20}}
+          contentContainerStyle={{ paddingBottom: 20 }}
           ListEmptyComponent={() => {
             return <EmptyView title="No Data Found" />;
           }}
@@ -149,8 +155,8 @@ const VendorAppointments = () => {
 export default VendorAppointments;
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: COLOR.white, paddingHorizontal: 15},
-  tabRow: {flexDirection: 'row', marginVertical: 15, justifyContent: 'center'},
+  container: { flex: 1, backgroundColor: COLOR.white, paddingHorizontal: 15 },
+  tabRow: { flexDirection: 'row', marginVertical: 15, justifyContent: 'center' },
   tabButton: {
     paddingVertical: 8,
     paddingHorizontal: 8,
@@ -158,7 +164,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     backgroundColor: '#E0E0E0',
   },
-  tabText: {fontSize: 14, fontWeight: '600'},
+  tabText: { fontSize: 14, fontWeight: '600' },
   card: {
     backgroundColor: COLOR.white,
     borderRadius: 12,
@@ -172,8 +178,8 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
     marginHorizontal: 5,
   },
-  sectionTitle: {fontSize: 14, fontWeight: '700', marginBottom: 8},
-  infoText: {fontSize: 13, color: '#333', marginBottom: 5},
+  sectionTitle: { fontSize: 14, fontWeight: '700', marginBottom: 8 },
+  infoText: { fontSize: 13, color: '#333', marginBottom: 5 },
   linkText: {
     fontSize: 13,
     color: COLOR.primary,
@@ -212,7 +218,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
   },
-  actionText: {color: COLOR.white, fontWeight: '600'},
+  actionText: { color: COLOR.white, fontWeight: '600' },
   feedbackBtn: {
     marginTop: 12,
     paddingVertical: 10,
@@ -221,5 +227,5 @@ const styles = StyleSheet.create({
     borderColor: COLOR.primary,
     alignItems: 'center',
   },
-  feedbackText: {color: COLOR.primary, fontWeight: '600'},
+  feedbackText: { color: COLOR.primary, fontWeight: '600' },
 });

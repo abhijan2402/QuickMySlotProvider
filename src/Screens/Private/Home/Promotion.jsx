@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,19 +8,19 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import HomeHeader from '../../../Components/HomeHeader';
-import {COLOR} from '../../../Constants/Colors';
+import { COLOR } from '../../../Constants/Colors';
 import Button from '../../../Components/UI/Button';
-import {images} from '../../../Components/UI/images';
+import { images } from '../../../Components/UI/images';
 import EmptyView from '../../../Components/UI/EmptyView';
 import LinearGradient from 'react-native-linear-gradient';
 import ConfirmModal from '../../../Components/UI/ConfirmModel';
-import {Typography} from '../../../Components/UI/Typography';
-import {useIsFocused} from '@react-navigation/native';
-import {GET_WITH_TOKEN, POST_WITH_TOKEN} from '../../../Backend/Api';
-import {ADD_PROMOTION, DELETE_PROMOTION} from '../../../Constants/ApiRoute';
-import {Font} from '../../../Constants/Font';
+import { Typography } from '../../../Components/UI/Typography';
+import { useIsFocused } from '@react-navigation/native';
+import { GET_WITH_TOKEN, POST_WITH_TOKEN } from '../../../Backend/Api';
+import { ADD_PROMOTION, DELETE_PROMOTION } from '../../../Constants/ApiRoute';
+import { Font } from '../../../Constants/Font';
 
-const Promotion = ({navigation}) => {
+const Promotion = ({ navigation }) => {
   const [deletes, setDelete] = useState(false);
   const [promotions, setPromotions] = useState([]);
   const isFocus = useIsFocused();
@@ -59,25 +59,21 @@ const Promotion = ({navigation}) => {
     POST_WITH_TOKEN(
       DELETE_PROMOTION + PromoId,
       success => {
-        console.log(success, 'successsuccesssuccess-->>>');
         setLoading(false);
         getPromotions();
       },
       error => {
-        console.log(error, 'errorerrorerror>>');
         setLoading(false);
         setDelete(false);
         getPromotions();
       },
       fail => {
-        console.log(fail, 'errorerrorerror>>');
-
         setLoading(false);
       },
     );
   };
 
-  const renderOffer = ({item}) => {
+  const renderOffer = ({ item }) => {
     const formatDate = date => {
       if (!date) return '';
       return new Date(date).toLocaleDateString(); // format: DD/MM/YYYY
@@ -88,8 +84,8 @@ const Promotion = ({navigation}) => {
         {/* Left Strip */}
         <LinearGradient
           colors={['#fbc2eb', '#a6c1ee']}
-          start={{x: 0, y: 0}}
-          end={{x: 0, y: 1}}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
           style={styles.strip}>
           <Typography style={styles.stripText}>{item.promo_code}</Typography>
         </LinearGradient>
@@ -104,9 +100,9 @@ const Promotion = ({navigation}) => {
             </Typography>
 
             {/* Edit + Delete */}
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <TouchableOpacity
-                style={[styles.addButton, {marginRight: 10}]}
+                style={[styles.addButton, { marginRight: 10 }]}
                 onPress={() => {
                   navigation.navigate('AddPromotion', {
                     data: item,
@@ -115,7 +111,7 @@ const Promotion = ({navigation}) => {
                 }}>
                 <Image
                   source={images.edit}
-                  style={{height: 20, width: 20, tintColor: COLOR.black}}
+                  style={{ height: 20, width: 20, tintColor: COLOR.black }}
                 />
               </TouchableOpacity>
               <TouchableOpacity
@@ -126,7 +122,7 @@ const Promotion = ({navigation}) => {
                 }}>
                 <Image
                   source={images.delete}
-                  style={{height: 20, width: 20, tintColor: COLOR.red}}
+                  style={{ height: 20, width: 20, tintColor: COLOR.red }}
                 />
               </TouchableOpacity>
             </View>
@@ -137,11 +133,11 @@ const Promotion = ({navigation}) => {
             {formatDate(item.expired_on)}
           </Typography>
           <Typography
-            style={[styles.status, {color: item.isActive ? 'green' : 'red'}]}>
+            style={[styles.status, { color: item.isActive ? 'green' : 'red' }]}>
             {item.isActive ? 'Active' : 'Inactive'}
           </Typography>
           <Typography
-            style={[styles.status, {color: item.is_highlighted ? 'green' : 'red'}]}>
+            style={[styles.status, { color: item.is_highlighted ? 'green' : 'red' }]}>
             {item.is_highlighted ? 'HighLighted' : 'Not HighLighted'}
           </Typography>
         </View>
@@ -150,25 +146,25 @@ const Promotion = ({navigation}) => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: '#fff', paddingHorizontal: 15}}>
+    <View style={{ flex: 1, backgroundColor: '#fff', paddingHorizontal: 15 }}>
       <HomeHeader
         title="Promotion"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
         leftTint={COLOR.black}
       />
 
-      <View style={{flex: 1, backgroundColor: '#fff', paddingHorizontal: 5}}>
+      <View style={{ flex: 1, backgroundColor: '#fff', paddingHorizontal: 5 }}>
         {loading ? (
           <ActivityIndicator
             size="large"
             color="#007bff"
-            style={{marginTop: 20}}
+            style={{ marginTop: 20 }}
           />
         ) : (
           <FlatList
             data={promotions}
             renderItem={renderOffer}
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             keyExtractor={(item, index) => index.toString()}
             contentContainerStyle={styles.container}
             showsVerticalScrollIndicator={false}
@@ -221,6 +217,12 @@ const styles = StyleSheet.create({
     elevation: 3,
     overflow: 'hidden',
     marginHorizontal: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3.5,
+    borderWidth: 1,
+    borderColor: COLOR.primary
   },
   strip: {
     backgroundColor: '#e0f3ff',
@@ -229,7 +231,7 @@ const styles = StyleSheet.create({
     width: 50,
   },
   stripText: {
-    transform: [{rotate: '-90deg'}],
+    transform: [{ rotate: '-90deg' }],
     fontSize: 12,
     fontFamily: Font.bold,
     color: '#007aff',

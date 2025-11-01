@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, useState} from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -14,22 +14,22 @@ import {
   Animated,
   ScrollView,
 } from 'react-native';
-import {COLOR} from '../../../Constants/Colors';
+import { COLOR } from '../../../Constants/Colors';
 import PropertyCard from '../../../Components/PropertyCard';
 import CustomButton from '../../../Components/CustomButton';
 import MultiModal from '../../../Components/MultiModal';
 import SortModal from '../../../Components/SortModal';
 import LottieView from 'lottie-react-native';
-import {windowHeight, windowWidth} from '../../../Constants/Dimensions';
-import {useIsFocused} from '@react-navigation/native';
-import {GET_WITH_TOKEN} from '../../../Backend/Api';
-import {BID_LIST, GET_PROFILE} from '../../../Constants/ApiRoute';
-import {userDetails} from '../../../Redux/action';
-import {useDispatch} from 'react-redux';
+import { windowHeight, windowWidth } from '../../../Constants/Dimensions';
+import { useIsFocused } from '@react-navigation/native';
+import { GET_WITH_TOKEN } from '../../../Backend/Api';
+import { BID_LIST, GET_PROFILE } from '../../../Constants/ApiRoute';
+import { userDetails } from '../../../Redux/action';
+import { useDispatch } from 'react-redux';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-const Home = ({navigation}) => {
+const Home = ({ navigation }) => {
   const dispatch = useDispatch();
   const banners = [
     'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=1200',
@@ -298,7 +298,7 @@ const Home = ({navigation}) => {
   const isFocus = useIsFocused();
 
   useEffect(() => {
-    alert ()
+    alert()
     if (isFocus) {
       fetchUserProfile();
     }
@@ -373,7 +373,7 @@ const Home = ({navigation}) => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate('Filter', {onApplyFilter: handleFilterChange})
+            navigation.navigate('Filter', { onApplyFilter: handleFilterChange })
           }>
           <Image
             source={{
@@ -399,7 +399,7 @@ const Home = ({navigation}) => {
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={{marginVertical: 2, marginLeft: 20}}>
+            style={{ marginVertical: 2, marginLeft: 20 }}>
             {avaialbleFilter.map(filterGroup => (
               <TouchableOpacity
                 onPress={() => {
@@ -436,12 +436,12 @@ const Home = ({navigation}) => {
 
           <FlatList
             data={properties}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <PropertyCard item={item} toggleLike={toggleLike} />
             )}
             keyExtractor={item => item.id}
             numColumns={2}
-            contentContainerStyle={{paddingBottom: 20, marginHorizontal: 10}}
+            contentContainerStyle={{ paddingBottom: 20, marginHorizontal: 10 }}
             showsVerticalScrollIndicator={false}
           />
         </>
@@ -452,7 +452,7 @@ const Home = ({navigation}) => {
           bottom: 50,
           right: 20,
           opacity: fadeAnim,
-          transform: [{translateY: floatAnim}],
+          transform: [{ translateY: floatAnim }],
         }}>
         <TouchableOpacity
           style={{
@@ -469,7 +469,7 @@ const Home = ({navigation}) => {
             source={{
               uri: 'https://cdn-icons-png.flaticon.com/128/2163/2163350.png',
             }}
-            style={{width: 25, height: 25}}
+            style={{ width: 25, height: 25 }}
           />
           <Text
             style={{
@@ -566,7 +566,7 @@ const styles = StyleSheet.create({
     shadowColor: COLOR.black,
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
   },
   propertyImage: {
     width: '100%',
@@ -614,14 +614,14 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginHorizontal: 20,
   },
-  searchIcon: {width: 20, height: 20, tintColor: COLOR.grey, marginRight: 8},
+  searchIcon: { width: 20, height: 20, tintColor: COLOR.grey, marginRight: 8 },
   searchInput: {
     flex: 1,
     paddingVertical: 8,
     fontSize: 14,
     color: COLOR.black,
   },
-  filterIcon: {width: 22, height: 22, tintColor: COLOR.primary, marginLeft: 8},
+  filterIcon: { width: 22, height: 22, tintColor: COLOR.primary, marginLeft: 8 },
   filterTagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -638,8 +638,8 @@ const styles = StyleSheet.create({
     marginRight: 8,
     marginBottom: 6,
   },
-  filterText: {fontSize: 12, color: COLOR.white, marginRight: 6},
-  crossIcon: {width: 11, height: 11, tintColor: COLOR.white},
+  filterText: { fontSize: 12, color: COLOR.white, marginRight: 6 },
+  crossIcon: { width: 11, height: 11, tintColor: COLOR.white },
   row: {
     justifyContent: 'space-between',
     paddingHorizontal: 10,
