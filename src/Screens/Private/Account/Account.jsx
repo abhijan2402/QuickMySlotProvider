@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -10,23 +10,23 @@ import {
 import HomeHeader from '../../../Components/HomeHeader';
 import CustomButton from '../../../Components/CustomButton';
 import ConfirmModal from '../../../Components/UI/ConfirmModel';
-import {AuthContext} from '../../../Backend/AuthContent';
-import {COLOR} from '../../../Constants/Colors';
-import {Typography} from '../../../Components/UI/Typography';
-import {useIsFocused} from '@react-navigation/native';
-import {GET_WITH_TOKEN, POST_WITH_TOKEN} from '../../../Backend/Api';
+import { AuthContext } from '../../../Backend/AuthContent';
+import { COLOR } from '../../../Constants/Colors';
+import { Typography } from '../../../Components/UI/Typography';
+import { useIsFocused } from '@react-navigation/native';
+import { GET_WITH_TOKEN, POST_WITH_TOKEN } from '../../../Backend/Api';
 import {
   ANALYTICS,
   DELETE_ACCOUNT,
   GET_CURRENT_MEMBERSHIP,
 } from '../../../Constants/ApiRoute';
-import {useDispatch, useSelector} from 'react-redux';
-import {isAuth, Token, userDetails} from '../../../Redux/action';
-import {Font} from '../../../Constants/Font';
-import {cleanImageUrl} from '../../../Backend/Utility';
+import { useDispatch, useSelector } from 'react-redux';
+import { isAuth, Token, userDetails } from '../../../Redux/action';
+import { Font } from '../../../Constants/Font';
+import { cleanImageUrl } from '../../../Backend/Utility';
 
-const Account = ({navigation}) => {
-  const {setUser} = useContext(AuthContext);
+const Account = ({ navigation }) => {
+  const { setUser } = useContext(AuthContext);
   const [visible, setVisible] = useState(false);
   const [deleteAccount, setDeleteAccount] = useState(false);
   const isFocus = useIsFocused();
@@ -148,12 +148,12 @@ const Account = ({navigation}) => {
         slug: 'about-us',
       },
     },
-    {
-      id: 7,
-      title: 'Support',
-      icon: 'https://cdn-icons-png.flaticon.com/128/4460/4460756.png',
-      navigate: 'Support',
-    },
+    // {
+    //   id: 7,
+    //   title: 'Support',
+    //   icon: 'https://cdn-icons-png.flaticon.com/128/4460/4460756.png',
+    //   navigate: 'Support',
+    // },
     // {
     //   id: 6,
     //   title: 'Change Password',
@@ -178,11 +178,11 @@ const Account = ({navigation}) => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: 20}}>
+        contentContainerStyle={{ paddingBottom: 20 }}>
         {/* Profile Section */}
         <View style={styles.profileSection}>
           <Image
-            source={{uri: cleanImageUrl(profileImage)}}
+            source={{ uri: cleanImageUrl(profileImage) }}
             style={styles.profileImage}
           />
           <Typography font={Font.semibold} variant="h2" color={COLOR.black}>
@@ -195,7 +195,7 @@ const Account = ({navigation}) => {
 
         {/* Plan Card */}
         <View style={styles.tabContainer}>
-          <View style={styles.tabContainer}>
+          {/* <View style={styles.tabContainer}>
             {membership?.subscription ? (
               <View style={styles.planCard}>
                 <Text style={styles.planTitle}>⭐ Current Plan</Text>
@@ -230,7 +230,7 @@ const Account = ({navigation}) => {
               // </View>
               <></>
             )}
-          </View>
+          </View> */}
 
           {/* Tabs */}
           {tabs.map(item => (
@@ -240,7 +240,7 @@ const Account = ({navigation}) => {
               activeOpacity={0.7}
               onPress={() => navigation.navigate(item.navigate, item.params)}>
               <View style={styles.tabLeft}>
-                <Image source={{uri: item.icon}} style={styles.leftIcon} />
+                <Image source={{ uri: item.icon }} style={styles.leftIcon} />
                 <Typography
                   variant="body1"
                   color={COLOR.black}
@@ -248,7 +248,7 @@ const Account = ({navigation}) => {
                   {item.title}
                 </Typography>
               </View>
-              <Image source={{uri: arrowIcon}} style={styles.arrowIcon} />
+              <Image source={{ uri: arrowIcon }} style={styles.arrowIcon} />
             </TouchableOpacity>
           ))}
         </View>
@@ -256,13 +256,13 @@ const Account = ({navigation}) => {
         {/* Logout / Delete */}
         <CustomButton
           title={'Log Out'}
-          style={{marginTop: 20}}
+          style={{ marginTop: 20 }}
           onPress={() => {
             setVisible(true);
           }}
         />
         <CustomButton
-          textStyle={{color: COLOR.red}}
+          textStyle={{ color: COLOR.red }}
           title={'Delete Account'}
           style={{
             marginTop: '5%',
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     shadowColor: '#000',
     shadowOpacity: 0.1,
-    shadowOffset: {width: 0, height: 3},
+    shadowOffset: { width: 0, height: 3 },
     shadowRadius: 6,
     elevation: 5,
     alignItems: 'center',

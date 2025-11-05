@@ -11,7 +11,7 @@ const errorHandling = {
 };
 
 export const API =
-  'http://lemonchiffon-walrus-503913.hostingersite.com/public/api/';
+  'https://api.quickmyslot.com/public/api/';
 export const token = store.getState().Token;
 export const statusMessage = {
   400: 'Invalid request format.',
