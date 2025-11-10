@@ -51,17 +51,20 @@
   </dict>
 </dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This App Wants To Access Your Location For Booking Purposes</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to your location for better service experience.</string>
-	<key>NSCameraUsageDescription</key>
-<string>This app needs access to your camera to take photos.</string>
+<string>QuickMySlot Provider use your location to find and manage nearby booking.</string>
+
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>QuickMySlot Provider use your location to show nearby listings and provide accurate booking details while you use the app.</string>
+
+<key>NSCameraUsageDescription</key>
+<string>QuickMySlot Provider need access to your camera so you can take and upload photos for your listings or profile.</string>
 
 <key>NSPhotoLibraryAddUsageDescription</key>
-<string>This app needs permission to save photos to your library.</string>
+<string>QuickMySlot Provider need permission to save photos to your library after you capture or edit them in the app.</string>
 
 <key>NSPhotoLibraryUsageDescription</key>
-<string>This app needs permission to save photos to your library.</string>
+<string>QuickMySlot Provider need access to your photo library so you can upload and manage photos for your listings or profile.</string>
+
 
 	<key>UIAppFonts</key>
 	<array>
