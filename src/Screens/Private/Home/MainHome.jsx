@@ -28,6 +28,7 @@ import AppointmentCard from '../../../Components/UI/AppointmentCard';
 import EmptyView from '../../../Components/UI/EmptyView';
 import moment from 'moment';
 import Button from '../../../Components/UI/Button';
+import Chatbot from '../Dashboard/Chatbot';
 
 const MainHome = ({ navigation }) => {
   const { width } = Dimensions.get('window');
@@ -519,7 +520,7 @@ const MainHome = ({ navigation }) => {
         </View>
       </ScrollView>
 
-
+      <Chatbot />
       <Modal
         visible={isModalVisible}
         transparent

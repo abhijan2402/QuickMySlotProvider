@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -8,13 +8,13 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import {COLOR} from '../../../Constants/Colors';
+import { COLOR } from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
-import {Typography} from '../../../Components/UI/Typography';
+import { Typography } from '../../../Components/UI/Typography';
 import ConfirmModal from '../../../Components/UI/ConfirmModel';
-import {windowWidth} from '../../../Constants/Dimensions';
-import {useIsFocused} from '@react-navigation/native';
-import {GET_WITH_TOKEN, POST_WITH_TOKEN} from '../../../Backend/Api';
+import { windowWidth } from '../../../Constants/Dimensions';
+import { useIsFocused } from '@react-navigation/native';
+import { GET_WITH_TOKEN, POST_WITH_TOKEN } from '../../../Backend/Api';
 import {
   ADD_SUB_SERVICES,
   DELETE_SERVICE,
@@ -22,11 +22,11 @@ import {
   SERVICE,
 } from '../../../Constants/ApiRoute';
 import EmptyView from '../../../Components/UI/EmptyView';
-import {Font} from '../../../Constants/Font';
+import { Font } from '../../../Constants/Font';
 
-const ManageServices = ({navigation}) => {
+const ManageServices = ({ navigation }) => {
   const [deleteService, setDeleteService] = useState(false);
-  const [tab, setTab] = useState('services');
+  const [tab, setTab] = useState('subServices');
   const [subServices, setSubServices] = useState([]);
   console.log(subServices);
   const [services, setServices] = useState([]);
@@ -129,21 +129,15 @@ const ManageServices = ({navigation}) => {
   };
   const [showAllDates, setShowAllDates] = useState(false);
 
-  const Services = ({item}) => {
+  const Services = ({ item }) => {
     return (
       <View style={styles.serviceCard}>
         {/* Main Content Row */}
-        <View style={{flexDirection: 'row'}}>
-          {/* Left: Service Image */}
-          <Image
-            source={{uri: item?.image}}
-            style={styles.serviceImage}
-            resizeMode="cover"
-          />
+        <View style={{ flexDirection: 'row' }}>
 
           {/* Right: Details */}
           <View
-            style={{flex: 1, marginLeft: 12, justifyContent: 'space-between'}}>
+            style={{ flex: 1, justifyContent: 'space-between' }}>
             {/* Title and Actions */}
             <View style={styles.rowBetween}>
               <Typography size={16} font={Font.bold} color={COLOR.black}>
@@ -178,7 +172,7 @@ const ManageServices = ({navigation}) => {
                     source={{
                       uri: 'https://cdn-icons-png.flaticon.com/128/6861/6861362.png',
                     }}
-                    style={[styles.actionIcon, {tintColor: 'red'}]}
+                    style={[styles.actionIcon, { tintColor: 'red' }]}
                   />
                 </TouchableOpacity>
               </View>
@@ -217,13 +211,13 @@ const ManageServices = ({navigation}) => {
               <Typography
                 font={Font.medium}
                 size={12}
-                style={{textTransform: 'capitalize'}}>
+                style={{ textTransform: 'capitalize' }}>
                 {item.gender}
               </Typography>
             </View>
 
             {/* Price & Duration */}
-            <View style={[styles.metaInfo, {marginTop: 4}]}>
+            <View style={[styles.metaInfo, { marginTop: 4 }]}>
               <Typography font={Font.medium} color="#004aad">
                 ₹{Number(item.price).toFixed(2)}
               </Typography>
@@ -250,7 +244,7 @@ const ManageServices = ({navigation}) => {
               size={13}
               font={Font.semibold}
               color={COLOR.black}
-              style={{marginBottom: 6}}>
+              style={{ marginBottom: 6 }}>
               Peak Hours
             </Typography>
             {Object.entries(item.peak_hours).map(([time, price], idx) => (
@@ -284,7 +278,7 @@ const ManageServices = ({navigation}) => {
               size={13}
               font={Font.semibold}
               color={COLOR.black}
-              style={{marginBottom: 6}}>
+              style={{ marginBottom: 6 }}>
               Addons
             </Typography>
             {Object.entries(item.addons).map(([addon, price], idx) => (
@@ -319,7 +313,7 @@ const ManageServices = ({navigation}) => {
                 size={13}
                 font={Font.semibold}
                 color={COLOR.black}
-                style={{marginBottom: 6}}>
+                style={{ marginBottom: 6 }}>
                 Availability
               </Typography>
 
@@ -356,11 +350,11 @@ const ManageServices = ({navigation}) => {
                           size={12}
                           font={Font.semibold}
                           color={COLOR.darkGrey}
-                          style={{marginBottom: 3}}>
+                          style={{ marginBottom: 3 }}>
                           {date}
                         </Typography>
 
-                        <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                           {times.map((time, i) => (
                             <Typography
                               key={i}
@@ -387,7 +381,7 @@ const ManageServices = ({navigation}) => {
                         <Typography
                           size={12}
                           color="#004aad"
-                          style={{marginTop: 4}}>
+                          style={{ marginTop: 4 }}>
                           {showAllDates ? 'Show less' : 'Show more'}
                         </Typography>
                       </TouchableOpacity>
@@ -411,7 +405,7 @@ const ManageServices = ({navigation}) => {
       <View key={item.id} style={styles.card}>
         {/* Left Icon */}
         <Image
-          source={{uri: item?.image_url}}
+          source={{ uri: item?.image_url }}
           style={styles.serviceIcon}
           resizeMode="contain"
         />
@@ -475,7 +469,7 @@ const ManageServices = ({navigation}) => {
         <TouchableOpacity
           style={[
             styles.services,
-            {backgroundColor: tab === 'services' ? COLOR.primary : null},
+            { backgroundColor: tab === 'services' ? COLOR.primary : null },
           ]}
           onPress={() => setTab('services')}>
           <Typography
@@ -489,7 +483,7 @@ const ManageServices = ({navigation}) => {
         <TouchableOpacity
           style={[
             styles.subServices,
-            {backgroundColor: tab === 'subServices' ? COLOR.primary : null},
+            { backgroundColor: tab === 'subServices' ? COLOR.primary : null },
           ]}
           onPress={() => setTab('subServices')}>
           <Typography
@@ -506,23 +500,23 @@ const ManageServices = ({navigation}) => {
         <ActivityIndicator
           size="large"
           color="#007bff"
-          style={{marginTop: 20}}
+          style={{ marginTop: 20 }}
         />
       ) : (
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
           {services.length > 0 && (
             <Typography
               size={15}
               font={Font.semibold}
               color={COLOR.black}
-              style={{marginBottom: 10}}>
+              style={{ marginBottom: 10 }}>
               Your Current Services
             </Typography>
           )}
 
           <FlatList
             data={tab === 'services' ? services : subServices}
-            renderItem={({item}) => {
+            renderItem={({ item }) => {
               return tab === 'services' ? (
                 <Services item={item} />
               ) : (
@@ -542,7 +536,7 @@ const ManageServices = ({navigation}) => {
               );
             }}
           />
-          <View style={{height: 70}}></View>
+          <View style={{ height: 70 }}></View>
         </View>
       )}
       <TouchableOpacity
@@ -664,9 +658,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     shadowColor: '#000',
     shadowOpacity: 0.05,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     elevation: 2,
     marginHorizontal: 10,
+    paddingHorizontal: 5
   },
   serviceImage: {
     width: 110,
@@ -702,7 +697,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 6,
-    shadowOffset: {width: 0, height: 3},
+    shadowOffset: { width: 0, height: 3 },
     elevation: 4,
   },
   serviceIcon: {

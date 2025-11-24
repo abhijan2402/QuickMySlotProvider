@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -10,16 +10,16 @@ import {
   Text,
 } from 'react-native';
 import Input from '../../../Components/Input';
-import {COLOR} from '../../../Constants/Colors';
+import { COLOR } from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import ImageModal from '../../../Components/UI/ImageModal';
-import useKeyboard, {Google_Key} from '../../../Constants/Utility';
-import {cleanImageUrl, isValidForm, ToastMsg} from '../../../Backend/Utility';
-import {validators} from '../../../Backend/Validator';
+import useKeyboard, { Google_Key } from '../../../Constants/Utility';
+import { cleanImageUrl, isValidForm, ToastMsg } from '../../../Backend/Utility';
+import { validators } from '../../../Backend/Validator';
 import Button from '../../../Components/UI/Button';
-import {Typography} from '../../../Components/UI/Typography';
-import {useDispatch, useSelector} from 'react-redux';
-import {useIsFocused} from '@react-navigation/native';
+import { Typography } from '../../../Components/UI/Typography';
+import { useDispatch, useSelector } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
 import {
   GET,
   GET_WITH_TOKEN,
@@ -31,15 +31,15 @@ import {
   GET_CATEGORY,
   UPDATE_PROFILE,
 } from '../../../Constants/ApiRoute';
-import {userDetails} from '../../../Redux/action';
-import {Dropdown} from 'react-native-element-dropdown';
-import {ErrorBox} from '../../../Components/UI/ErrorBox';
-import {Font} from '../../../Constants/Font';
+import { userDetails } from '../../../Redux/action';
+import { Dropdown } from 'react-native-element-dropdown';
+import { ErrorBox } from '../../../Components/UI/ErrorBox';
+import { Font } from '../../../Constants/Font';
 import moment from 'moment';
-import {images} from '../../../Components/UI/images';
+import { images } from '../../../Components/UI/images';
 import DatePickerModal from '../../../Components/UI/DatePicker';
 import GoogleAutoLocaton from '../../../Components/UI/GoogleAutoLocaton';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 
 const days = [
   'Monday',
@@ -51,7 +51,7 @@ const days = [
   'Sunday',
 ];
 
-const EditProfile = ({navigation}) => {
+const EditProfile = ({ navigation }) => {
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -67,9 +67,9 @@ const EditProfile = ({navigation}) => {
   const [pinCode, setPinCode] = useState();
   const [category, setCategory] = useState();
   const [isEditing, setIsEditing] = useState(true);
-  const {isKeyboardVisible} = useKeyboard();
+  const { isKeyboardVisible } = useKeyboard();
   const userdata = useSelector(store => store.userDetails);
-  console.log(userdata, 'userdatauserdatauserdatauserdata');
+  // console.log(userdata, 'userdatauserdatauserdatauserdata');
   const [profileImage, setProfileImage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState({});
@@ -149,15 +149,17 @@ const EditProfile = ({navigation}) => {
 
         // ✅ Keep remaining initializations
         getCategory();
+        console.log(userdata, "DATATAT");
+
         setPhone(userdata?.phone_number);
-        setWebsite(userdata?.website || userdata?.business_website);
-        setProfileImage({path: cleanImageUrl(userdata?.image)});
+        setWebsite(userdata?.website || userdata?.business_website || null);
+        setProfileImage({ path: cleanImageUrl(userdata?.image) });
         setFirstName(userdata?.name || '');
         setEmail(userdata?.email || '');
         setAddress(userdata?.exact_location || '');
         setBuisness(userdata?.business_name || '');
         setServed(userdata?.location_area_served || '');
-        setCompany(userdata?.company_name || '');
+        setCompany(userdata?.business_name || '');
         setExperience(
           userdata?.years_of_experience
             ? userdata.years_of_experience.toString()
@@ -188,6 +190,8 @@ const EditProfile = ({navigation}) => {
   const handleImageSelected = response => {
     console.log(response);
     if (response) {
+      console.log(response, "OIOIOPIO");
+
       setProfileImage(response);
     }
   };
@@ -245,7 +249,7 @@ const EditProfile = ({navigation}) => {
       state: validators.checkRequire('State', state),
       pinCode: validators.checkRequire('Pin Code', pinCode),
       buisness: validators.checkRequire('Buisness Name', buisness),
-      location_served: validators.checkRequire('Location Area Served', served),
+      // location_served: validators.checkRequire('Location Area Served', served),
       experience: validators.checkRequire('Experience', experience),
       start: validators.checkRequire('Start Time', startTime),
       end: validators.checkRequire('End Time', endTime),
@@ -268,7 +272,7 @@ const EditProfile = ({navigation}) => {
       formData.append('zip_code', pinCode);
       formData.append('company_name', company);
       formData.append('category_id', userdata?.service_category);
-      formData.append('website', website);
+      if (website) formData.append('website', website);
       formData.append('business_name', buisness);
       formData.append('years_of_experience', Number(experience));
       formData.append('location_area_served', served);
@@ -279,9 +283,11 @@ const EditProfile = ({navigation}) => {
       selectedDays.map((item, index) => {
         formData.append(`working_days[${index}]`, item.toLowerCase());
       });
-      if (profileImage && profileImage?.mime) {
+      console.log(profileImage, "IMAGEGG");
+
+      if (profileImage && profileImage?.uri) {
         formData.append('profile_picture', {
-          uri: profileImage?.path,
+          uri: profileImage?.uri,
           type: profileImage?.mime || 'image/jpeg',
           name: profileImage?.filename || 'profileImage?.path',
         });
@@ -291,9 +297,12 @@ const EditProfile = ({navigation}) => {
         UPDATE_PROFILE,
         formData,
         success => {
+          console.log(success, "HUHUH");
+
           setLoading(false);
           ToastMsg(success?.message);
-          console.log(success, 'dsdsdsdeeeeeeeeeeeeweewew-->>>');
+          console.log(success?.data, "BUBUBUY");
+
           dispatch(userDetails(success?.data));
           navigation.pop();
           setIsEditing(false);
@@ -301,7 +310,7 @@ const EditProfile = ({navigation}) => {
         },
         error => {
           console.log(error, 'errorerrorerror>>');
-          setError(error?.data?.errors);
+          // setError(error?.data?.errors);
           setLoading(false);
         },
         fail => {
@@ -314,7 +323,7 @@ const EditProfile = ({navigation}) => {
 
   return (
     <View
-      style={{flex: 1, backgroundColor: COLOR.white, paddingHorizontal: 15}}>
+      style={{ flex: 1, backgroundColor: COLOR.white, paddingHorizontal: 15 }}>
       <HomeHeader
         title="Edit Profile"
         leftIcon="https://cdn-icons-png.flaticon.com/128/2722/2722991.png"
@@ -343,7 +352,7 @@ const EditProfile = ({navigation}) => {
       </View>
 
       <KeyboardAvoidingView
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={
           Platform.OS === 'ios' ? 0 : isKeyboardVisible ? 0 : -40
@@ -351,14 +360,14 @@ const EditProfile = ({navigation}) => {
         <ScrollView
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
-          style={{flex: 1, paddingHorizontal: 5}}
+          style={{ flex: 1, paddingHorizontal: 5 }}
           contentContainerStyle={styles.container}>
           {/* Inputs with Error */}
           <Input
             label="Name"
             placeholder="Enter Your name"
             value={firstName}
-            style={{borderColor: COLOR.primary}}
+            style={{ borderColor: COLOR.primary }}
             onChangeText={setFirstName}
             editable={isEditing}
             error={error.name}
@@ -368,7 +377,7 @@ const EditProfile = ({navigation}) => {
             placeholder="Enter email"
             value={email}
             onChangeText={setEmail}
-            style={{borderColor: COLOR.primary}}
+            style={{ borderColor: COLOR.primary }}
             keyboardType="email-address"
             editable={isEditing}
             error={error.email}
@@ -378,7 +387,7 @@ const EditProfile = ({navigation}) => {
             placeholder="Enter phone number"
             value={phone}
             onChangeText={setPhone}
-            style={{borderColor: COLOR.primary}}
+            style={{ borderColor: COLOR.primary }}
             keyboardType="phone-pad"
             editable={false}
             error={error.phone}
@@ -396,7 +405,7 @@ const EditProfile = ({navigation}) => {
                 details?.name;
               setAddress(loc);
               if (details?.geometry?.location) {
-                const {lat, lng} = details.geometry.location;
+                const { lat, lng } = details.geometry.location;
                 const newRegion = {
                   latitude: lat,
                   longitude: lng,
@@ -404,7 +413,7 @@ const EditProfile = ({navigation}) => {
                   longitudeDelta: 0.05,
                 };
                 setRegion(newRegion);
-                setMarkerCoords({latitude: lat, longitude: lng});
+                setMarkerCoords({ latitude: lat, longitude: lng });
               }
 
               if (details?.address_components?.length) {
@@ -439,7 +448,7 @@ const EditProfile = ({navigation}) => {
             }}
           />
           {error.exact_location && (
-            <ErrorBox style={{marginTop: 0}} error={error.exact_location} />
+            <ErrorBox style={{ marginTop: 0 }} error={error.exact_location} />
           )}
           {address && (
             <View
@@ -451,7 +460,7 @@ const EditProfile = ({navigation}) => {
                 borderRadius: 10,
               }}>
               <MapView
-                style={{flex: 1}}
+                style={{ flex: 1 }}
                 region={region}
                 onRegionChangeComplete={async newRegion => {
                   setRegion(newRegion);
@@ -475,7 +484,7 @@ const EditProfile = ({navigation}) => {
             label="City"
             placeholder="Enter Your City"
             value={city}
-            style={{borderColor: COLOR.primary}}
+            style={{ borderColor: COLOR.primary }}
             onChangeText={setCity}
             editable={isEditing}
             error={error.city}
@@ -484,7 +493,7 @@ const EditProfile = ({navigation}) => {
             label="State"
             placeholder="Enter Your State"
             value={state}
-            style={{borderColor: COLOR.primary}}
+            style={{ borderColor: COLOR.primary }}
             onChangeText={setState}
             editable={isEditing}
             error={error.state}
@@ -493,7 +502,7 @@ const EditProfile = ({navigation}) => {
             label="Country"
             placeholder="Enter Your Country"
             value={country}
-            style={{borderColor: COLOR.primary}}
+            style={{ borderColor: COLOR.primary }}
             onChangeText={setCountry}
             editable={isEditing}
             error={error.country}
@@ -503,7 +512,7 @@ const EditProfile = ({navigation}) => {
             label="Pin Code"
             placeholder="Enter Your Pin Code"
             value={pinCode}
-            style={{borderColor: COLOR.primary}}
+            style={{ borderColor: COLOR.primary }}
             onChangeText={setPinCode}
             editable={isEditing}
             error={error.pinCode}
@@ -511,13 +520,13 @@ const EditProfile = ({navigation}) => {
           <Input
             label="Years of Experience"
             placeholder="Enter Your Experience"
-            style={{borderColor: COLOR.primary, fontFamily: Font.medium}}
+            style={{ borderColor: COLOR.primary, fontFamily: Font.medium }}
             value={experience}
             keyboardType="decimal-pad"
             onChangeText={setExperience}
             error={error.experience}
           />
-          <Typography size={14} font={Font.semibold} style={[{marginTop: 18}]}>
+          <Typography size={14} font={Font.semibold} style={[{ marginTop: 18 }]}>
             Working Days
           </Typography>
           <View style={styles.daysContainer}>
@@ -550,10 +559,10 @@ const EditProfile = ({navigation}) => {
             ))}
           </View>
           {error.days && (
-            <ErrorBox style={{marginTop: -6}} error={error.days} />
+            <ErrorBox style={{ marginTop: -6 }} error={error.days} />
           )}
 
-          <View style={{marginTop: error.days ? 10 : 5}}>
+          <View style={{ marginTop: error.days ? 10 : 5 }}>
             <DatePickerModal
               label="Daily Start Time (e.g., 9:00 AM)"
               value={startTime}
@@ -579,7 +588,7 @@ const EditProfile = ({navigation}) => {
             label="company name"
             placeholder="Enter Your company name"
             value={company}
-            style={{borderColor: COLOR.primary}}
+            style={{ borderColor: COLOR.primary }}
             onChangeText={setCompany}
             editable={isEditing}
             error={error.company_name}
@@ -588,7 +597,7 @@ const EditProfile = ({navigation}) => {
             label="website"
             placeholder="Enter Your website"
             value={website}
-            style={{borderColor: COLOR.primary}}
+            style={{ borderColor: COLOR.primary }}
             onChangeText={setWebsite}
             editable={isEditing}
             error={error.website}
@@ -597,26 +606,26 @@ const EditProfile = ({navigation}) => {
             label="business name"
             placeholder="Enter Your business name"
             value={buisness}
-            style={{borderColor: COLOR.primary}}
+            style={{ borderColor: COLOR.primary }}
             onChangeText={setBuisness}
             editable={isEditing}
             error={error.buisness}
           />
-          <Input
+          {/* <Input
             label="location area served"
             placeholder="Enter Your location area served"
             value={served}
-            style={{borderColor: COLOR.primary}}
+            style={{ borderColor: COLOR.primary }}
             onChangeText={setServed}
             editable={isEditing}
             error={error.location_served}
-          />
+          /> */}
         </ScrollView>
       </KeyboardAvoidingView>
 
       {/* Edit / Update Button */}
       <Button
-        containerStyle={{marginTop: 10}}
+        containerStyle={{ marginTop: 10 }}
         loading={loading}
         title={isEditing ? 'Update' : 'Edit'}
         onPress={() => {
@@ -678,7 +687,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOpacity: 0.1,
-    shadowOffset: {width: 0, height: 3},
+    shadowOffset: { width: 0, height: 3 },
     shadowRadius: 6,
     elevation: 4,
   },

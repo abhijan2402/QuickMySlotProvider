@@ -148,24 +148,18 @@ const Account = ({ navigation }) => {
         slug: 'about-us',
       },
     },
-    // {
-    //   id: 7,
-    //   title: 'Support',
-    //   icon: 'https://cdn-icons-png.flaticon.com/128/4460/4460756.png',
-    //   navigate: 'Support',
-    // },
-    // {
-    //   id: 6,
-    //   title: 'Change Password',
-    //   icon: 'https://cdn-icons-png.flaticon.com/128/11135/11135307.png',
-    //   navigate: 'ForgotPassword',
-    // },
-    // {
-    //   id: 8,
-    //   title: 'FAQ',
-    //   icon: 'https://cdn-icons-png.flaticon.com/128/1660/1660165.png',
-    //   navigate: 'Faq',
-    // },
+    {
+      id: 7,
+      title: 'Support',
+      icon: 'https://cdn-icons-png.flaticon.com/128/4460/4460756.png',
+      navigate: 'Support',
+    },
+    {
+      id: 8,
+      title: 'FAQ',
+      icon: 'https://cdn-icons-png.flaticon.com/128/1660/1660165.png',
+      navigate: 'Faq',
+    },
   ];
 
   return (
@@ -195,7 +189,7 @@ const Account = ({ navigation }) => {
 
         {/* Plan Card */}
         <View style={styles.tabContainer}>
-          {/* <View style={styles.tabContainer}>
+          <View style={styles.tabContainer}>
             {membership?.subscription ? (
               <View style={styles.planCard}>
                 <Text style={styles.planTitle}>⭐ Current Plan</Text>
@@ -230,7 +224,7 @@ const Account = ({ navigation }) => {
               // </View>
               <></>
             )}
-          </View> */}
+          </View>
 
           {/* Tabs */}
           {tabs.map(item => (
@@ -367,6 +361,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     alignItems: 'center',
     marginBottom: 10,
+    paddingTop: 5
   },
   planTitle: {
     fontSize: 14,

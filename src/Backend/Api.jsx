@@ -168,6 +168,11 @@ export const POST_FORM_DATA = async (
   },
 ) => {
   const tokenVal = store.getState().Token;
+  console.log(tokenVal, "RTOKKK");
+
+  console.log(`${API}${route}`, "URLLLLL");
+  // https://api.quickmyslot.com/public/api/update/business-profile/2
+
   try {
     await axios({
       method: 'post',
@@ -176,7 +181,6 @@ export const POST_FORM_DATA = async (
       headers: {
         Authorization: `Bearer ${tokenVal}`,
         Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
       },
       validateStatus: function (status) {
         return status >= 200 && status <= 999; // default
@@ -184,6 +188,8 @@ export const POST_FORM_DATA = async (
       ...errorHandling,
     })
       .then(res => {
+        // console.log(res, "RESSS");
+
         if (res?.status == 200 || res?.status == 201) {
           onSuccess(res?.data);
         } else {
@@ -194,6 +200,8 @@ export const POST_FORM_DATA = async (
         }
       })
       .catch(err => {
+        console.log(err, "ERRORORORO");
+
         onError(err);
       });
   } catch (error) {

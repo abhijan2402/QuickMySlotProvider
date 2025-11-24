@@ -209,7 +209,7 @@ const AddService = ({ route, navigation }) => {
       price: validators.checkRequire('Price', price),
       gender: validators.checkRequire('Gender', gender),
       duration: validators.checkRequire('Duration', duration),
-      image: validators.checkRequire('Service Image', image),
+      // image: validators.checkRequire('Service Image', image),
     };
 
     // Validate addons
@@ -255,13 +255,13 @@ const AddService = ({ route, navigation }) => {
     formData.append('duration', duration);
     formData.append('gender', gender?.value);
     formData.append('service_id', service?.value);
-    if (image?.mime) {
-      formData.append('image', {
-        uri: image?.path || image?.uri,
-        type: image?.mime || 'image/jpeg',
-        name: image?.filename || 'service.jpg',
-      });
-    }
+    // if (image?.mime) {
+    //   formData.append('image', {
+    //     uri: image?.path || image?.uri,
+    //     type: image?.mime || 'image/jpeg',
+    //     name: image?.filename || 'service.jpg',
+    //   });
+    // }
     addons.forEach((addon, index) => {
       if (addon.name && addon.price) {
         formData.append(`addons[${addon.name}]`, addon.price);
@@ -447,30 +447,30 @@ const AddService = ({ route, navigation }) => {
         />
 
         {/* Upload Image */}
-        <Typography
+        {/* <Typography
           size={14}
           // fontWeight="600"
           font={Font.semibold}
           color="#333"
           style={[styles.label, { marginTop: 20 }]}>
           Service Image
-        </Typography>
+        </Typography> */}
 
-        <ImageUpload
+        {/* <ImageUpload
           file={image}
           setFile={file => setImage(file)}
           document={false}
-        />
+        /> */}
 
-        <Typography
+        {/* <Typography
           size={12}
           color="#777"
           font={Font.semibold}
           style={[styles.note, { marginBottom: 0 }]}>
           Max file size: 2MB. JPG, PNG allowed.
-        </Typography>
+        </Typography> */}
         {/* show error below image */}
-        {errors.image && <ErrorBox error={errors.image} />}
+        {/* {errors.image && <ErrorBox error={errors.image} />} */}
 
         {/* Addons Section */}
         <View style={styles.section}>

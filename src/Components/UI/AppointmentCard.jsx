@@ -9,6 +9,7 @@ import {
 } from '../../Constants/ApiRoute';
 import { COLOR } from '../../Constants/Colors';
 import { Typography } from './Typography';
+import { ToastMsg } from '../../Backend/Utility';
 
 const AppointmentCard = ({ item, tab, onSuccess, onPress, navigation }) => {
   const [accept, setAccept] = useState(false);
@@ -26,15 +27,18 @@ const AppointmentCard = ({ item, tab, onSuccess, onPress, navigation }) => {
     POST_WITH_TOKEN(
       ACCEPT_APPOINTMENTS + appointmentId,
       success => {
+        ToastMsg(success?.message)
         setLoading(false);
       },
       error => {
         console.log(error, 'errorerrorerror>>');
+        ToastMsg(error?.message)
         setLoading(false);
         setAccept(false);
         onSuccess();
       },
       fail => {
+        ToastMsg(fail?.message)
         console.log(fail, 'failfailfail>>');
         setLoading(false);
       },
@@ -45,15 +49,18 @@ const AppointmentCard = ({ item, tab, onSuccess, onPress, navigation }) => {
     POST_WITH_TOKEN(
       REJECT_APPOINTMENTS + appointmentId,
       success => {
+        ToastMsg(success?.message)
         setLoading(false);
       },
       error => {
         console.log(error, 'errorerrorerror>>');
         setLoading(false);
         setReject(false);
+        ToastMsg(error?.message)
         onSuccess();
       },
       fail => {
+        ToastMsg(fail?.message)
         console.log(fail, 'failfailfail>>');
         setLoading(false);
       },

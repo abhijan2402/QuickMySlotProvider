@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Image,
   StyleSheet,
@@ -7,18 +7,18 @@ import {
   View,
   Linking,
 } from 'react-native';
-import {COLOR} from '../../Constants/Colors';
-import {images} from './images'; // cross, upload, pdfIcon, documentIcon
+import { COLOR } from '../../Constants/Colors';
+import { images } from './images'; // cross, upload, pdfIcon, documentIcon
 import ImageModal from './ImageModal';
 
 const ImageUpload = ({
   file,
-  setFile = () => {},
+  setFile = () => { },
   document = true,
-  onChangeFile = () => {},
+  onChangeFile = () => { },
 }) => {
-  console.log(file,'5686464646656');
-  
+  // console.log(file,'5686464646656');
+
   const [showModal, setShowModal] = useState(false);
 
   // check if file is image using only path
@@ -68,7 +68,7 @@ const ImageUpload = ({
       return (
         <View style={styles.fileWrapper}>
           <Image
-            source={{uri: imageUri}}
+            source={{ uri: imageUri }}
             style={styles.previewImg}
           />
           <TouchableOpacity
@@ -188,7 +188,7 @@ const ImageUpload = ({
         // Default handling - prioritize path
         const path = fileData.path || fileData.uri;
         const name = fileData.name || fileData.filename || path?.split('/').pop() || `file_${Date.now()}`;
-        
+
         normalized = {
           ...normalized,
           uri: path,

@@ -19,7 +19,7 @@ import { GET_WITH_TOKEN, POST_WITH_TOKEN } from '../../../Backend/Api';
 import { CANCEL_BOOKING, GET_BOOKING_DETAILS, REJECT_APPOINTMENTS } from '../../../Constants/ApiRoute';
 import { images } from '../../../Components/UI/images';
 import moment from 'moment';
-import { cleanImageUrl } from '../../../Backend/Utility';
+import { cleanImageUrl, showToast, ToastMsg } from '../../../Backend/Utility';
 
 const AppointmentDetail = ({ route, navigation }) => {
   const [cancelAppointment, setCancelAppointment] = useState(false);
@@ -40,7 +40,7 @@ const AppointmentDetail = ({ route, navigation }) => {
     console.log("CALLLEDDDDD");
 
     GET_WITH_TOKEN(
-      `${GET_BOOKING_DETAILS}/${id}`,
+      `${GET_BOOKING_DETAILS}${id}`,
       success => {
         console.log(success?.data, 'booking details');
         setData(success?.data);
@@ -48,7 +48,7 @@ const AppointmentDetail = ({ route, navigation }) => {
       },
       error => {
         setLoading(false);
-        console.log(success);
+        console.log(error, "ERROORO");
       },
       fail => {
         setLoading(false);
@@ -60,19 +60,25 @@ const AppointmentDetail = ({ route, navigation }) => {
   const CancelBooking = () => {
     setLoading(true);
     POST_WITH_TOKEN(
-      `${REJECT_APPOINTMENTS}/${id}`,
+      `${REJECT_APPOINTMENTS}${id}`,
       success => {
         console.log(success);
         setLoading(false);
+        setCancelAppointment(false);
+
       },
       error => {
         setLoading(false);
-        console.log(error);
+        console.log(error, "EROROROROR");
+        ToastMsg(error?.message)
         setCancelAppointment(false);
         navigation.goBack();
       },
       fail => {
         setLoading(false);
+        setCancelAppointment(false);
+        ToastMsg(fail?.data?.message)
+
         console.log(fail);
       },
     );
@@ -167,32 +173,71 @@ const AppointmentDetail = ({ route, navigation }) => {
         {/* Price Details */}
         <View style={styles.priceCard}>
           <Typography style={styles.sectionTitle}>Price Details</Typography>
+
           <View style={styles.serviceRow}>
             <Typography style={styles.text}>Sub Total</Typography>
             <Typography style={styles.text}>₹{data?.calculation_breakdown?.subtotal}</Typography>
           </View>
 
-          {
-            data?.gst_amount != "0.00" &&
+          {/* GST */}
+          {Number(data?.calculation_breakdown?.gst_amount) > 0 && (
             <View style={styles.serviceRow}>
-              <Typography style={styles.text}>Taxes (GST)</Typography>
-              <Typography style={styles.text}>₹{data?.tax}</Typography>
+              <Typography style={styles.text}>Taxes (GST {data?.calculation_breakdown?.gst_percentage}%)</Typography>
+              <Typography style={styles.text}>₹{data?.calculation_breakdown?.gst_amount}</Typography>
             </View>
-          }
+          )}
+
+          {/* Promo Discount */}
+          {Number(data?.calculation_breakdown?.promo_discount_amount) > 0 && (
+            <View style={styles.serviceRow}>
+              <Typography style={styles.text}>Promo Discount</Typography>
+              <Typography style={styles.text}>-₹{data?.calculation_breakdown?.promo_discount_amount}</Typography>
+            </View>
+          )}
+
+          {/* Vendor Cashback */}
+          {/* {Number(data?.calculation_breakdown?.vendor_cashback_amount) > 0 && (
+            <View style={styles.serviceRow}>
+              <Typography style={styles.text}>
+                Vendor Cashback
+              </Typography>
+              <Typography style={styles.text}>₹{data?.calculation_breakdown?.vendor_cashback_amount}</Typography>
+            </View>
+          )} */}
+
+          {/* Total Discount */}
+          {Number(data?.calculation_breakdown?.total_discount_amount) > 0 && (
+            <View style={styles.serviceRow}>
+              <Typography style={styles.text}>
+                Total Discount
+              </Typography>
+              <Typography style={styles.text}>-₹{data?.calculation_breakdown?.total_discount_amount}</Typography>
+            </View>
+          )}
+
+          {/* Convenience Fee */}
           <View style={styles.serviceRow}>
-            <Typography style={styles.text}>Convenience fee</Typography>
-            <Typography style={styles.text}>₹{data?.convenience_fee}</Typography>
+            <Typography style={styles.text}>
+              Convenience Fee
+            </Typography>
+            <Typography style={styles.text}>₹{data?.calculation_breakdown?.convenience_fee}</Typography>
           </View>
+
+          {/* Platform Fee */}
           <View style={styles.serviceRow}>
             <Typography style={styles.text}>Platform Fee</Typography>
             <Typography style={styles.text}>₹{data?.calculation_breakdown?.platform_fee}</Typography>
           </View>
+
           <View style={styles.divider} />
+
+          {/* Grand Total */}
           <View style={styles.serviceRow}>
             <Typography style={styles.sectionTitle}>Grand Total</Typography>
             <Typography style={styles.sectionTitle}>₹{data?.final_amount}</Typography>
           </View>
         </View>
+
 
         {/* Payment Method */}
         {/* <View style={styles.card}>

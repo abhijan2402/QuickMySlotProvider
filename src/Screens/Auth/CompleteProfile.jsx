@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -9,29 +9,33 @@ import {
   Text,
 } from 'react-native';
 import HomeHeader from '../../Components/HomeHeader';
-import {COLOR} from '../../Constants/Colors';
+import { COLOR } from '../../Constants/Colors';
 import ImageModal from '../../Components/UI/ImageModal';
-import {windowWidth} from '../../Constants/Dimensions';
-import {images} from '../../Components/UI/images';
+import { windowWidth } from '../../Constants/Dimensions';
+import { images } from '../../Components/UI/images';
 import ImageUpload from '../../Components/UI/ImageUpload';
 import Input from '../../Components/Input';
-import {ErrorBox} from '../../Components/UI/ErrorBox';
+import { ErrorBox } from '../../Components/UI/ErrorBox';
 import Button from '../../Components/UI/Button';
-import {Typography} from '../../Components/UI/Typography';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import useKeyboard, {Google_Key} from '../../Constants/Utility';
-import {useDispatch, useSelector} from 'react-redux';
-import {BUSINESS_PROFILE, CATEGORY} from '../../Constants/ApiRoute';
-import {GET_WITH_TOKEN, POST_FORM_DATA} from '../../Backend/Api';
-import {ToastMsg} from '../../Backend/Utility';
-import {userDetails} from '../../Redux/action';
-import {useIsFocused} from '@react-navigation/native';
-import {Dropdown} from 'react-native-element-dropdown';
-import {Font} from '../../Constants/Font';
+import { Typography } from '../../Components/UI/Typography';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import useKeyboard, { Google_Key } from '../../Constants/Utility';
+import { useDispatch, useSelector } from 'react-redux';
+import { BUSINESS_PROFILE, CATEGORY } from '../../Constants/ApiRoute';
+import { GET_WITH_TOKEN, POST_FORM_DATA } from '../../Backend/Api';
+import { ToastMsg } from '../../Backend/Utility';
+import { userDetails } from '../../Redux/action';
+import { useIsFocused } from '@react-navigation/native';
+import { Dropdown } from 'react-native-element-dropdown';
+import { Font } from '../../Constants/Font';
 import GoogleAutoLocaton from '../../Components/UI/GoogleAutoLocaton';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
+import { store } from '../../Redux/store';
 
-const CompleteProfile = ({navigation}) => {
+const CompleteProfile = ({ navigation, route }) => {
+  const userId = route?.params?.userId;
+  console.log(userId, "USERRRRRRRR");
+
   const [showModal, setShowModal] = useState(false);
   const [currentField, setCurrentField] = useState(null);
 
@@ -42,6 +46,12 @@ const CompleteProfile = ({navigation}) => {
     aadhaarFront: null,
     pan: null,
   });
+  const [portfolioImages, setPortfolioImages] = useState([]);
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [businessName, setBusinessName] = useState('');
+  const [address, setAddress] = useState('');
 
   // Text field states
   const [about, setAbout] = useState('');
@@ -49,7 +59,7 @@ const CompleteProfile = ({navigation}) => {
   const [location, setLocation] = useState('');
   const [website, setWebsite] = useState('');
   const [gst, setGst] = useState('');
-  const {isKeyboardVisible} = useKeyboard();
+  const { isKeyboardVisible } = useKeyboard();
   const userdata = useSelector(store => store.userDetails);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -139,101 +149,195 @@ const CompleteProfile = ({navigation}) => {
   };
 
   const validateForm = () => {
+    console.log("HHHHHHH");
+
     let newErrors = {};
+
     if (!image.PhotoVerifi)
       newErrors.PhotoVerifi = 'Photo verification is required';
+
     if (!image.businessProof)
       newErrors.businessProof = 'Business proof is required';
+
     if (!image.aadhaarFront)
       newErrors.aadhaarFront = 'Aadhaar card is required';
-    if (!image.pan) newErrors.pan = 'PAN card is required';
+
+    if (!image.pan)
+      newErrors.pan = 'PAN card is required';
+
     if (!about.trim())
       newErrors.about = 'Please enter details about your business';
-    if (!experience.trim()) newErrors.experience = 'Experience is required';
-    if (!location.trim()) newErrors.location = 'Location is required';
-    if (!gst.trim()) newErrors.gst = 'GST Number is required';
-    if (!category) newErrors.category = 'Service Category is required';
 
+    if (!experience.trim())
+      newErrors.experience = 'Experience is required';
+
+    if (!location.trim())
+      newErrors.location = 'Location is required';
+
+    // if (!gst.trim())
+    //   newErrors.gst = 'GST Number is required';
+
+    if (!category)
+      newErrors.category = 'Service Category is required';
+
+
+    // ⭐ NEW VALIDATIONS
+    if (!name.trim())
+      newErrors.name = 'Name is required';
+
+    if (!email.trim())
+      newErrors.email = 'Email is required';
+    else if (!/^\S+@\S+\.\S+$/.test(email))
+      newErrors.email = 'Enter a valid email';
+
+    if (!businessName.trim())
+      newErrors.businessName = 'Business name is required';
+
+    if (!address.trim())
+      newErrors.address = 'Address is required';
+    if (!portfolioImages?.length) {
+      newErrors.portfolioImages = 'Portfolio Images are required';
+
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+
   };
 
-  const handleNext = () => {
-    if (validateForm()) {
-      setLoading(true);
-      const formData = new FormData();
-      formData.append('user_id', userdata?.id);
-      formData.append('business_description', about);
-      formData.append('exact_location', location);
-      formData.append('years_of_experience', Number(experience));
-      formData.append('gstin_number', gst);
-      formData.append('business_website', website);
-      formData.append('service_category', category);
-      formData.append('lat', markerCoords?.latitude || region.latitude);
-      formData.append('long', markerCoords?.longitude || region.longitude);
+  const getValidFileUri = (img) => {
+    if (!img) return null;
 
-      if (image?.PhotoVerifi) {
-        formData.append('photo_verification', {
-          uri: image?.PhotoVerifi.path || image?.PhotoVerifi.uri,
-          type: image?.PhotoVerifi.mime || 'image/jpeg',
-          name: image?.PhotoVerifi.fileName || 'image/jpeg',
-        });
-      }
-      if (image?.businessProof) {
-        formData.append('business_proof', {
-          uri: image?.businessProof.path || image?.businessProof.uri,
-          type: image?.businessProof.mime || 'image/jpeg',
-          name: image?.businessProof.fileName || 'image/jpeg',
-        });
-      }
-      if (image?.aadhaarFront) {
-        formData.append('adhaar_card_verification', {
-          uri: image?.aadhaarFront.path || image?.aadhaarFront.uri,
-          type: image?.aadhaarFront.mime || 'image/jpeg',
-          name: image?.aadhaarFront.fileName || 'image/jpeg',
-        });
-      }
-      if (image?.pan) {
-        formData.append('pan_card', {
-          uri: image?.pan.path || image?.pan.uri,
-          type: image?.pan.mime || 'image/jpeg',
-          name: image?.pan.fileName || 'image/jpeg',
-        });
-      }
-      console.log(formData);
-
-      POST_FORM_DATA(
-        BUSINESS_PROFILE,
-        formData,
-        success => {
-          setLoading(false);
-          dispatch(userDetails(success?.data));
-          navigation.navigate('Availability');
-        },
-        error => {
-          console.log(error);
-
-          setLoading(false);
-          if (error?.data?.errors) {
-            const errorKeyMap = {
-              years_of_experience: 'experience',
-              business_website: 'website',
-              pan_card: 'pan',
-            };
-            const apiErrors = {};
-            Object.keys(error.data.errors).forEach(key => {
-              const mappedKey = errorKeyMap[key] || key;
-              apiErrors[mappedKey] = error.data.errors[key]; // keep full array
-            });
-            setErrors(apiErrors);
-          } else {
-          }
-        },
-        fail => {
-          setLoading(false);
-        },
-      );
+    // Case 1: React Native Image Picker returns uri
+    if (img.uri) {
+      if (img.uri.startsWith("ph://")) return img.uri;
+      if (img.uri.startsWith("content://")) return img.uri;
+      if (img.uri.startsWith("file://")) return img.uri;
+      if (img.uri.startsWith("/")) return "file://" + img.uri;
+      return img.uri;
     }
+
+    // Case 2: Image Crop Picker returns path
+    if (img.path) {
+      if (img.path.startsWith("ph://")) return img.path;
+      if (img.path.startsWith("content://")) return img.path;
+      if (img.path.startsWith("file://")) return img.path;
+      if (img.path.startsWith("/")) return "file://" + img.path;
+      return "file://" + img.path;
+    }
+
+    return null;
+  };
+
+
+
+  const handleNext = async () => {
+    if (!validateForm()) return;
+
+    setLoading(true);
+
+    const formData = new FormData();
+
+    // Text fields
+    formData.append("business_description", about);
+    formData.append("business_name", businessName);
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("years_of_experience", String(experience));
+    formData.append("exact_location", location);
+    formData.append("FullAddress", location);
+    formData.append("Full", "");
+    formData.append("business_website", website);
+    formData.append("gstin_number", gst);
+    formData.append("user_id", userdata?.id);
+    formData.append("service_category", "1");
+    formData.append("lat", markerCoords?.latitude?.toString() || region.latitude.toString());
+    formData.append("long", markerCoords?.longitude?.toString() || region.longitude.toString());
+
+    // --- FILES ---
+
+    if (image?.PhotoVerifi) {
+      formData.append("photo_verification", {
+        uri: getValidFileUri(image.PhotoVerifi),
+        type: image.PhotoVerifi.mime || "image/jpeg",
+        name: image.PhotoVerifi.name || "photo_verification.jpg"
+      });
+    }
+
+    if (image?.businessProof) {
+      formData.append("business_proof", {
+        uri: getValidFileUri(image.businessProof),
+        type: image.businessProof.mime || "image/jpeg",
+        name: image.businessProof.name || "business_proof.jpg"
+      });
+    }
+
+    if (image?.aadhaarFront) {
+      formData.append("adhaar_card_verification", {
+        uri: getValidFileUri(image.aadhaarFront),
+        type: image.aadhaarFront.mime || "image/jpeg",
+        name: image.aadhaarFront.name || "aadhaar_front.jpg"
+      });
+    }
+
+    if (image?.pan) {
+      formData.append("pan_card", {
+        uri: getValidFileUri(image.pan),
+        type: image.pan.mime || "image/jpeg",
+        name: image.pan.name || "pan_card.jpg"
+      });
+    }
+
+    // Portfolio images
+    if (portfolioImages?.length > 0) {
+      portfolioImages.forEach((img, index) => {
+        formData.append(`portfolio_images[${index}]`, {
+          uri: getValidFileUri(img),
+          type: img.mime || "image/jpeg",
+          name: img.name || `portfolio_${index}.jpg`,
+        });
+      });
+    }
+
+    // Debug
+    formData._parts.forEach(p => console.log(p[0], p[1]));
+
+    const tokenVal = store.getState().Token;
+
+    try {
+      const response = await fetch(
+        "https://api.quickmyslot.com/public/api/update/business-profile/2",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${tokenVal}`,
+            // DO NOT ADD Content-Type manually
+          },
+          body: formData,
+        }
+      );
+      console.log(response, "YUYUYU");
+
+      if (response.ok) {
+        const json = await response.json();
+        dispatch(userDetails(json.data));
+        navigation.navigate("Availability");
+      } else {
+        console.log("SERVER ERROR:", await response.text());
+      }
+
+    } catch (error) {
+      console.log("FETCH NETWORK ERROR:", error);
+    }
+
+    setLoading(false);
+  };
+
+
+  const removePortfolioImage = (indexToRemove) => {
+    setPortfolioImages(prev =>
+      prev.filter((_, index) => index !== indexToRemove)
+    );
   };
 
   return (
@@ -243,8 +347,8 @@ const CompleteProfile = ({navigation}) => {
         Platform.OS === 'ios'
           ? 'padding'
           : isKeyboardVisible
-          ? 'height'
-          : undefined
+            ? 'height'
+            : undefined
       }
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 40}>
       <HomeHeader
@@ -257,8 +361,8 @@ const CompleteProfile = ({navigation}) => {
       <KeyboardAwareScrollView
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{paddingBottom: 20}}
-        style={{flex: 1, paddingHorizontal: 5}}>
+        contentContainerStyle={{ paddingBottom: 20 }}
+        style={{ flex: 1, paddingHorizontal: 5 }}>
         <View
           style={{
             flexDirection: 'row',
@@ -273,7 +377,7 @@ const CompleteProfile = ({navigation}) => {
             elevation: 3,
           }}>
           <Image
-            style={{width: 22, height: 22, marginRight: 10, marginTop: 2}}
+            style={{ width: 22, height: 22, marginRight: 10, marginTop: 2 }}
             source={images.warning}
             resizeMode="contain"
           />
@@ -282,22 +386,50 @@ const CompleteProfile = ({navigation}) => {
             size={14}
             color="#444"
             lineHeight={20}
-            style={{paddingRight: 10, width: windowWidth * 0.75}}>
+            style={{ paddingRight: 10, width: windowWidth * 0.75 }}>
             Please make sure to provide accurate and complete business details,
             including valid proof documents. This helps us verify your profile
             and improves customer trust.
           </Typography>
         </View>
 
+        <Input
+          label="Name"
+          placeholder="Enter your name"
+          style={{ borderColor: COLOR.primary, fontFamily: Font.medium }}
+          value={name}
+          onChangeText={setName}
+          error={errors.name}
+        />
+
+        <Input
+          label="Email"
+          placeholder="Enter your Email"
+          style={{ borderColor: COLOR.primary, fontFamily: Font.medium }}
+          value={email}
+          onChangeText={setEmail}
+          error={errors.email}
+        />
+
+        <Input
+          label="Business Name"
+          placeholder="Enter your Business Name"
+          style={{ borderColor: COLOR.primary, fontFamily: Font.medium }}
+          value={businessName}
+          onChangeText={setBusinessName}
+          error={errors.businessName}
+        />
+
+        {/* 
         <Typography
           size={16}
           font={Font.semibold}
           color={COLOR.black}
-          style={{marginBottom: 10}}>
+          style={{ marginBottom: 10 }}>
           Business Information
-        </Typography>
+        </Typography> */}
 
-        <Text style={[styles.label, {marginTop: 18}]}>Service Category</Text>
+        <Text style={[styles.label, { marginTop: 18, fontFamily: Font.semibold }]}>Service Category</Text>
         <Dropdown
           style={styles.dropdown}
           placeholderStyle={styles.placeholderStyle}
@@ -311,7 +443,7 @@ const CompleteProfile = ({navigation}) => {
           onChange={item => setCategory(item.value)}
         />
         {errors.category && (
-          <ErrorBox error={errors.category} style={{marginBottom: 20}} />
+          <ErrorBox error={errors.category} style={{ marginBottom: 20 }} />
         )}
 
         {/* Photo Verification */}
@@ -320,12 +452,12 @@ const CompleteProfile = ({navigation}) => {
           font={Font.semibold}
           // font={Font.semibold}
           color={COLOR.black}
-          style={{marginTop: 20, marginBottom: 6}}>
+          style={{ marginTop: 20, marginBottom: 6 }}>
           Photo Verification
         </Typography>
         <ImageUpload
           file={image.PhotoVerifi}
-          setFile={file => setImages(prev => ({...prev, PhotoVerifi: file}))}
+          setFile={file => setImages(prev => ({ ...prev, PhotoVerifi: file }))}
           document={false}
         />
         {errors.PhotoVerifi && <ErrorBox error={errors.PhotoVerifi} />}
@@ -335,13 +467,13 @@ const CompleteProfile = ({navigation}) => {
           size={14}
           font={Font.semibold}
           color={COLOR.black}
-          style={{marginTop: 20, marginBottom: 6}}>
+          style={{ marginTop: 20, marginBottom: 6 }}>
           Business Proof
         </Typography>
 
         <ImageUpload
           file={image.businessProof}
-          setFile={file => setImages(prev => ({...prev, businessProof: file}))}
+          setFile={file => setImages(prev => ({ ...prev, businessProof: file }))}
         />
 
         {errors.businessProof && <ErrorBox error={errors.businessProof} />}
@@ -351,13 +483,13 @@ const CompleteProfile = ({navigation}) => {
           size={14}
           font={Font.semibold}
           color={COLOR.black}
-          style={{marginTop: 20, marginBottom: 6}}>
+          style={{ marginTop: 20, marginBottom: 6 }}>
           Aadhaar Card Verification
         </Typography>
 
         <ImageUpload
           file={image.aadhaarFront}
-          setFile={file => setImages(prev => ({...prev, aadhaarFront: file}))}
+          setFile={file => setImages(prev => ({ ...prev, aadhaarFront: file }))}
         />
 
         {errors.aadhaarFront && <ErrorBox error={errors.aadhaarFront} />}
@@ -367,13 +499,13 @@ const CompleteProfile = ({navigation}) => {
           size={14}
           font={Font.semibold}
           color={COLOR.black}
-          style={{marginTop: 20, marginBottom: 6}}>
+          style={{ marginTop: 20, marginBottom: 6 }}>
           PAN Card
         </Typography>
 
         <ImageUpload
           file={image.pan}
-          setFile={file => setImages(prev => ({...prev, pan: file}))}
+          setFile={file => setImages(prev => ({ ...prev, pan: file }))}
         />
 
         {errors.pan && <ErrorBox error={errors.pan} />}
@@ -397,7 +529,7 @@ const CompleteProfile = ({navigation}) => {
         <Input
           label="Years of Experience"
           placeholder="Enter Your Experience"
-          style={{borderColor: COLOR.primary, fontFamily: Font.medium}}
+          style={{ borderColor: COLOR.primary, fontFamily: Font.medium }}
           value={experience}
           keyboardType="decimal-pad"
           onChangeText={setExperience}
@@ -416,7 +548,7 @@ const CompleteProfile = ({navigation}) => {
             setLocation(loc);
 
             if (details?.geometry?.location) {
-              const {lat, lng} = details.geometry.location;
+              const { lat, lng } = details.geometry.location;
               const newRegion = {
                 latitude: lat,
                 longitude: lng,
@@ -424,7 +556,7 @@ const CompleteProfile = ({navigation}) => {
                 longitudeDelta: 0.05,
               };
               setRegion(newRegion);
-              setMarkerCoords({latitude: lat, longitude: lng});
+              setMarkerCoords({ latitude: lat, longitude: lng });
             }
           }}
           renderRightButton={() => {
@@ -435,10 +567,10 @@ const CompleteProfile = ({navigation}) => {
                     setLocation('');
                     setMarkerCoords(null);
                   }}
-                  style={{marginTop: 15}}>
+                  style={{ marginTop: 15 }}>
                   <Image
                     source={images.cross}
-                    style={{height: 14, width: 14, tintColor: 'red'}}
+                    style={{ height: 14, width: 14, tintColor: 'red' }}
                   />
                 </TouchableOpacity>
               );
@@ -446,6 +578,16 @@ const CompleteProfile = ({navigation}) => {
             return null;
           }}
         />
+        <Input
+          label="Address"
+          placeholder="Enter your complete Address"
+          style={{ borderColor: COLOR.primary, fontFamily: Font.medium }}
+          value={address}
+          onChangeText={setAddress}
+          error={errors.address}
+        />
+
+
 
         {location && (
           <View
@@ -457,7 +599,7 @@ const CompleteProfile = ({navigation}) => {
               borderRadius: 10,
             }}>
             <MapView
-              style={{flex: 1}}
+              style={{ flex: 1 }}
               region={region}
               onRegionChangeComplete={async newRegion => {
                 setRegion(newRegion);
@@ -482,7 +624,7 @@ const CompleteProfile = ({navigation}) => {
         <Input
           label="Business Website (optional)"
           placeholder="https://yourbusiness.com"
-          style={{borderColor: COLOR.primary, fontFamily: Font.medium}}
+          style={{ borderColor: COLOR.primary, fontFamily: Font.medium }}
           value={website}
           onChangeText={setWebsite}
           error={errors.website}
@@ -492,11 +634,54 @@ const CompleteProfile = ({navigation}) => {
         <Input
           label="GSTIN No."
           placeholder="Enter GST Number"
-          style={{borderColor: COLOR.primary, fontFamily: Font.medium}}
+          style={{ borderColor: COLOR.primary, fontFamily: Font.medium }}
           value={gst}
           onChangeText={setGst}
           error={errors.gst}
         />
+        <Typography
+          size={14}
+          font={Font.semibold}
+          color={COLOR.black}
+          style={{ marginTop: 20, marginBottom: 6 }}>
+          Portfolio Images
+        </Typography>
+        <ImageUpload
+          file={null}   // no single file preview
+          setFile={file =>
+            setPortfolioImages(prev => [...prev, file])
+          }
+        />
+        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+          {portfolioImages?.map((i, index) => (
+            <View key={index}>
+              <Image
+                source={{ uri: i?.originalData?.uri }}
+                style={{
+                  width: 80,
+                  height: 80,
+                  marginTop: 10,
+                  borderRadius: 6,
+                  marginLeft: 10
+                }}
+              />
+
+              <TouchableOpacity
+                onPress={() => removePortfolioImage(index)}
+                style={{ position: "absolute", right: 5, top: 13 }}
+              >
+                <Image
+                  source={{ uri: "https://cdn-icons-png.flaticon.com/128/1828/1828843.png" }}
+                  style={{ width: 20, height: 20 }}
+                />
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+
+
+        {errors.portfolioImages && <ErrorBox error={errors.portfolioImages} />}
+
       </KeyboardAwareScrollView>
 
       <Button loading={loading} title="Next" onPress={handleNext} />
@@ -516,8 +701,8 @@ const CompleteProfile = ({navigation}) => {
 export default CompleteProfile;
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: COLOR.white, paddingHorizontal: 15},
-  scrollContainer: {paddingHorizontal: 5, paddingTop: 10, paddingBottom: 50},
+  container: { flex: 1, backgroundColor: COLOR.white, paddingHorizontal: 15 },
+  scrollContainer: { paddingHorizontal: 5, paddingTop: 10, paddingBottom: 50 },
   imgWrapper: {
     position: 'relative',
     marginBottom: 12,
