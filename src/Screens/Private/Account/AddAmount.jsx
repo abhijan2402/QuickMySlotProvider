@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   KeyboardAvoidingView,
@@ -7,32 +7,32 @@ import {
   Text,
 } from 'react-native';
 import Input from '../../../Components/Input';
-import {COLOR} from '../../../Constants/Colors';
+import { COLOR } from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
-import {validators} from '../../../Backend/Validator';
-import {isValidForm, ToastMsg} from '../../../Backend/Utility';
+import { validators } from '../../../Backend/Validator';
+import { isValidForm, ToastMsg } from '../../../Backend/Utility';
 import useKeyboard from '../../../Constants/Utility';
 import Button from '../../../Components/UI/Button';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
   ADD_WALLET,
   CREATE_RAZORPAY_ORDER,
   WALLET_VERIFY,
-} from '../../../Constants/ApiRoute'; 
-import {POST_FORM_DATA} from '../../../Backend/Api';
-import {useSelector} from 'react-redux';
+} from '../../../Constants/ApiRoute';
+import { POST_FORM_DATA } from '../../../Backend/Api';
+import { useSelector } from 'react-redux';
 import RazorpayCheckout from 'react-native-razorpay';
 
-const AddAmount = ({navigation, route}) => {
+const AddAmount = ({ navigation, route }) => {
   const [amount, setAmount] = useState('');
-  const {isKeyboardVisible} = useKeyboard();
+  const { isKeyboardVisible } = useKeyboard();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({});
   const userdata = useSelector(store => store.userDetails);
 
   // Razorpay configuration (Remove key_secret from frontend!)
   const razorpayConfig = {
-    key_id: 'rzp_test_RL1gmdHRZxYSlx', // Only key_id should be in frontend
+    key_id: 'rzp_live_Rtp1NvclC2UEPp', // Only key_id should be in frontend
     currency: 'INR',
     name: 'QuickMySlot',
     description: 'Add Amount to Wallet',
@@ -135,7 +135,7 @@ const AddAmount = ({navigation, route}) => {
           contact: userdata?.phone_number || '9999999999',
           name: userdata?.name || 'User',
         },
-        theme: {color: COLOR.primary},
+        theme: { color: COLOR.primary },
       };
 
       console.log('Razorpay options:', options);
@@ -198,13 +198,13 @@ const AddAmount = ({navigation, route}) => {
 
   return (
     <KeyboardAvoidingView
-      style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 15}}
+      style={{ flex: 1, backgroundColor: 'white', paddingHorizontal: 15 }}
       behavior={
         Platform.OS === 'ios'
           ? 'padding'
           : isKeyboardVisible
-          ? 'height'
-          : undefined
+            ? 'height'
+            : undefined
       }
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 40}>
       <HomeHeader
@@ -214,7 +214,7 @@ const AddAmount = ({navigation, route}) => {
       />
 
       <KeyboardAwareScrollView
-        style={{paddingHorizontal: 5}}
+        style={{ paddingHorizontal: 5 }}
         contentContainerStyle={styles.container}>
         <Input
           label="Amount (₹)"
@@ -224,11 +224,11 @@ const AddAmount = ({navigation, route}) => {
             setAmount(text);
             // Clear error when user starts typing
             if (error.amount) {
-              setError(prev => ({...prev, amount: ''}));
+              setError(prev => ({ ...prev, amount: '' }));
             }
           }}
           keyboardType="numeric"
-          style={{borderColor: COLOR.primary}}
+          style={{ borderColor: COLOR.primary }}
           error={error.amount}
         />
 

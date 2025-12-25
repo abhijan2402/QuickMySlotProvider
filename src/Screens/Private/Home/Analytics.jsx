@@ -119,7 +119,7 @@ const MyAnalytics = ({ navigation }) => {
           </View>
 
           {/* Promotion Card */}
-          {/* <View style={[styles.card, styles.shadow]}>
+          <View style={[styles.card, styles.shadow]}>
             <Typography style={styles.sectionTitle}>
               Promote Your Business
             </Typography>
@@ -134,7 +134,7 @@ const MyAnalytics = ({ navigation }) => {
                 <Typography style={styles.boostText}>Boost Profile</Typography>
               </TouchableOpacity>
             </View>
-          </View> */}
+          </View>
         </ScrollView>
       )}
     </View>

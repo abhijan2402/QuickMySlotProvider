@@ -151,6 +151,12 @@ const AppointmentDetail = ({ route, navigation }) => {
               );
             })}
           </Typography>
+          <Typography style={[styles.sectionTitle, { marginTop: 15 }]}>Accepted Time</Typography>
+          <Typography style={[styles.text, { marginTop: 5 }]}>
+            ⏰{' '}
+            {data?.accept_time}
+          </Typography>
+
         </View>
 
         {/* Services Breakdown */}
@@ -248,7 +254,7 @@ const AppointmentDetail = ({ route, navigation }) => {
         </View> */}
 
         {/* Cancel Button */}
-        {data?.status !== "rejected" && data?.status !== "completed" ? (
+        {data?.status !== "rejected" && data?.status !== "completed" && data?.status !== "accepted" ? (
           <Button
             onPress={() => setCancelAppointment(true)}
             title={'Cancel Appointment'}

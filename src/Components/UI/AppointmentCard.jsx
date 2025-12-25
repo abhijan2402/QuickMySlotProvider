@@ -1,7 +1,7 @@
 import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
 import ConfirmModal from './ConfirmModel';
-import { POST_WITH_TOKEN } from '../../Backend/Api';
+import { POST_FORM_DATA, POST_WITH_TOKEN } from '../../Backend/Api';
 import {
   ACCEPT_APPOINTMENTS,
   COMPLETED_APPOINTMENTS,
@@ -10,6 +10,7 @@ import {
 import { COLOR } from '../../Constants/Colors';
 import { Typography } from './Typography';
 import { ToastMsg } from '../../Backend/Utility';
+import moment from 'moment';
 
 const AppointmentCard = ({ item, tab, onSuccess, onPress, navigation }) => {
   const [accept, setAccept] = useState(false);
@@ -17,18 +18,34 @@ const AppointmentCard = ({ item, tab, onSuccess, onPress, navigation }) => {
   const [reject, setReject] = useState(false);
   const [complete, setComplete] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [selectedTime, setSelectedTime] = useState(null);
+
   const scheduleEntries = item?.schedule_time
     ? Object.entries(item.schedule_time)
     : [];
+
   const [success, setSuccess] = useState(false);
 
   const HandleAccept = () => {
+    if (selectedTime == null) {
+      ToastMsg("Please select time before accept")
+      setAccept(false);
+      return
+    }
     setLoading(true);
-    POST_WITH_TOKEN(
+    const formData = new FormData()
+    formData.append("accept_time", selectedTime)
+    console.log(formData, "DATATAT");
+
+    POST_FORM_DATA(
       ACCEPT_APPOINTMENTS + appointmentId,
+      formData,
       success => {
         ToastMsg(success?.message)
         setLoading(false);
+        setLoading(false);
+        setAccept(false);
+        onSuccess();
       },
       error => {
         console.log(error, 'errorerrorerror>>');
@@ -101,9 +118,7 @@ const AppointmentCard = ({ item, tab, onSuccess, onPress, navigation }) => {
         disabled={false}>
         📞 {item.customer?.phone_number}
       </Typography>
-      {/* <Typography style={styles.infoText}>
-        📍 {item.customer?.exact_location}
-      </Typography> */}
+
 
       <View style={styles.divider} />
 
@@ -119,65 +134,45 @@ const AppointmentCard = ({ item, tab, onSuccess, onPress, navigation }) => {
           </>
         ))
       }
-      {/* <Typography style={styles.totalPrice}>
-        Total: ₹{item?.subtotal}
-      </Typography> */}
-      {/* <View style={styles.divider} /> */}
-      {/* <Typography
-        style={{
-          fontSize: 16,
-          fontWeight: '700',
-          color: '#000',
-          marginBottom: 8,
-        }}>
-        🗓 Booking Details
-      </Typography> */}
-      {/* {scheduleEntries.length > 0 ? (
-        <View>
-          <Typography
-            style={{
-              fontSize: 14,
-              fontWeight: '600',
-              color: '#444',
-              marginBottom: 6,
-            }}>
-            {new Date(scheduleEntries[0][1]).toLocaleDateString()}
-          </Typography>
+      {
+        tab !== 'Completed' && tab !== 'Rejected' && tab !== "Accepted" && (
+          <View style={styles.card1}>
+            <Typography style={styles.sectionTitle}>Select Time</Typography>
+            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+              {scheduleEntries.map((entry, index) => {
+                const time = entry[0];
+                const isSelected = selectedTime === time;
 
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
-            {scheduleEntries.map(([time], index) => (
-              <View
-                key={index}
-                style={{
-                  backgroundColor: '#E8F0FE',
-                  paddingVertical: 6,
-                  paddingHorizontal: 12,
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  borderColor: '#C5D1F0',
-                  marginRight: 8,
-                  marginBottom: 6,
-                }}>
-                <Typography
-                  style={{
-                    fontSize: 13,
-                    color: '#1A73E8',
-                    fontWeight: '500',
-                  }}>
-                  {time}
-                </Typography>
-              </View>
-            ))}
-          </View>
-        </View>
-      ) : (
-        <Typography style={{ fontSize: 13, color: '#777' }}>
-          Date & Time: N/A
-        </Typography>
-      )} */}
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => setSelectedTime(time)}
+                    style={{
+                      padding: 2,
+                      // marginRight: 7,
+                      paddingVertical: 2,
+                      // marginTop: 6,
+                      borderRadius: 6,
+                      borderWidth: 1,
+                      borderColor: isSelected ? COLOR.primary : '#ddd',
+                      backgroundColor: isSelected ? '#E3F2FD' : '#fff',
+                    }}
+                  >
+                    <Typography
+                      style={{
+                        color: isSelected ? COLOR.primary : '#333',
+                        fontWeight: '600',
+                      }}
+                    >
+                      ⏰ {time}
+                    </Typography>
+                  </TouchableOpacity>
+                );
+              })}
 
-
-
+            </View>
+          </View>)
+      }
 
       {/* Actions */}
       {tab !== 'Completed' && tab !== 'Rejected' && (
@@ -314,4 +309,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   feedbackText: { color: COLOR.primary, fontWeight: '600' },
+  card1: {
+    backgroundColor: COLOR.white,
+    borderRadius: 12,
+    padding: 5,
+    paddingHorizontal: 10,
+    // marginBottom: 15,
+    // shadowColor: '#000',
+    // shadowOpacity: 0.08,
+    // shadowRadius: 6,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#eee',
+    marginVertical: 7
+    // marginHorizontal: 5,
+  },
 });

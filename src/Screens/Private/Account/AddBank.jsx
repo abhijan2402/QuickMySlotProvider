@@ -89,7 +89,6 @@ const AddBank = ({ navigation, route }) => {
       formData.append('city', city);
       formData.append('state', state);
       formData.append('postal_code', postalCode);
-      console.log(formData, "DATATTATTTATA");
 
       const url = isEditing ? UPDATE_BANK + data?.id : ADD_BANK;
 

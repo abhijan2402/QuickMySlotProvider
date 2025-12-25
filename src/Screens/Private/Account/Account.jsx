@@ -123,6 +123,13 @@ const Account = ({ navigation }) => {
       },
     },
     {
+      id: 14,
+      title: 'Appointments',
+      icon: 'https://cdn-icons-png.flaticon.com/128/7322/7322293.png',
+      navigate: 'Appointment',
+
+    },
+    {
       id: 4,
       title: 'Privacy Policy',
       icon: 'https://cdn-icons-png.flaticon.com/128/10348/10348823.png',
@@ -210,19 +217,19 @@ const Account = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
             ) : (
-              // <View style={styles.planCard}>
-              //   <Text style={styles.planTitle}>🚀 Boost Your Profile</Text>
-              //   <Text style={styles.planDesc}>
-              //     Stand out and get more visibility! Purchase a plan to boost
-              //     your profile.
-              //   </Text>
-              //   <TouchableOpacity
-              //     style={styles.upgradeBtn}
-              //     onPress={() => navigation.navigate('BoostProfile')}>
-              //     <Text style={styles.upgradeText}>Purchase Plan</Text>
-              //   </TouchableOpacity>
-              // </View>
-              <></>
+              <View style={styles.planCard}>
+                <Text style={styles.planTitle}>🚀 Boost Your Profile</Text>
+                <Text style={styles.planDesc}>
+                  Stand out and get more visibility! Purchase a plan to boost
+                  your profile.
+                </Text>
+                <TouchableOpacity
+                  style={styles.upgradeBtn}
+                  onPress={() => navigation.navigate('BoostProfile')}>
+                  <Text style={styles.upgradeText}>Purchase Plan</Text>
+                </TouchableOpacity>
+              </View>
+
             )}
           </View>
 

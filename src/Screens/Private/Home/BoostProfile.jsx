@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -6,24 +6,24 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import {COLOR} from '../../../Constants/Colors';
+import { COLOR } from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
 import Button from '../../../Components/UI/Button';
-import {Typography} from '../../../Components/UI/Typography';
-import {useIsFocused} from '@react-navigation/native';
+import { Typography } from '../../../Components/UI/Typography';
+import { useIsFocused } from '@react-navigation/native';
 import {
   GET_CURRENT_MEMBERSHIP,
   MEMBERSHIP_CREATE_ORDER,
   MEMBERSHIP_VERIFY_PAYMENT,
   SUBSCRIPTION,
 } from '../../../Constants/ApiRoute';
-import {GET_WITH_TOKEN, POST_FORM_DATA} from '../../../Backend/Api';
-import {Font} from '../../../Constants/Font';
-import {ToastMsg} from '../../../Backend/Utility';
+import { GET_WITH_TOKEN, POST_FORM_DATA } from '../../../Backend/Api';
+import { Font } from '../../../Constants/Font';
+import { ToastMsg } from '../../../Backend/Utility';
 import RazorpayCheckout from 'react-native-razorpay';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 
-const BoostProfile = ({navigation}) => {
+const BoostProfile = ({ navigation }) => {
   const isFocus = useIsFocused();
   const [loading, setLoading] = useState(false);
   const [subscription, setSubscription] = useState([]);
@@ -33,8 +33,9 @@ const BoostProfile = ({navigation}) => {
   const [currentPlan, setCurrentPlan] = useState();
 
   const userdata = useSelector(store => store.userDetails);
+  // rzp_live_Rtp1NvclC2UEPp
   const razorpayConfig = {
-    key_id: 'rzp_test_RL1gmdHRZxYSlx',
+    key_id: 'rzp_live_Rtp1NvclC2UEPp',
     currency: 'INR',
     name: 'QuickMySlot',
     description: 'Membership Subscription',
@@ -178,7 +179,7 @@ const BoostProfile = ({navigation}) => {
           contact: userdata?.phone_number || '9999999999',
           name: userdata?.name || 'User',
         },
-        theme: {color: COLOR.primary},
+        theme: { color: COLOR.primary },
       };
 
       console.log('Razorpay options:', options);
@@ -237,11 +238,11 @@ const BoostProfile = ({navigation}) => {
         <ActivityIndicator
           size="large"
           color="#007bff"
-          style={{marginTop: 20}}
+          style={{ marginTop: 20 }}
         />
       ) : (
         <ScrollView
-          contentContainerStyle={{paddingVertical: 15, paddingHorizontal: 5}}>
+          contentContainerStyle={{ paddingVertical: 15, paddingHorizontal: 5 }}>
           {/* Boost Options */}
           <Typography size={15} font={Font.medium} style={styles.sectionTitle}>
             Choose Plan
@@ -259,7 +260,7 @@ const BoostProfile = ({navigation}) => {
                 {selected?.id === item.id && <View style={styles.radioDot} />}
               </View>
 
-              <View style={{flex: 1}}>
+              <View style={{ flex: 1 }}>
                 <Typography
                   size={16}
                   font={Font.semibold}
@@ -326,7 +327,7 @@ const BoostProfile = ({navigation}) => {
       )}
 
       {/* Checkout Button */}
-      <View style={{position: 'absolute', left: 20, right: 20, bottom: 10}}>
+      <View style={{ position: 'absolute', left: 20, right: 20, bottom: 10 }}>
         <Button
           title={'Checkout'}
           onPress={() => {

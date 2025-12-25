@@ -73,7 +73,6 @@ const BankDetails = ({ navigation }) => {
   };
 
   const renderBankCard = ({ item }) => {
-    console.log(item, "ITEMMMMMMMM");
 
     return (
       <TouchableOpacity
@@ -90,7 +89,7 @@ const BankDetails = ({ navigation }) => {
             {item.bank_name}
           </Typography>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={[
               styles.checkbox,
               selectedBankId === item.id && styles.checkboxSelected,
@@ -104,7 +103,7 @@ const BankDetails = ({ navigation }) => {
                 style={{ width: 12, height: 12, tintColor: '#fff' }}
               />
             )}
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         {/* 🔹 Account Number */}
@@ -197,7 +196,7 @@ const BankDetails = ({ navigation }) => {
             />
           </TouchableOpacity>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={[styles.iconButton, { backgroundColor: '#F44336' }]}
             onPress={() => {
               setDelete(true);
@@ -209,7 +208,7 @@ const BankDetails = ({ navigation }) => {
               }}
               style={[styles.actionIcon, { tintColor: '#fff' }]}
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </TouchableOpacity>
     )
@@ -244,15 +243,16 @@ const BankDetails = ({ navigation }) => {
           )}
         />
       )}
-
-      {/* Add Bank Button */}
-      <TouchableOpacity
-        style={styles.addBtn}
-        onPress={() => navigation.navigate('AddBank')}>
-        <Typography size={14} font={Font.semibold} color="#fff">
-          + Add Bank
-        </Typography>
-      </TouchableOpacity>
+      {
+        bankList?.length == 0 &&
+        < TouchableOpacity
+          style={styles.addBtn}
+          onPress={() => navigation.navigate('AddBank')}>
+          <Typography size={14} font={Font.semibold} color="#fff">
+            + Add Bank
+          </Typography>
+        </TouchableOpacity>
+      }
 
       {/* Delete Confirmation Modal */}
       <ConfirmModal
@@ -266,7 +266,7 @@ const BankDetails = ({ navigation }) => {
         onPressYes={handleDelete}
         onPressNo={() => setDelete(false)}
       />
-    </View>
+    </View >
   );
 };
 

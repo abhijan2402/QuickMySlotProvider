@@ -348,7 +348,7 @@ const MainHome = ({ navigation }) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 30 }}>
-        {/* Salon Card */}
+
         <TouchableOpacity
           activeOpacity={0.99}
           onPress={() => {
@@ -357,7 +357,7 @@ const MainHome = ({ navigation }) => {
           style={styles.card}>
           <Image
             source={{
-              uri: cleanImageUrl(userdata?.photo_verification),
+              uri: cleanImageUrl(userdata?.image),
             }}
             style={styles.cardIcon}
           />
@@ -519,8 +519,8 @@ const MainHome = ({ navigation }) => {
           />
         </View>
       </ScrollView>
-
       <Chatbot />
+
       <Modal
         visible={isModalVisible}
         transparent

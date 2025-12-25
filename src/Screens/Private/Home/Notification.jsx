@@ -29,7 +29,6 @@ const NotificationsScreen = () => {
         GET_NOTIFICATION,
         success => {
           setNotification(success?.data)
-          console.log(success, 'successsuccesssuccess-->>>');
           setLoading(false);
         },
         error => {
