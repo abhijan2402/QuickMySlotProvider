@@ -139,7 +139,7 @@ const ManageServices = ({ navigation }) => {
           <View
             style={{ flex: 1, justifyContent: 'space-between' }}>
             {/* Title and Actions */}
-            <View style={styles.rowBetween}>
+            <View style={[styles.rowBetween,]}>
               <Typography size={16} font={Font.bold} color={COLOR.black}>
                 {item.name}
               </Typography>
@@ -413,8 +413,8 @@ const ManageServices = ({ navigation }) => {
         {/* Content */}
         <View style={styles.detailsWrapper}>
           {/* Title + Actions */}
-          <View style={styles.rowBetween}>
-            <Typography size={14} font={Font.semibold} color={COLOR.black}>
+          <View style={[styles.rowBetween,]}>
+            <Typography style={{ width: windowWidth / 2.1 }} size={14} font={Font.semibold} color={COLOR.black}>
               {item?.name}
             </Typography>
 
@@ -715,6 +715,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    // borderWidth: 1,
+    // width: windowWidth / 2
   },
 
   actionBtn: {

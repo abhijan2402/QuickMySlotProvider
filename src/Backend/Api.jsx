@@ -188,7 +188,7 @@ export const POST_FORM_DATA = async (
       ...errorHandling,
     })
       .then(res => {
-        // console.log(res, "RESSS");
+        console.log(res, "RESSS");
 
         if (res?.status == 200 || res?.status == 201) {
           onSuccess(res?.data);

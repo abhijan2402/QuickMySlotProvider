@@ -9,6 +9,7 @@ import {
   Modal,
   TextInput,
   Alert,
+  Text,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { COLOR } from '../../../Constants/Colors';
@@ -191,6 +192,8 @@ const MainHome = ({ navigation }) => {
         setLoading(false);
         const response = success?.data?.data;
         const filteredBids = response?.filter((e) => e?.category?.id == userdata?.service_category);
+        console.log(filteredBids, "BISISISISI");
+
         setBidList(filteredBids || [])
       },
       error => {
@@ -229,7 +232,8 @@ const MainHome = ({ navigation }) => {
         <Image
           source={{ uri: item?.image }}
           style={[styles.bannerImage, { width: width - 40 }]}
-          resizeMode="stretch"
+          // resizeMode="stretch"
+          resizeMode="repeat"
         />
       </TouchableOpacity>
     );
@@ -348,7 +352,6 @@ const MainHome = ({ navigation }) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 30 }}>
-
         <TouchableOpacity
           activeOpacity={0.99}
           onPress={() => {
@@ -412,16 +415,61 @@ const MainHome = ({ navigation }) => {
             />
           ))}
         </View>
+        {
+          bidList?.length == 0 ?
+            <>
+              <View style={{ backgroundColor: COLOR.primary, paddingVertical: 10 }}>
+                <Typography color={COLOR.white} size={18} font={Font.semibold} textAlign={"center"}>Bid Portal - Live Bidding Opportunities</Typography>
+              </View>
+              <View
+                style={{
+                  alignItems: "center",
+                  // justifyContent: "center",
+                  marginHorizontal: 20,
+                  backgroundColor: COLOR.background,
+                  marginVertical: 20,
+                  borderRadius: 20,
+                  padding: 10,
+                  flexDirection: "row",
+                  paddingVertical: 18
+                }}
+              >
+                <Image
+                  source={{ uri: "https://cdn-icons-png.flaticon.com/128/2669/2669141.png" }}   // <-- your image here
+                  style={{ width: 100, height: 80, resizeMode: "contain" }}
+                />
+                <View>
 
-        <View style={{ marginBottom: 40 }}>
-          <FlatList
-            data={bidList}
-            renderItem={renderBidItem}
-            keyExtractor={item => item.id}
-            showsVerticalScrollIndicator={false}
+                  <Text style={{ marginTop: 12, fontSize: 20, fontFamily: Font.medium, color: "#e85c2c" }}>
+                    No Active Bids Found
+                  </Text>
 
-          />
-        </View>
+                  <Text
+                    style={{
+                      marginTop: 4,
+                      // textAlign: "center",
+                      color: "#6e6e6e",
+                      fontSize: 14,
+                      fontFamily: Font.regular,
+                      width: windowWidth / 1.8,
+                    }}
+                  >
+                    Stay tuned! New bids will added shortly for all categories.
+                  </Text>
+                </View>
+              </View>
+            </>
+            :
+            <View style={{ marginBottom: 40 }}>
+              <FlatList
+                data={bidList}
+                renderItem={renderBidItem}
+                keyExtractor={item => item.id}
+                showsVerticalScrollIndicator={false}
+
+              />
+            </View>
+        }
 
 
 
@@ -701,7 +749,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   bannerImage: {
-    height: 150,
+    height: 200,
     borderRadius: 12,
   },
   dotsContainer: {

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -10,31 +10,31 @@ import {
   Image,
 } from 'react-native';
 import Input from '../../../Components/Input';
-import {COLOR} from '../../../Constants/Colors';
+import { COLOR } from '../../../Constants/Colors';
 import HomeHeader from '../../../Components/HomeHeader';
-import {Dropdown} from 'react-native-element-dropdown';
-import {validators} from '../../../Backend/Validator';
-import {isValidForm} from '../../../Backend/Utility';
-import {ErrorBox} from '../../../Components/UI/ErrorBox';
+import { Dropdown } from 'react-native-element-dropdown';
+import { validators } from '../../../Backend/Validator';
+import { isValidForm } from '../../../Backend/Utility';
+import { ErrorBox } from '../../../Components/UI/ErrorBox';
 import useKeyboard from '../../../Constants/Utility';
 import Button from '../../../Components/UI/Button';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
   ADD_BANK,
   ADD_SUB_SERVICES,
   UPDATE_BANK,
 } from '../../../Constants/ApiRoute';
-import {POST_FORM_DATA, POST_WITH_TOKEN} from '../../../Backend/Api';
-import {useIsFocused} from '@react-navigation/native';
-import {Typography} from '../../../Components/UI/Typography';
-import {images} from '../../../Components/UI/images';
+import { POST_FORM_DATA, POST_WITH_TOKEN } from '../../../Backend/Api';
+import { useIsFocused } from '@react-navigation/native';
+import { Typography } from '../../../Components/UI/Typography';
+import { images } from '../../../Components/UI/images';
 import ImageUpload from '../../../Components/UI/ImageUpload';
 import ImageModal from '../../../Components/UI/ImageModal';
-import {Font} from '../../../Constants/Font';
+import { Font } from '../../../Constants/Font';
 
-const AddSubServices = ({navigation, route}) => {
+const AddSubServices = ({ navigation, route }) => {
   const [subServices, setSubServices] = useState('');
-  const {isKeyboardVisible} = useKeyboard();
+  const { isKeyboardVisible } = useKeyboard();
   const [loading, setLoading] = useState(false);
   const data = route?.params?.data;
   console.log(data, 'dsadsawqewqewqefsdcbgfhyjuuy');
@@ -49,7 +49,7 @@ const AddSubServices = ({navigation, route}) => {
   useEffect(() => {
     if (isFocus) {
       setSubServices(data?.name);
-      setImage(data?.image_url ? {path: data?.image_url} : null);
+      setImage(data?.image_url ? { path: data?.image_url } : null);
     }
   }, [isFocus]);
 
@@ -83,8 +83,8 @@ const AddSubServices = ({navigation, route}) => {
           name: image.filename || 'service.jpg',
         });
       }
-      console.log(formData,'formDataformDataformDataqw');
-      
+      console.log(formData, 'formDataformDataformDataqw');
+
       POST_FORM_DATA(
         isEditing ? ADD_SUB_SERVICES + '/' + data?.id : ADD_SUB_SERVICES,
         formData,
@@ -107,13 +107,13 @@ const AddSubServices = ({navigation, route}) => {
 
   return (
     <KeyboardAvoidingView
-      style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 15}}
+      style={{ flex: 1, backgroundColor: 'white', paddingHorizontal: 15 }}
       behavior={
         Platform.OS === 'ios'
           ? 'padding'
           : isKeyboardVisible
-          ? 'height'
-          : undefined
+            ? 'height'
+            : undefined
       }
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 40}>
       <HomeHeader
@@ -123,21 +123,21 @@ const AddSubServices = ({navigation, route}) => {
       />
 
       <KeyboardAwareScrollView
-        style={{paddingHorizontal: 5}}
+        style={{ paddingHorizontal: 5 }}
         contentContainerStyle={styles.container}>
         <Input
           label="Sub Service Name"
           placeholder="Enter Sub Service name"
           value={subServices}
           onChangeText={setSubServices}
-          style={{borderColor: COLOR.primary, fontFamily: Font.medium}}
+          style={{ borderColor: COLOR.primary, fontFamily: Font.medium }}
           error={error.setSubServices}
         />
         {/* Upload Image */}
         <Typography
           size={14}
           font={Font.semibold}
-          style={[styles.label, {marginTop: 20}]}>
+          style={[styles.label, { marginTop: 20 }]}>
           Sub Service Image
         </Typography>
 
@@ -151,7 +151,7 @@ const AddSubServices = ({navigation, route}) => {
           size={12}
           color="#777"
           font={Font.semibold}
-          style={[styles.note, {marginTop: 5}]}>
+          style={[styles.note, { marginTop: 5 }]}>
           Max file size: 2MB. JPG, PNG allowed.
         </Typography>
         {/* show error below image */}

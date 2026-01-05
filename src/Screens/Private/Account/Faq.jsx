@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -9,14 +9,14 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import HomeHeader from '../../../Components/HomeHeader';
-import {COLOR} from '../../../Constants/Colors';
-import {Typography} from '../../../Components/UI/Typography';
-import {useIsFocused} from '@react-navigation/native';
-import {GET_WITH_TOKEN} from '../../../Backend/Api';
-import {ADD_FAQ} from '../../../Constants/ApiRoute';
-import {images} from '../../../Components/UI/images';
+import { COLOR } from '../../../Constants/Colors';
+import { Typography } from '../../../Components/UI/Typography';
+import { useIsFocused } from '@react-navigation/native';
+import { GET_WITH_TOKEN } from '../../../Backend/Api';
+import { ADD_FAQ } from '../../../Constants/ApiRoute';
+import { images } from '../../../Components/UI/images';
 
-const Faq = ({navigation}) => {
+const Faq = ({ navigation }) => {
   const isFocus = useIsFocused();
   const [loading, setLoading] = useState(false);
   const [faq, setFaq] = useState([]);
@@ -30,6 +30,8 @@ const Faq = ({navigation}) => {
         success => {
           console.log(success);
           setLoading(false);
+          console.log(success?.data, "AHIUBSBSIU");
+
           const grouped = success?.data?.reduce((acc, item) => {
             console.log(acc);
             const existing = acc.find(sec => sec.title === item.category);
@@ -37,7 +39,7 @@ const Faq = ({navigation}) => {
             if (existing) {
               existing.data.push(item);
             } else {
-              acc.push({title: item.category, data: [item]});
+              acc.push({ title: item.category, data: [item] });
             }
             return acc;
           }, []);
@@ -72,18 +74,18 @@ const Faq = ({navigation}) => {
         <ActivityIndicator
           size="large"
           color="#007bff"
-          style={{marginTop: 20}}
+          style={{ marginTop: 20 }}
         />
       ) : (
         <SectionList
           sections={faq}
           keyExtractor={(item, index) => item.id.toString() + index}
-          renderSectionHeader={({section: {title}}) => (
-            <Typography style={styles.sectionTitle} size={16} fontWeight="700">
-              {title}
-            </Typography>
-          )}
-          renderItem={({item}) => (
+          // renderSectionHeader={({ section: { title } }) => (
+          //   <Typography style={styles.sectionTitle} size={16} fontWeight="700">
+          //     {title}
+          //   </Typography>
+          // )}
+          renderItem={({ item }) => (
             <View style={styles.faqItem}>
               <TouchableOpacity
                 style={styles.faqHeader}
@@ -99,7 +101,7 @@ const Faq = ({navigation}) => {
                     source={
                       expandedId === item.id ? images.arrowdown : images.arrowup
                     }
-                    style={{width: 16, height: 16, tintColor: '#555'}}
+                    style={{ width: 16, height: 16, tintColor: '#555' }}
                     resizeMode="contain"
                   />
                 </TouchableOpacity>

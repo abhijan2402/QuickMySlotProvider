@@ -36,10 +36,12 @@ const AppointmentCard = ({ item, tab, onSuccess, onPress, navigation }) => {
     const formData = new FormData()
     formData.append("accept_time", selectedTime)
     console.log(formData, "DATATAT");
-
-    POST_FORM_DATA(
+    const data = {
+      accept_time: selectedTime
+    }
+    POST_WITH_TOKEN(
       ACCEPT_APPOINTMENTS + appointmentId,
-      formData,
+      data,
       success => {
         ToastMsg(success?.message)
         setLoading(false);
